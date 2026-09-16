@@ -2,6 +2,9 @@
 
 Thank you for contributing to **PlumberBench**! This benchmark tracks the state-of-the-art in LLM procedural game generation and physical reasoning.
 
+> [!IMPORTANT]
+> **Legal Disclaimer & Notice of Non-Affiliation:** PlumberBench is an independent, non-commercial open-source research initiative. PlumberBench is **not affiliated with, endorsed by, authorized by, or sponsored by Nintendo Co., Ltd. or Nintendo of America Inc.** All characters, trademarks, and intellectual property remain the property of their respective holders.
+
 ---
 
 ## 📜 Golden Rules of PlumberBench
@@ -21,11 +24,14 @@ To maintain benchmark integrity, all submissions must satisfy the following:
 
 3. **Full Hardware & Inference Transparency**:
    - You must disclose:
-     - Model Name & Version
-     - Quantization / Precision (e.g. `UD-Q4_K_XL`, `Q8_0`, `FP16`, `bfloat16`)
-     - Thinking / Reasoning Mode (e.g. CoT token count, reasoning effort)
-     - Hardware (e.g. `RTX 3070 8GB`, `RTX 4090 24GB`, `Frontier Cloud API`)
-     - Inference Engine (e.g. `llama.cpp`, `vLLM`, `Ollama`, `ExLlamaV2`)
+     - **Model Name & Version / Quant** (e.g. `Qwen3.8-Flash-Next`, `UD-Q4_K_XL`, `FP16`)
+     - **Inference Harness / Runner** (e.g. `llama.cpp Master`, `vLLM`, `Frontier API`, `Antigravity CLI`)
+     - **Thinking / Reasoning Effort** (e.g. `60k CoT Deliberation`, `10k Budget`, `High Reasoning`, `Zero-Shot`)
+     - **Hardware / Platform** (e.g. `RTX 3070 8GB`, `RTX 4090 24GB`, `Frontier Cloud API`)
+
+4. **Creative Title Policy (No Trademark Names in Title)**:
+   - Do **not** include "Mario" or other trademarked names in your submission's title.
+   - Use creative, distinct titles (e.g. *Three Worlds Odyssey*, *Super Pixel Bros*, *The 2.6k Deluxe Platformer*, *The Matrix Bros*, *Circus Jumper*). The prompt itself may mention the benchmark prompt as-is.
 
 ---
 
@@ -69,11 +75,13 @@ Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS i
 Use the bundled Python submission script to automatically copy files, take a headless preview screenshot, and validate:
 ```bash
 python3 scripts/submit.py \
-  --file path/to/your_mario.html \
-  --id my_model_mario \
-  --title "Super Mushroom Quest" \
+  --file path/to/your_game.html \
+  --id my_model_quest \
+  --title "Kingdom Jumper" \
   --author "u/YourHandle" \
   --model "MyModel-70B-Instruct" \
+  --harness "llama.cpp Master" \
+  --effort "60k CoT Deliberation" \
   --hardware "Local RTX 4090 24GB" \
   --source "https://reddit.com/r/LocalLLaMA/..." \
   --prompt "Write a complete, playable Super Mario clone in a single file..."

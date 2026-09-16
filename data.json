@@ -1,7 +1,7 @@
 [
   {
     "id": "gpt6_astra_high",
-    "title": "Super Mario: Three Worlds Edition",
+    "title": "Three Worlds Odyssey",
     "author": "GPT-6 Astra (Frontier High)",
     "category": "Modern Indie",
     "badge": "Frontier High",
@@ -27,11 +27,13 @@
     "matches": 0,
     "preview": "previews/gpt6_astra_high.png",
     "wins": 0,
-    "hidden": false
+    "hidden": false,
+    "harness": "Frontier API",
+    "thinkingEffort": "High Reasoning CoT"
   },
   {
     "id": "gemini38_flash_full",
-    "title": "Super Mario Bros: 2.6k Deluxe",
+    "title": "The 2.6k Deluxe Platformer",
     "author": "Gemini 3.8 Flash",
     "category": "NES Purist",
     "badge": "Full CoT Deluxe",
@@ -57,7 +59,9 @@
     "matches": 0,
     "preview": "previews/gemini38_flash_full.png",
     "wins": 0,
-    "hidden": false
+    "hidden": false,
+    "harness": "Antigravity CLI",
+    "thinkingEffort": "Full CoT Deliberation"
   },
   {
     "id": "qwen38_flash_3070_potato",
@@ -88,7 +92,9 @@
     "preview": "previews/qwen38_flash_3070_potato.png",
     "wins": 0,
     "hidden": false,
-    "demoUrl": "https://www.cc8.pl/mario-q38-flash.html"
+    "demoUrl": "https://www.cc8.pl/mario-q38-flash.html",
+    "harness": "llama.cpp (cc8.pl)",
+    "thinkingEffort": "10k CoT Budget (xhigh)"
   },
   {
     "id": "qwen38_gold_60k",
@@ -118,7 +124,9 @@
     "matches": 0,
     "preview": "previews/qwen38_gold_60k.png",
     "wins": 0,
-    "hidden": false
+    "hidden": false,
+    "harness": "llama.cpp Master (L3MS)",
+    "thinkingEffort": "60k CoT Deliberation (59m)"
   },
   {
     "id": "qwen38_27b_chopsticks",
@@ -149,11 +157,13 @@
     "preview": "previews/qwen38_27b_chopsticks.png",
     "wins": 0,
     "hidden": false,
-    "demoUrl": "https://indigo-carmencita-27.tiiny.site/"
+    "demoUrl": "https://indigo-carmencita-27.tiiny.site/",
+    "harness": "llama.cpp (u/ChopSticksPlease)",
+    "thinkingEffort": "Standard One-Shot"
   },
   {
     "id": "gpt6_astra_light",
-    "title": "Super Meadow (A Little Adventure)",
+    "title": "Super Meadow: A Little Adventure",
     "author": "GPT-6 Astra (Light)",
     "category": "Modern Indie",
     "badge": "Light CoT Indie",
@@ -179,7 +189,9 @@
     "matches": 0,
     "preview": "previews/gpt6_astra_light.png",
     "wins": 0,
-    "hidden": false
+    "hidden": false,
+    "harness": "Frontier API",
+    "thinkingEffort": "Light Reasoning CoT"
   },
   {
     "id": "qwen38_27b_circus_mikenonect",
@@ -210,7 +222,9 @@
     "preview": "previews/qwen38_27b_circus_mikenonect.png",
     "wins": 0,
     "hidden": false,
-    "demoUrl": "https://mikeveerman.github.io/qwen38-27b-mario"
+    "demoUrl": "https://mikeveerman.github.io/qwen38-27b-mario",
+    "harness": "llama.cpp (u/MikeNonect)",
+    "thinkingEffort": "Overnight Batch (Q8)"
   },
   {
     "id": "gemini38_flash_baseline",
@@ -240,7 +254,9 @@
     "matches": 0,
     "preview": "previews/gemini38_flash_baseline.png",
     "wins": 0,
-    "hidden": true
+    "hidden": true,
+    "harness": "Antigravity Interactive",
+    "thinkingEffort": "Zero-Shot Fast Mode"
   },
   {
     "id": "gemini25_pro_pygame",
@@ -270,7 +286,9 @@
     "matches": 0,
     "preview": "previews/gemini25_pro_pygame.png",
     "wins": 0,
-    "hidden": true
+    "hidden": true,
+    "harness": "Cloud API (u/Healthy-Nebula-3603)",
+    "thinkingEffort": "Standard One-Shot"
   },
   {
     "id": "ornith35b_matrix_bros",
@@ -301,6 +319,8 @@
     "matches": 0,
     "wins": 0,
     "preview": "previews/ornith35b_matrix_bros.png",
-    "hidden": false
+    "hidden": false,
+    "harness": "llama.cpp (u/TimelordQ)",
+    "thinkingEffort": "Direct Zero-Shot"
   }
 ]
