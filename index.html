@@ -252,12 +252,10 @@
       border: 1px solid var(--gold);
       color: var(--gold);
     }
-    .tier-grandmaster { background: rgba(248, 195, 0, 0.2); border-color: #f8c300; color: #f8c300; }
     .tier-master { background: rgba(188, 140, 255, 0.2); border-color: #bc8cff; color: #bc8cff; }
     .tier-diamond { background: rgba(88, 166, 255, 0.2); border-color: #58a6ff; color: #58a6ff; }
-    .tier-platinum { background: rgba(46, 160, 67, 0.2); border-color: #2ea043; color: #3fb950; }
-    .tier-gold { background: rgba(210, 153, 34, 0.2); border-color: #d29922; color: #d29922; }
-    .tier-silver { background: rgba(139, 148, 158, 0.2); border-color: #8b949e; color: #8b949e; }
+    .tier-challenger { background: rgba(46, 160, 67, 0.2); border-color: #2ea043; color: #3fb950; }
+    .tier-contender { background: rgba(210, 153, 34, 0.2); border-color: #d29922; color: #d29922; }
 
     .card-title {
       font-size: 16px;
@@ -493,7 +491,7 @@
       background: #21262d;
       border: 1px solid var(--card-border);
       color: var(--text);
-      padding: 9px 12px;
+      padding: 9px 10px;
       border-radius: 6px;
       font-family: inherit;
       font-weight: 600;
@@ -504,6 +502,7 @@
       justify-content: center;
       gap: 4px;
       transition: all 0.15s ease;
+      text-decoration: none;
     }
     .btn-action:hover {
       background: #30363d;
@@ -511,7 +510,7 @@
       border-color: #58a6ff;
     }
 
-    /* Arena Matchup View */
+    /* Blind Arena View */
     .arena-container {
       background: #111722;
       border: 1px solid var(--card-border);
@@ -521,7 +520,7 @@
     }
     .arena-header {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .arena-title {
       font-family: 'Press Start 2P', monospace;
@@ -532,12 +531,15 @@
     .arena-sub {
       color: var(--text-muted);
       font-size: 13px;
+      max-width: 650px;
+      margin: 0 auto;
+      line-height: 1.5;
     }
     .arena-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 24px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     @media (max-width: 840px) {
       .arena-grid { grid-template-columns: 1fr; }
@@ -582,18 +584,26 @@
       display: flex;
       flex-direction: column;
     }
+    .arena-reveal-box {
+      background: #161f2c;
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 20px;
+      text-align: center;
+      display: none;
+    }
     .arena-controls {
       display: flex;
       justify-content: center;
-      gap: 14px;
+      gap: 12px;
       flex-wrap: wrap;
-      margin-top: 10px;
     }
     .btn-arena-vote {
       background: #1f6feb;
       color: #fff;
       border: none;
-      padding: 12px 24px;
+      padding: 12px 22px;
       border-radius: 8px;
       font-family: inherit;
       font-weight: 700;
@@ -624,7 +634,7 @@
       background: transparent;
       border: 1px solid var(--card-border);
       color: var(--text-muted);
-      padding: 12px 20px;
+      padding: 12px 18px;
       border-radius: 8px;
       font-family: inherit;
       font-weight: 600;
@@ -788,6 +798,37 @@
     }
     .drawer h2 { font-size: 20px; color: #fff; margin-bottom: 4px; font-weight: 700; }
     .drawer .sub { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+
+    .source-box {
+      background: #161e29;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+    }
+    .source-box-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+    .source-box-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .source-btn-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .source-btn-link:hover { text-decoration: underline; }
+
     .prompt-box {
       background: #090c10;
       border: 1px solid var(--card-border);
@@ -900,8 +941,8 @@
   <div>✦ PLUMBERBENCH 2026 ✦ THE ZERO-SHOT MARIO PLATFORMER ELO ARENA</div>
   <div>
     <span class="marquee-tag">STRICT ONE-SHOT</span> 
-    <span class="marquee-tag" style="background:#f8c300; color:#000;">ELO RATINGS</span>
-    <span class="marquee-tag" style="background:#238636;">VIBES EVALUATION</span>
+    <span class="marquee-tag" style="background:#f8c300; color:#000;">BLIND VIBE ARENA</span>
+    <span class="marquee-tag" style="background:#238636;">OFFICIAL SOURCES LINKED</span>
   </div>
 </div>
 
@@ -909,16 +950,16 @@
 <header class="hero">
   <h1 class="hero-title">PLUMBER<span>BENCH</span></h1>
   <div class="hero-manifesto">
-    CRITERIA: <span>ONE-SHOT PROMPT</span> &nbsp;&bull;&nbsp; SCORING: <span>VIBES & ELO</span>
+    CRITERIA: <span>ONE-SHOT PROMPT</span> &nbsp;&bull;&nbsp; SCORING: <span>PURE VIBES & ELO</span>
   </div>
   <p class="hero-subtitle">
-    Can an LLM sit in deep deliberation and one-shot an authentic, playable Super Mario clone with physics, tilemaps, and chiptune audio? Fully benchmarked with live screenshots, ELO rankings, and browser playability.
+    Can an LLM sit in deep deliberation and one-shot an authentic, playable Super Mario clone with physics, tilemaps, and chiptune audio? Evaluated via blind head-to-head duels and ranked by community ELO.
   </p>
 
   <!-- View Switcher -->
   <div class="view-nav">
-    <button class="view-nav-btn active" data-view="wall">🕹️ Wall of Mario</button>
-    <button class="view-nav-btn" data-view="arena">⚔️ Elo Vibe Arena</button>
+    <button class="view-nav-btn active" data-view="wall">🕹️ Wall of Mario (7)</button>
+    <button class="view-nav-btn" data-view="arena">⚔️ Blind Vibe Arena</button>
     <button class="view-nav-btn" data-view="table">📊 Elo Leaderboard</button>
   </div>
 </header>
@@ -926,7 +967,7 @@
 <!-- Controls Bar (Active on Wall of Mario) -->
 <div class="controls-wrap" id="wallControls">
   <div class="filter-group">
-    <button class="filter-btn active" data-filter="all">All Entries (9)</button>
+    <button class="filter-btn active" data-filter="all">All Active (7)</button>
     <button class="filter-btn" data-filter="NES Purist">NES Purists</button>
     <button class="filter-btn" data-filter="Modern Indie">Modern Indie</button>
     <button class="filter-btn" data-filter="local">Local Hardware</button>
@@ -951,12 +992,18 @@
     </div>
   </div>
 
-  <!-- 2. Elo Vibe Arena View -->
+  <!-- 2. Blind Elo Vibe Arena View -->
   <div id="arenaView" style="display:none;">
     <div class="arena-container">
       <div class="arena-header">
-        <div class="arena-title">⚔️ VIBE DUEL ARENA</div>
-        <div class="arena-sub">Vote on which model captures the best Mario platformer vibes. Your votes dynamically adjust the official ELO ratings.</div>
+        <div class="arena-title">⚔️ BLIND VIBE ARENA</div>
+        <div class="arena-sub">Test both implementations blind with zero bias. ELO ratings and model identities are hidden until your vote is cast.</div>
+      </div>
+
+      <!-- Reveal Result Box (Appears after voting) -->
+      <div class="arena-reveal-box" id="arenaRevealBox">
+        <div style="font-family:'Press Start 2P', monospace; font-size:12px; color:var(--gold); margin-bottom:8px;" id="revealTitle">VOTE LOGGED!</div>
+        <div id="revealDetails" style="font-size:13px; color:#e6edf3; line-height:1.6;"></div>
       </div>
       
       <div class="arena-grid">
@@ -964,14 +1011,16 @@
         <div class="arena-cab" id="cabA">
           <div class="arena-cab-header">
             <div class="arena-cab-name" id="cabAName">CHALLENGER ALPHA</div>
-            <div class="elo-pill" id="cabAElo">⚡ 1342 ELO</div>
+            <div class="elo-pill" id="cabAElo" style="display:none;">⚡ 1200 ELO</div>
           </div>
           <div class="arena-screen" id="cabAScreen">
             <img id="cabAImg" src="" alt="Challenger A">
             <div class="crt-scanlines"></div>
           </div>
           <div class="arena-body">
-            <div id="cabADetails" style="margin-bottom:12px;"></div>
+            <div id="cabADetails" style="margin-bottom:12px;">
+              <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity hidden. Play to test jumping physics, audio crunch, and NES momentum.</div>
+            </div>
             <button class="btn-play" style="margin-top:auto;" id="cabAPlayBtn">▶ PLAY CHALLENGER A</button>
           </div>
         </div>
@@ -980,14 +1029,16 @@
         <div class="arena-cab" id="cabB">
           <div class="arena-cab-header">
             <div class="arena-cab-name" id="cabBName">CHALLENGER BETA</div>
-            <div class="elo-pill" id="cabBElo">⚡ 1298 ELO</div>
+            <div class="elo-pill" id="cabBElo" style="display:none;">⚡ 1200 ELO</div>
           </div>
           <div class="arena-screen" id="cabBScreen">
             <img id="cabBImg" src="" alt="Challenger B">
             <div class="crt-scanlines"></div>
           </div>
           <div class="arena-body">
-            <div id="cabBDetails" style="margin-bottom:12px;"></div>
+            <div id="cabBDetails" style="margin-bottom:12px;">
+              <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity hidden. Play to test jumping physics, audio crunch, and NES momentum.</div>
+            </div>
             <button class="btn-play" style="margin-top:auto;" id="cabBPlayBtn">▶ PLAY CHALLENGER B</button>
           </div>
         </div>
@@ -996,10 +1047,10 @@
       <!-- Voting Actions -->
       <div class="arena-controls">
         <button class="btn-arena-vote" id="voteABtn">👈 Challenger A Better</button>
-        <button class="btn-arena-tie" id="voteTieBtn">🤝 Both Good / Tie</button>
+        <button class="btn-arena-tie" id="voteTieBtn">🤝 Both Equal / Tie</button>
         <button class="btn-arena-vote" id="voteBBtn">👉 Challenger B Better</button>
-        <button class="btn-arena-skip" id="nextMatchBtn">🎲 Next Matchup</button>
-        <button class="btn-arena-skip" id="resetEloBtn" style="color:#ff7b72;">↺ Reset My Elo Deltas</button>
+        <button class="btn-arena-skip" id="nextMatchBtn">🎲 Next Blind Matchup</button>
+        <button class="btn-arena-skip" id="resetEloBtn" style="color:#ff7b72;">↺ Reset All ELO Deltas</button>
       </div>
     </div>
   </div>
@@ -1012,16 +1063,17 @@
           <tr>
             <th>Rank</th>
             <th>Preview</th>
-            <th>Contender</th>
-            <th>Model & Hardware</th>
+            <th>Contender & Model</th>
+            <th>Hardware / Origin</th>
             <th>ELO Rating</th>
             <th>Tier</th>
-            <th>Win Rate</th>
+            <th>Matches</th>
             <th>Vibe</th>
-            <th>NES Crunch</th>
+            <th>Crunch</th>
             <th>Physics</th>
             <th>Ambition</th>
             <th>Code</th>
+            <th>Source</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -1058,7 +1110,13 @@
     <div class="crt-scanlines"></div>
   </div>
   <h2 id="drawerTitle">Prompt & Metadata</h2>
-  <p class="sub" id="drawerSub">Model details, exact generation prompt, and community reviews.</p>
+  <p class="sub" id="drawerSub">Model details, exact generation prompt, and verified source links.</p>
+
+  <!-- Source & Links Box -->
+  <div class="source-box">
+    <div class="source-box-title">VERIFIED SOURCE & REFERENCES</div>
+    <div class="source-box-links" id="drawerSourceLinks"></div>
+  </div>
 
   <h3 style="font-size:14px; margin-bottom:8px; color:var(--gold);">Exact One-Shot Prompt</h3>
   <div class="prompt-box" id="drawerPromptText">Loading prompt...</div>
@@ -1082,16 +1140,16 @@
 (() => {
   'use strict';
 
-  // Fallback offline dataset for file:// protocol
+  // Fallback offline dataset (7 active, 2 hidden)
   const EMBEDDED_GAMES_DATA = [
     {
       "id": "gpt6_astra_high",
       "title": "Super Mario: Three Worlds Edition",
       "author": "GPT-6 Astra (Frontier High)",
       "category": "Modern Indie",
-      "badge": "Leaderboard #1",
+      "badge": "Frontier High",
       "file": "games/gpt6_astra_high.html",
-      "baseVotes": 482,
+      "baseVotes": 0,
       "vibeScore": 9.4,
       "size": "37.5 KB",
       "lines": 204,
@@ -1100,28 +1158,24 @@
       "mode": "High Reasoning Mode",
       "promptStyle": "Minimal Zero-Shot",
       "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-      "sourceName": "MarioBench Benchmark Run",
-      "sourceUrl": "../runs/astra_HIGH/mario.html",
+      "sourceName": "MarioBench Run",
+      "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gpt6_astra_high.html",
       "vibeReview": "Spectacular scope across 3 unique worlds (Mushroom Meadow, Sunset Steppes, Starlight Summit). Features harmonic moving platforms that Mario physically rides, kickable turtle shells with ricochet physics, and ceiling clearance detection on mushroom growth. Plays slightly more like a modern indie platformer than an authentic crunchy 1985 NES cartridge, but technically flawless.",
-      "ratings": {
-        "nesCrunch": 7.5,
-        "physicsFeel": 9.5,
-        "ambition": 9.8
-      },
-      "elo": 1342,
-      "eloTier": "Grandmaster",
-      "winRate": "85%",
-      "matches": 40,
-      "preview": "previews/gpt6_astra_high.png"
+      "ratings": { "nesCrunch": 7.5, "physicsFeel": 9.5, "ambition": 9.8 },
+      "elo": 1200,
+      "matches": 0,
+      "wins": 0,
+      "preview": "previews/gpt6_astra_high.png",
+      "hidden": false
     },
     {
       "id": "gemini38_flash_full",
       "title": "Super Mario Bros: 2.6k Deluxe",
       "author": "Gemini 3.8 Flash",
       "category": "NES Purist",
-      "badge": "Top Physics & Audio",
+      "badge": "Full CoT Deluxe",
       "file": "games/gemini38_flash_full.html",
-      "baseVotes": 415,
+      "baseVotes": 0,
       "vibeScore": 9.1,
       "size": "74.8 KB",
       "lines": 2628,
@@ -1130,19 +1184,15 @@
       "mode": "Full CoT Deliberation",
       "promptStyle": "Minimal Zero-Shot",
       "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-      "sourceName": "MarioBench Benchmark Run",
-      "sourceUrl": "../runs/subagent_pro/mario.html",
+      "sourceName": "MarioBench Run",
+      "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gemini38_flash_full.html",
       "vibeReview": "Unmatched audio crunch and physical momentum. Implements a Web Audio synthesizer using an 800 Hz bandpass white-noise filter for authentic NES snare drums, directional skidding with procedural dust puffs, 14-frame variable jump height, and kickable Koopa shells that wipe out enemy chains. Mario's face sprite is somewhat derpy, but the gameplay feel is pure arcade gold.",
-      "ratings": {
-        "nesCrunch": 9.5,
-        "physicsFeel": 9.6,
-        "ambition": 9.2
-      },
-      "elo": 1298,
-      "eloTier": "Master",
-      "winRate": "79%",
-      "matches": 38,
-      "preview": "previews/gemini38_flash_full.png"
+      "ratings": { "nesCrunch": 9.5, "physicsFeel": 9.6, "ambition": 9.2 },
+      "elo": 1200,
+      "matches": 0,
+      "wins": 0,
+      "preview": "previews/gemini38_flash_full.png",
+      "hidden": false
     },
     {
       "id": "qwen38_flash_3070_potato",
@@ -1151,7 +1201,7 @@
       "category": "NES Purist",
       "badge": "8GB 3070 Potato Run",
       "file": "games/qwen38_flash_3070_potato.html",
-      "baseVotes": 528,
+      "baseVotes": 58,
       "vibeScore": 8.9,
       "size": "67.5 KB",
       "lines": 1277,
@@ -1160,19 +1210,16 @@
       "mode": "xhigh (10k CoT budget, 40k ctx)",
       "promptStyle": "Single One-Shot System Prompt",
       "prompt": "Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS in a single HTML file.Plan the implementation briefly within the reasoning budget. Then output only the complete HTML file. Do not use tools or provide explanations.",
-      "sourceName": "r/LocalLLaMA Comment & Live Demo",
-      "sourceUrl": "https://www.cc8.pl/mario-q38-flash.html",
+      "sourceName": "r/LocalLLaMA & cc8.pl",
+      "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
+      "demoUrl": "https://www.cc8.pl/mario-q38-flash.html",
       "vibeReview": "Built on an 8GB RTX 3070 (a potato in modern local LLM terms) using UD-Q3_K_XL quant with 40k context and a 10k reasoning limit at ~11-12 t/s. Delivers a retro wrapper with live HUD stats, bandpass noise-filtered NES percussion, jump sweeps, custom pixel sprites, Goombas, and responsive physics.",
-      "ratings": {
-        "nesCrunch": 9.2,
-        "physicsFeel": 8.9,
-        "ambition": 8.8
-      },
-      "elo": 1264,
-      "eloTier": "Master",
-      "winRate": "74%",
-      "matches": 35,
-      "preview": "previews/qwen38_flash_3070_potato.png"
+      "ratings": { "nesCrunch": 9.2, "physicsFeel": 8.9, "ambition": 8.8 },
+      "elo": 1200,
+      "matches": 0,
+      "wins": 0,
+      "preview": "previews/qwen38_flash_3070_potato.png",
+      "hidden": false
     },
     {
       "id": "qwen38_27b_chopsticks",
@@ -1190,28 +1237,25 @@
       "mode": "Medium Reasoning Effort",
       "promptStyle": "Strict NES Specification",
       "prompt": "Write a fully functional, complete clone of Super Mario Bros game (the famous NES game)\n- Clone must work in a web browser, index.html, no server\n- Decent replica of the graphics assets.\n- Colorful and playable.\n- Controls with keyboard up, down, left, right, spacebar to jump, shift to speed up",
-      "sourceName": "r/LocalLLaMA Thread",
+      "sourceName": "r/LocalLLaMA (u/ChopSticksPlease)",
       "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
+      "demoUrl": "https://indigo-carmencita-27.tiiny.site/",
       "vibeReview": "One-shotted by a 17GB local quant running on an RTX 3090 with MTP draft decoding. Built a crisp 256x240 integer-scaled NES clone with multi-channel audio synthesis, Goombas, breakable bricks, question blocks, and authentic momentum.",
-      "ratings": {
-        "nesCrunch": 9.0,
-        "physicsFeel": 8.6,
-        "ambition": 8.5
-      },
-      "elo": 1230,
-      "eloTier": "Diamond",
-      "winRate": "69%",
-      "matches": 32,
-      "preview": "previews/qwen38_27b_chopsticks.png"
+      "ratings": { "nesCrunch": 9.0, "physicsFeel": 8.6, "ambition": 8.5 },
+      "elo": 1200,
+      "matches": 0,
+      "wins": 0,
+      "preview": "previews/qwen38_27b_chopsticks.png",
+      "hidden": false
     },
     {
       "id": "qwen38_gold_60k",
       "title": "The 60,000-Token Monolith",
       "author": "Qwen3.8-Flash-Next (Gold)",
       "category": "NES Purist",
-      "badge": "Local King",
+      "badge": "Local Homelab King",
       "file": "games/qwen38_gold_60k.html",
-      "baseVotes": 598,
+      "baseVotes": 0,
       "vibeScore": 8.5,
       "size": "70.8 KB",
       "lines": 1248,
@@ -1220,28 +1264,24 @@
       "mode": "xhigh (59m CoT Deliberation)",
       "promptStyle": "Minimal Zero-Shot",
       "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-      "sourceName": "L3MS Homelab Experiments",
-      "sourceUrl": "../runs/mario_gold/mario.html",
+      "sourceName": "L3MS Local Homelab (RTX 4070)",
+      "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/qwen38_gold_60k.html",
       "vibeReview": "Generated entirely on a local RTX 4070 in a single contiguous 60,221 token inference stream after 29,455 thinking tokens. Captures authentic retro atmosphere with a custom CRT scanline shader pass, arcade marquee bulbs, World 1-1 and World 1-2 Underground pipe warps, bouncing fireballs, Koopas, and Piranha plants.",
-      "ratings": {
-        "nesCrunch": 9.2,
-        "physicsFeel": 8.0,
-        "ambition": 9.4
-      },
-      "elo": 1205,
-      "eloTier": "Diamond",
-      "winRate": "65%",
-      "matches": 31,
-      "preview": "previews/qwen38_gold_60k.png"
+      "ratings": { "nesCrunch": 9.2, "physicsFeel": 8.0, "ambition": 9.4 },
+      "elo": 1200,
+      "matches": 0,
+      "wins": 0,
+      "preview": "previews/qwen38_gold_60k.png",
+      "hidden": false
     },
     {
       "id": "gpt6_astra_light",
       "title": "Super Meadow (A Little Adventure)",
       "author": "GPT-6 Astra (Light)",
       "category": "Modern Indie",
-      "badge": "Creative Pivot",
+      "badge": "Light CoT Indie",
       "file": "games/gpt6_astra_light.html",
-      "baseVotes": 389,
+      "baseVotes": 0,
       "vibeScore": 8.6,
       "size": "21.7 KB",
       "lines": 102,
@@ -1250,19 +1290,15 @@
       "mode": "Light Reasoning Mode",
       "promptStyle": "Minimal Zero-Shot",
       "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-      "sourceName": "MarioBench Benchmark Run",
-      "sourceUrl": "../runs/astra_light/mario.html",
+      "sourceName": "MarioBench Run",
+      "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gpt6_astra_light.html",
       "vibeReview": "A charming artistic departure. Rather than an 8-bit clone, Astra Light autonomously created a 16:9 modern indie platformer with a sunset gradient sky, bezier curve hills, 120 Hz accumulator physics, screen shake, and a cozy hillside cottage finish.",
-      "ratings": {
-        "nesCrunch": 6.0,
-        "physicsFeel": 9.2,
-        "ambition": 8.8
-      },
-      "elo": 1182,
-      "eloTier": "Platinum",
-      "winRate": "60%",
-      "matches": 30,
-      "preview": "previews/gpt6_astra_light.png"
+      "ratings": { "nesCrunch": 6.0, "physicsFeel": 9.2, "ambition": 8.8 },
+      "elo": 1200,
+      "matches": 0,
+      "wins": 0,
+      "preview": "previews/gpt6_astra_light.png",
+      "hidden": false
     },
     {
       "id": "qwen38_27b_circus_mikenonect",
@@ -1280,19 +1316,16 @@
       "mode": "Overnight Batch",
       "promptStyle": "Aesthetic Engaging Prompt",
       "prompt": "Create a Super Mario clone in JavaScript as a single HTML page. Make the game engaging and the graphics as beautiful as possible. (Later adapted to circus-theme to avoid DMCA).",
-      "sourceName": "r/LocalLLaMA Viral Thread",
+      "sourceName": "r/LocalLLaMA (u/MikeNonect)",
       "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1vp438p/if_you_would_have_told_me_half_a_year_ago_that_a/",
+      "demoUrl": "https://mikeveerman.github.io/qwen38-27b-mario",
       "vibeReview": "The most discussed Mario run on r/LocalLLaMA with 629 upvotes. Transformed Mario into a circus-themed acrobat with colorful tents, trapeze platforms, juggling balls, and rich background art.",
-      "ratings": {
-        "nesCrunch": 5.5,
-        "physicsFeel": 8.8,
-        "ambition": 9.0
-      },
-      "elo": 1155,
-      "eloTier": "Platinum",
-      "winRate": "55%",
-      "matches": 29,
-      "preview": "previews/qwen38_27b_circus_mikenonect.png"
+      "ratings": { "nesCrunch": 5.5, "physicsFeel": 8.8, "ambition": 9.0 },
+      "elo": 1200,
+      "matches": 0,
+      "wins": 0,
+      "preview": "previews/qwen38_27b_circus_mikenonect.png",
+      "hidden": false
     },
     {
       "id": "gemini25_pro_pygame",
@@ -1310,19 +1343,14 @@
       "mode": "Standard Prompt",
       "promptStyle": "Max Quality Python Prompt",
       "prompt": "Build absolutely the best implementation of the super Mario game in python without any external assets.",
-      "sourceName": "r/LocalLLaMA Pastebin Thread",
+      "sourceName": "r/LocalLLaMA (Pastebin)",
       "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1jjsiiw/mario_game_made_by_new_a_gemini_pro_25_in_couple/",
-      "vibeReview": "One-shot Python / PyGame implementation from Gemini 2.5 Pro that blew up with 312 upvotes on r/LocalLLaMA. Clean momentum curves, title screen, procedurally drawn bushes, clouds, and Goombas.",
-      "ratings": {
-        "nesCrunch": 8.0,
-        "physicsFeel": 8.5,
-        "ambition": 7.8
-      },
-      "elo": 1128,
-      "eloTier": "Gold",
-      "winRate": "49%",
-      "matches": 27,
-      "preview": "previews/gemini25_pro_pygame.png"
+      "ratings": { "nesCrunch": 8.0, "physicsFeel": 8.5, "ambition": 7.8 },
+      "elo": 1200,
+      "matches": 0,
+      "wins": 0,
+      "preview": "previews/gemini25_pro_pygame.png",
+      "hidden": true
     },
     {
       "id": "gemini38_flash_baseline",
@@ -1331,7 +1359,7 @@
       "category": "NES Purist",
       "badge": "Zero-Bug Sprint",
       "file": "games/gemini38_flash_baseline.html",
-      "baseVotes": 294,
+      "baseVotes": 0,
       "vibeScore": 7.8,
       "size": "27.6 KB",
       "lines": 992,
@@ -1340,19 +1368,14 @@
       "mode": "Conversational Fast Mode",
       "promptStyle": "Minimal Zero-Shot",
       "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-      "sourceName": "Antigravity Reference Baseline",
-      "sourceUrl": "../runs/paul_allen/mario.html",
-      "vibeReview": "The original interactive benchmark reference. Built in seconds with zero bugs, silky 60 FPS sub-pixel physics, 6-frame coyote jump buffering, clean square wave audio sweeps, and a 120-column overworld slice.",
-      "ratings": {
-        "nesCrunch": 8.4,
-        "physicsFeel": 8.9,
-        "ambition": 7.0
-      },
-      "elo": 1096,
-      "eloTier": "Silver",
-      "winRate": "43%",
-      "matches": 26,
-      "preview": "previews/gemini38_flash_baseline.png"
+      "sourceName": "Antigravity Baseline",
+      "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gemini38_flash_baseline.html",
+      "ratings": { "nesCrunch": 8.4, "physicsFeel": 8.9, "ambition": 7.0 },
+      "elo": 1200,
+      "matches": 0,
+      "wins": 0,
+      "preview": "previews/gemini38_flash_baseline.png",
+      "hidden": true
     }
   ];
 
@@ -1362,15 +1385,17 @@
   let currentView = 'wall';
   let activeGameId = null;
 
-  // Arena pair
+  // Arena blind state
   let arenaGameA = null;
   let arenaGameB = null;
+  let arenaVoted = false;
 
   // Local Storage Keys
   const VOTE_STORAGE_KEY = 'pb_user_votes';
   const VOTE_COUNTS_KEY = 'pb_vibe_counts_v1';
-  const ELO_DELTAS_KEY = 'pb_elo_deltas_v1';
-  const COMMENTS_STORAGE_KEY = 'pb_comments_v1';
+  const ELO_DELTAS_KEY = 'pb_elo_deltas_v2';
+  const ELO_MATCHES_KEY = 'pb_elo_matches_v2';
+  const COMMENTS_STORAGE_KEY = 'pb_comments_v2';
 
   function getUserVotes() {
     try { return JSON.parse(localStorage.getItem(VOTE_STORAGE_KEY)) || {}; }
@@ -1403,9 +1428,41 @@
     localStorage.setItem(ELO_DELTAS_KEY, JSON.stringify(deltas));
   }
 
+  function getEloMatches() {
+    try { return JSON.parse(localStorage.getItem(ELO_MATCHES_KEY)) || {}; }
+    catch(e) { return {}; }
+  }
+
+  function recordMatch(id, isWin) {
+    const stats = getEloMatches();
+    if (!stats[id]) stats[id] = { matches: 0, wins: 0 };
+    stats[id].matches += 1;
+    if (isWin) stats[id].wins += 1;
+    localStorage.setItem(ELO_MATCHES_KEY, JSON.stringify(stats));
+  }
+
   function getEffectiveElo(game) {
     const deltas = getEloDeltas();
     return Math.round(game.elo + (deltas[game.id] || 0));
+  }
+
+  function getEffectiveMatches(game) {
+    const stats = getEloMatches()[game.id];
+    return stats ? stats.matches : 0;
+  }
+
+  function getEffectiveWinRate(game) {
+    const stats = getEloMatches()[game.id];
+    if (!stats || stats.matches === 0) return '—';
+    return Math.round((stats.wins / stats.matches) * 100) + '%';
+  }
+
+  function getEloTier(elo, matches) {
+    if (matches === 0) return { name: 'Provisional', cls: 'tier-challenger' };
+    if (elo >= 1260) return { name: 'Master', cls: 'tier-master' };
+    if (elo >= 1220) return { name: 'Diamond', cls: 'tier-diamond' };
+    if (elo >= 1180) return { name: 'Challenger', cls: 'tier-challenger' };
+    return { name: 'Contender', cls: 'tier-contender' };
   }
 
   function getEffectiveVotes(game) {
@@ -1443,7 +1500,7 @@
       if (!res.ok) throw new Error('HTTP ' + res.status);
       gamesData = await res.json();
     } catch (e) {
-      console.warn('Network fetch failed, using embedded dataset fallback:', e);
+      console.warn('Using embedded dataset fallback:', e);
       gamesData = EMBEDDED_GAMES_DATA;
     }
     renderGrid();
@@ -1452,8 +1509,13 @@
     setupArenaMatchup();
   }
 
+  function getActiveGames() {
+    return gamesData.filter(g => !g.hidden);
+  }
+
   function getFilteredAndSorted() {
-    let filtered = gamesData.filter(g => {
+    let active = getActiveGames();
+    let filtered = active.filter(g => {
       if (currentFilter === 'all') return true;
       if (currentFilter === 'local') return g.hardware.toLowerCase().includes('rtx') || g.hardware.toLowerCase().includes('desktop');
       if (currentFilter === 'frontier') return g.hardware.toLowerCase().includes('cloud') || g.hardware.toLowerCase().includes('pro');
@@ -1484,20 +1546,20 @@
       const isVoted = !!userVotes[game.id];
       const votes = getEffectiveVotes(game);
       const effectiveElo = getEffectiveElo(game);
+      const matches = getEffectiveMatches(game);
+      const tier = getEloTier(effectiveElo, matches);
 
       let badgeClass = 'card-badge';
       if (idx === 0) badgeClass += ' badge-gold';
       else if (game.badge.includes('Reddit') || game.badge.includes('Viral')) badgeClass += ' badge-viral';
       else if (game.category === 'NES Purist') badgeClass += ' badge-purist';
 
-      const tierClass = `tier-${game.eloTier.toLowerCase()}`;
-
       card.innerHTML = `
         <div class="card-top">
           <div class="card-title-group">
             <div class="badge-row">
-              <span class="${badgeClass}">${idx === 0 ? '👑 #1 ELO' : '#' + (idx + 1)}</span>
-              <span class="elo-pill ${tierClass}">⚡ ${effectiveElo} ELO</span>
+              <span class="${badgeClass}">#${idx + 1}</span>
+              <span class="elo-pill ${tier.cls}">⚡ ${effectiveElo} ELO</span>
             </div>
             <div class="card-title">${game.title}</div>
             <div class="card-model">${game.author} &bull; ${game.category}</div>
@@ -1520,7 +1582,7 @@
 
         <div class="card-body">
           <div class="meta-tags">
-            <span class="meta-tag">ELO: <strong>${effectiveElo}</strong> (${game.winRate} Win)</span>
+            <span class="meta-tag">ELO: <strong>${effectiveElo}</strong> (${matches} matches)</span>
             <span class="meta-tag">VIBE: <strong>${game.vibeScore} ★</strong></span>
             <span class="meta-tag">CODE: <strong>${game.size}</strong></span>
           </div>
@@ -1546,11 +1608,9 @@
           </div>
 
           <div class="card-footer">
-            ${game.file.endsWith('.py')
-              ? `<button class="btn-play" style="background:#4b5563;" data-action="python" data-id="${game.id}">🐍 Python Code</button>`
-              : `<button class="btn-play" data-action="play" data-id="${game.id}">▶ PLAY NOW</button>`
-            }
+            <button class="btn-play" data-action="play" data-id="${game.id}">▶ PLAY NOW</button>
             <button class="btn-action" data-action="inspect" data-id="${game.id}">📜 Prompt</button>
+            <a class="btn-action" href="${game.sourceUrl}" target="_blank" rel="noopener noreferrer">🔗 Source</a>
           </div>
         </div>
       `;
@@ -1562,10 +1622,13 @@
   function renderTable() {
     const tbody = document.getElementById('tableBody');
     tbody.innerHTML = '';
-    const sorted = [...gamesData].sort((a, b) => getEffectiveElo(b) - getEffectiveElo(a));
+    const active = getActiveGames();
+    const sorted = [...active].sort((a, b) => getEffectiveElo(b) - getEffectiveElo(a));
 
     sorted.forEach((game, idx) => {
       const effectiveElo = getEffectiveElo(game);
+      const matches = getEffectiveMatches(game);
+      const tier = getEloTier(effectiveElo, matches);
       const row = document.createElement('tr');
       const rankEmoji = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
       
@@ -1586,62 +1649,70 @@
           ⚡ ${effectiveElo}
         </td>
         <td>
-          <span class="elo-pill tier-${game.eloTier.toLowerCase()}">${game.eloTier}</span>
+          <span class="elo-pill ${tier.cls}">${tier.name}</span>
         </td>
-        <td style="font-family:monospace; font-weight:bold;">${game.winRate}</td>
+        <td style="font-family:monospace;">${matches}</td>
         <td style="font-weight:bold; color:var(--gold);">${game.vibeScore} ★</td>
         <td style="font-family:monospace;">${game.ratings.nesCrunch}</td>
         <td style="font-family:monospace;">${game.ratings.physicsFeel}</td>
         <td style="font-family:monospace;">${game.ratings.ambition}</td>
         <td style="font-size:11px; color:var(--text-muted);">${game.size}</td>
         <td>
-          <button class="btn-action" data-action="${game.file.endsWith('.py') ? 'inspect' : 'play'}" data-id="${game.id}">
-            ${game.file.endsWith('.py') ? 'Code' : 'Play'}
-          </button>
+          <a class="source-btn-link" href="${game.sourceUrl}" target="_blank" rel="noopener noreferrer">Link ↗</a>
+        </td>
+        <td>
+          <button class="btn-action" data-action="play" data-id="${game.id}">Play</button>
         </td>
       `;
       tbody.appendChild(row);
     });
   }
 
-  // Setup Elo Arena Duel
+  // Setup Blind Elo Arena Duel
   function setupArenaMatchup() {
-    if (gamesData.length < 2) return;
+    const active = getActiveGames();
+    if (active.length < 2) return;
+
+    arenaVoted = false;
+    document.getElementById('arenaRevealBox').style.display = 'none';
 
     // Pick two random distinct games
-    let idxA = Math.floor(Math.random() * gamesData.length);
+    let idxA = Math.floor(Math.random() * active.length);
     let idxB;
     do {
-      idxB = Math.floor(Math.random() * gamesData.length);
+      idxB = Math.floor(Math.random() * active.length);
     } while (idxB === idxA);
 
-    arenaGameA = gamesData[idxA];
-    arenaGameB = gamesData[idxB];
+    arenaGameA = active[idxA];
+    arenaGameB = active[idxB];
 
-    const eloA = getEffectiveElo(arenaGameA);
-    const eloB = getEffectiveElo(arenaGameB);
-
-    document.getElementById('cabAName').textContent = arenaGameA.title;
-    document.getElementById('cabAElo').textContent = `⚡ ${eloA} ELO (${arenaGameA.eloTier})`;
+    // BLIND SETUP: Do NOT show ELO or model identities!
+    document.getElementById('cabAName').textContent = 'CHALLENGER ALPHA';
+    document.getElementById('cabAElo').style.display = 'none';
     document.getElementById('cabAImg').src = arenaGameA.preview;
     document.getElementById('cabADetails').innerHTML = `
-      <div style="color:#fff; font-weight:700; font-size:14px; margin-bottom:4px;">${arenaGameA.model}</div>
-      <div style="color:var(--text-muted); font-size:12px; margin-bottom:6px;">${arenaGameA.hardware} &bull; ${arenaGameA.size}</div>
-      <div style="color:#b1bac4; font-size:12px; line-height:1.4;">${arenaGameA.vibeReview.slice(0, 140)}...</div>
+      <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity and ELO hidden for blind testing. Play to test momentum, collision feel, and audio crunch.</div>
     `;
 
-    document.getElementById('cabBName').textContent = arenaGameB.title;
-    document.getElementById('cabBElo').textContent = `⚡ ${eloB} ELO (${arenaGameB.eloTier})`;
+    document.getElementById('cabBName').textContent = 'CHALLENGER BETA';
+    document.getElementById('cabBElo').style.display = 'none';
     document.getElementById('cabBImg').src = arenaGameB.preview;
     document.getElementById('cabBDetails').innerHTML = `
-      <div style="color:#fff; font-weight:700; font-size:14px; margin-bottom:4px;">${arenaGameB.model}</div>
-      <div style="color:var(--text-muted); font-size:12px; margin-bottom:6px;">${arenaGameB.hardware} &bull; ${arenaGameB.size}</div>
-      <div style="color:#b1bac4; font-size:12px; line-height:1.4;">${arenaGameB.vibeReview.slice(0, 140)}...</div>
+      <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity and ELO hidden for blind testing. Play to test momentum, collision feel, and audio crunch.</div>
     `;
+
+    // Re-enable vote buttons
+    document.getElementById('voteABtn').disabled = false;
+    document.getElementById('voteTieBtn').disabled = false;
+    document.getElementById('voteBBtn').disabled = false;
+    document.getElementById('voteABtn').style.opacity = '1';
+    document.getElementById('voteTieBtn').style.opacity = '1';
+    document.getElementById('voteBBtn').style.opacity = '1';
   }
 
   function handleArenaVote(outcome) {
-    if (!arenaGameA || !arenaGameB) return;
+    if (!arenaGameA || !arenaGameB || arenaVoted) return;
+    arenaVoted = true;
 
     const eloA = getEffectiveElo(arenaGameA);
     const eloB = getEffectiveElo(arenaGameB);
@@ -1661,14 +1732,56 @@
     setEloDelta(arenaGameA.id, deltaA);
     setEloDelta(arenaGameB.id, deltaB);
 
+    recordMatch(arenaGameA.id, outcome === 'A');
+    recordMatch(arenaGameB.id, outcome === 'B');
+
+    const newEloA = eloA + deltaA;
+    const newEloB = eloB + deltaB;
     const signA = deltaA >= 0 ? `+${deltaA}` : `${deltaA}`;
     const signB = deltaB >= 0 ? `+${deltaB}` : `${deltaB}`;
+
+    // REVEAL IDENTITIES POST-VOTE
+    document.getElementById('cabAName').textContent = arenaGameA.title;
+    document.getElementById('cabAElo').style.display = 'inline-flex';
+    document.getElementById('cabAElo').innerHTML = `⚡ ${newEloA} ELO (${signA})`;
+    document.getElementById('cabADetails').innerHTML = `
+      <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:2px;">${arenaGameA.model}</div>
+      <div style="color:var(--text-muted); font-size:12px; margin-bottom:6px;">${arenaGameA.hardware} &bull; ${arenaGameA.size}</div>
+      <a class="source-btn-link" href="${arenaGameA.sourceUrl}" target="_blank" rel="noopener noreferrer">🔗 Source Post / Code ↗</a>
+    `;
+
+    document.getElementById('cabBName').textContent = arenaGameB.title;
+    document.getElementById('cabBElo').style.display = 'inline-flex';
+    document.getElementById('cabBElo').innerHTML = `⚡ ${newEloB} ELO (${signB})`;
+    document.getElementById('cabBDetails').innerHTML = `
+      <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:2px;">${arenaGameB.model}</div>
+      <div style="color:var(--text-muted); font-size:12px; margin-bottom:6px;">${arenaGameB.hardware} &bull; ${arenaGameB.size}</div>
+      <a class="source-btn-link" href="${arenaGameB.sourceUrl}" target="_blank" rel="noopener noreferrer">🔗 Source Post / Code ↗</a>
+    `;
+
+    // Reveal result card
+    const revealBox = document.getElementById('arenaRevealBox');
+    revealBox.style.display = 'block';
+    revealBox.innerHTML = `
+      <div style="font-family:'Press Start 2P', monospace; font-size:11px; color:var(--gold); margin-bottom:6px;">🎉 DUEL REVEALED!</div>
+      <div style="font-size:13px; line-height:1.6;">
+        <strong>Challenger A:</strong> ${arenaGameA.title} (${arenaGameA.model}) &rarr; <strong>${newEloA} ELO (${signA})</strong> &nbsp;&bull;&nbsp; <a href="${arenaGameA.sourceUrl}" target="_blank" style="color:var(--accent);">Source ↗</a><br>
+        <strong>Challenger B:</strong> ${arenaGameB.title} (${arenaGameB.model}) &rarr; <strong>${newEloB} ELO (${signB})</strong> &nbsp;&bull;&nbsp; <a href="${arenaGameB.sourceUrl}" target="_blank" style="color:var(--accent);">Source ↗</a>
+      </div>
+    `;
+
+    // Dim vote buttons
+    document.getElementById('voteABtn').disabled = true;
+    document.getElementById('voteTieBtn').disabled = true;
+    document.getElementById('voteBBtn').disabled = true;
+    document.getElementById('voteABtn').style.opacity = '0.5';
+    document.getElementById('voteTieBtn').style.opacity = '0.5';
+    document.getElementById('voteBBtn').style.opacity = '0.5';
 
     showToast(`⚡ Match logged! ${arenaGameA.title}: ${signA} | ${arenaGameB.title}: ${signB}`);
 
     renderGrid();
     renderTable();
-    setupArenaMatchup();
   }
 
   function setupEventListeners() {
@@ -1717,7 +1830,7 @@
         return;
       }
 
-      const inspectBtn = e.target.closest('[data-action="inspect"]') || e.target.closest('[data-action="python"]');
+      const inspectBtn = e.target.closest('[data-action="inspect"]');
       if (inspectBtn) {
         openDrawer(inspectBtn.dataset.id);
         return;
@@ -1731,7 +1844,8 @@
     document.getElementById('nextMatchBtn').addEventListener('click', setupArenaMatchup);
     document.getElementById('resetEloBtn').addEventListener('click', () => {
       localStorage.removeItem(ELO_DELTAS_KEY);
-      showToast('↺ ELO deltas reset to official benchmark baselines');
+      localStorage.removeItem(ELO_MATCHES_KEY);
+      showToast('↺ All ELO ratings reset to baseline 1200');
       renderGrid();
       renderTable();
       setupArenaMatchup();
@@ -1798,7 +1912,7 @@
     } else {
       userVotes[gameId] = true;
       setVoteDelta(gameId, 1);
-      showToast('▲ Upvoted! Vibe points logged.');
+      showToast('▲ Upvoted! Vibe logged.');
     }
 
     setUserVotes(userVotes);
@@ -1837,10 +1951,17 @@
     document.getElementById('drawerImg').src = game.preview;
     document.getElementById('drawerTitle').textContent = game.title;
     document.getElementById('drawerSub').innerHTML = `
-      <strong>⚡ ${getEffectiveElo(game)} ELO (${game.eloTier})</strong> &bull; 
-      ${game.model} &bull; ${game.mode} &bull; ${game.hardware} &bull; 
-      <a href="${game.sourceUrl}" target="_blank" style="color:var(--accent);">Source Link ↗</a>
+      <strong>⚡ ${getEffectiveElo(game)} ELO</strong> &bull; 
+      ${game.model} &bull; ${game.mode} &bull; ${game.hardware}
     `;
+
+    // Render Source Links
+    const linksDiv = document.getElementById('drawerSourceLinks');
+    linksDiv.innerHTML = `
+      <a class="source-btn-link" href="${game.sourceUrl}" target="_blank" rel="noopener noreferrer">🔗 Source Post / Repository ↗</a>
+      ${game.demoUrl ? `<a class="source-btn-link" href="${game.demoUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);">🌐 Author's Live Web Demo ↗</a>` : ''}
+    `;
+
     document.getElementById('drawerPromptText').textContent = game.prompt;
     document.getElementById('drawerVibeReview').textContent = game.vibeReview;
 
@@ -1860,15 +1981,18 @@
     list.innerHTML = '';
 
     const stored = getStoredComments()[gameId] || [];
-    const defaultComments = [
-      { author: 'MarioPurist_85', time: 'Yesterday', text: 'The physics on this are remarkably close to the original 1985 ROM, especially the acceleration curve.' },
-      { author: 'GameDevLab', time: '2 days ago', text: 'Crazy that this was generated completely one-shot with zero external assets.' }
-    ];
+    document.getElementById('drawerCommentCount').textContent = stored.length;
 
-    const all = [...stored, ...defaultComments];
-    document.getElementById('drawerCommentCount').textContent = all.length;
+    if (stored.length === 0) {
+      list.innerHTML = `
+        <div style="color:var(--text-muted); font-size:13px; font-style:italic; padding:10px 0;">
+          No reviews yet for this implementation. Play the game and submit the first review below!
+        </div>
+      `;
+      return;
+    }
 
-    all.forEach(c => {
+    stored.forEach(c => {
       const item = document.createElement('div');
       item.className = 'comment-item';
       item.innerHTML = `

@@ -4,9 +4,9 @@
     "title": "Super Mario: Three Worlds Edition",
     "author": "GPT-6 Astra (Frontier High)",
     "category": "Modern Indie",
-    "badge": "Leaderboard #1",
+    "badge": "Frontier High",
     "file": "games/gpt6_astra_high.html",
-    "baseVotes": 482,
+    "baseVotes": 0,
     "vibeScore": 9.4,
     "size": "37.5 KB",
     "lines": 204,
@@ -15,28 +15,28 @@
     "mode": "High Reasoning Mode",
     "promptStyle": "Minimal Zero-Shot",
     "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-    "sourceName": "MarioBench Benchmark Run",
-    "sourceUrl": "../runs/astra_HIGH/mario.html",
+    "sourceName": "MarioBench Run",
+    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gpt6_astra_high.html",
     "vibeReview": "Spectacular scope across 3 unique worlds (Mushroom Meadow, Sunset Steppes, Starlight Summit). Features harmonic moving platforms that Mario physically rides, kickable turtle shells with ricochet physics, and ceiling clearance detection on mushroom growth. Plays slightly more like a modern indie platformer than an authentic crunchy 1985 NES cartridge, but technically flawless.",
     "ratings": {
       "nesCrunch": 7.5,
       "physicsFeel": 9.5,
       "ambition": 9.8
     },
-    "elo": 1342,
-    "eloTier": "Grandmaster",
-    "winRate": "85%",
-    "matches": 40,
-    "preview": "previews/gpt6_astra_high.png"
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/gpt6_astra_high.png",
+    "wins": 0,
+    "hidden": false
   },
   {
     "id": "gemini38_flash_full",
     "title": "Super Mario Bros: 2.6k Deluxe",
     "author": "Gemini 3.8 Flash",
     "category": "NES Purist",
-    "badge": "Top Physics & Audio",
+    "badge": "Full CoT Deluxe",
     "file": "games/gemini38_flash_full.html",
-    "baseVotes": 415,
+    "baseVotes": 0,
     "vibeScore": 9.1,
     "size": "74.8 KB",
     "lines": 2628,
@@ -45,19 +45,19 @@
     "mode": "Full CoT Deliberation",
     "promptStyle": "Minimal Zero-Shot",
     "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-    "sourceName": "MarioBench Benchmark Run",
-    "sourceUrl": "../runs/subagent_pro/mario.html",
+    "sourceName": "MarioBench Run",
+    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gemini38_flash_full.html",
     "vibeReview": "Unmatched audio crunch and physical momentum. Implements a Web Audio synthesizer using an 800 Hz bandpass white-noise filter for authentic NES snare drums, directional skidding with procedural dust puffs, 14-frame variable jump height, and kickable Koopa shells that wipe out enemy chains. Mario's face sprite is somewhat derpy, but the gameplay feel is pure arcade gold.",
     "ratings": {
       "nesCrunch": 9.5,
       "physicsFeel": 9.6,
       "ambition": 9.2
     },
-    "elo": 1298,
-    "eloTier": "Master",
-    "winRate": "79%",
-    "matches": 38,
-    "preview": "previews/gemini38_flash_full.png"
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/gemini38_flash_full.png",
+    "wins": 0,
+    "hidden": false
   },
   {
     "id": "qwen38_flash_3070_potato",
@@ -66,7 +66,7 @@
     "category": "NES Purist",
     "badge": "8GB 3070 Potato Run",
     "file": "games/qwen38_flash_3070_potato.html",
-    "baseVotes": 528,
+    "baseVotes": 58,
     "vibeScore": 8.9,
     "size": "67.5 KB",
     "lines": 1277,
@@ -75,28 +75,29 @@
     "mode": "xhigh (10k CoT budget, 40k ctx)",
     "promptStyle": "Single One-Shot System Prompt",
     "prompt": "Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS in a single HTML file.Plan the implementation briefly within the reasoning budget. Then output only the complete HTML file. Do not use tools or provide explanations.",
-    "sourceName": "r/LocalLLaMA Comment & Live Demo",
-    "sourceUrl": "https://www.cc8.pl/mario-q38-flash.html",
+    "sourceName": "r/LocalLLaMA & cc8.pl",
+    "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
     "vibeReview": "Built on an 8GB RTX 3070 (a potato in modern local LLM terms) using UD-Q3_K_XL quant with 40k context and a 10k reasoning limit at ~11-12 t/s. Delivers a retro wrapper with live HUD stats, bandpass noise-filtered NES percussion, jump sweeps, custom pixel sprites, Goombas, and responsive physics.",
     "ratings": {
       "nesCrunch": 9.2,
       "physicsFeel": 8.9,
       "ambition": 8.8
     },
-    "elo": 1264,
-    "eloTier": "Master",
-    "winRate": "74%",
-    "matches": 35,
-    "preview": "previews/qwen38_flash_3070_potato.png"
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/qwen38_flash_3070_potato.png",
+    "wins": 0,
+    "hidden": false,
+    "demoUrl": "https://www.cc8.pl/mario-q38-flash.html"
   },
   {
     "id": "qwen38_gold_60k",
     "title": "The 60,000-Token Monolith",
     "author": "Qwen3.8-Flash-Next (Gold)",
     "category": "NES Purist",
-    "badge": "Local King",
+    "badge": "Local Homelab King",
     "file": "games/qwen38_gold_60k.html",
-    "baseVotes": 598,
+    "baseVotes": 0,
     "vibeScore": 8.5,
     "size": "70.8 KB",
     "lines": 1248,
@@ -105,19 +106,19 @@
     "mode": "xhigh (59m CoT Deliberation)",
     "promptStyle": "Minimal Zero-Shot",
     "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-    "sourceName": "L3MS Homelab Experiments",
-    "sourceUrl": "../runs/mario_gold/mario.html",
+    "sourceName": "L3MS Local Homelab (RTX 4070)",
+    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/qwen38_gold_60k.html",
     "vibeReview": "Generated entirely on a local RTX 4070 in a single contiguous 60,221 token inference stream after 29,455 thinking tokens. Captures authentic retro atmosphere with a custom CRT scanline shader pass, arcade marquee bulbs, World 1-1 and World 1-2 Underground pipe warps, bouncing fireballs, Koopas, and Piranha plants.",
     "ratings": {
       "nesCrunch": 9.2,
       "physicsFeel": 8.0,
       "ambition": 9.4
     },
-    "elo": 1205,
-    "eloTier": "Diamond",
-    "winRate": "65%",
-    "matches": 31,
-    "preview": "previews/qwen38_gold_60k.png"
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/qwen38_gold_60k.png",
+    "wins": 0,
+    "hidden": false
   },
   {
     "id": "qwen38_27b_chopsticks",
@@ -135,7 +136,7 @@
     "mode": "Medium Reasoning Effort",
     "promptStyle": "Strict NES Specification",
     "prompt": "Write a fully functional, complete clone of Super Mario Bros game (the famous NES game)\n- Clone must work in a web browser, index.html, no server\n- Decent replica of the graphics assets.\n- Colorful and playable.\n- Controls with keyboard up, down, left, right, spacebar to jump, shift to speed up",
-    "sourceName": "r/LocalLLaMA Thread",
+    "sourceName": "r/LocalLLaMA (u/ChopSticksPlease)",
     "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
     "vibeReview": "One-shotted by a 17GB local quant running on an RTX 3090 with MTP draft decoding. Built a crisp 256x240 integer-scaled NES clone with multi-channel audio synthesis, Goombas, breakable bricks, question blocks, and authentic momentum.",
     "ratings": {
@@ -143,20 +144,21 @@
       "physicsFeel": 8.6,
       "ambition": 8.5
     },
-    "elo": 1230,
-    "eloTier": "Diamond",
-    "winRate": "69%",
-    "matches": 32,
-    "preview": "previews/qwen38_27b_chopsticks.png"
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/qwen38_27b_chopsticks.png",
+    "wins": 0,
+    "hidden": false,
+    "demoUrl": "https://indigo-carmencita-27.tiiny.site/"
   },
   {
     "id": "gpt6_astra_light",
     "title": "Super Meadow (A Little Adventure)",
     "author": "GPT-6 Astra (Light)",
     "category": "Modern Indie",
-    "badge": "Creative Pivot",
+    "badge": "Light CoT Indie",
     "file": "games/gpt6_astra_light.html",
-    "baseVotes": 389,
+    "baseVotes": 0,
     "vibeScore": 8.6,
     "size": "21.7 KB",
     "lines": 102,
@@ -165,19 +167,19 @@
     "mode": "Light Reasoning Mode",
     "promptStyle": "Minimal Zero-Shot",
     "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-    "sourceName": "MarioBench Benchmark Run",
-    "sourceUrl": "../runs/astra_light/mario.html",
+    "sourceName": "MarioBench Run",
+    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gpt6_astra_light.html",
     "vibeReview": "A charming artistic departure. Rather than an 8-bit clone, Astra Light autonomously created a 16:9 modern indie platformer with a sunset gradient sky, bezier curve hills, 120 Hz accumulator physics, screen shake, and a cozy hillside cottage finish.",
     "ratings": {
       "nesCrunch": 6.0,
       "physicsFeel": 9.2,
       "ambition": 8.8
     },
-    "elo": 1182,
-    "eloTier": "Platinum",
-    "winRate": "60%",
-    "matches": 30,
-    "preview": "previews/gpt6_astra_light.png"
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/gpt6_astra_light.png",
+    "wins": 0,
+    "hidden": false
   },
   {
     "id": "qwen38_27b_circus_mikenonect",
@@ -195,7 +197,7 @@
     "mode": "Overnight Batch",
     "promptStyle": "Aesthetic Engaging Prompt",
     "prompt": "Create a Super Mario clone in JavaScript as a single HTML page. Make the game engaging and the graphics as beautiful as possible. (Later adapted to circus-theme to avoid DMCA).",
-    "sourceName": "r/LocalLLaMA Viral Thread",
+    "sourceName": "r/LocalLLaMA (u/MikeNonect)",
     "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1vp438p/if_you_would_have_told_me_half_a_year_ago_that_a/",
     "vibeReview": "The most discussed Mario run on r/LocalLLaMA with 629 upvotes. Transformed Mario into a circus-themed acrobat with colorful tents, trapeze platforms, juggling balls, and rich background art.",
     "ratings": {
@@ -203,11 +205,12 @@
       "physicsFeel": 8.8,
       "ambition": 9.0
     },
-    "elo": 1155,
-    "eloTier": "Platinum",
-    "winRate": "55%",
-    "matches": 29,
-    "preview": "previews/qwen38_27b_circus_mikenonect.png"
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/qwen38_27b_circus_mikenonect.png",
+    "wins": 0,
+    "hidden": false,
+    "demoUrl": "https://mikeveerman.github.io/qwen38-27b-mario"
   },
   {
     "id": "gemini38_flash_baseline",
@@ -216,7 +219,7 @@
     "category": "NES Purist",
     "badge": "Zero-Bug Sprint",
     "file": "games/gemini38_flash_baseline.html",
-    "baseVotes": 294,
+    "baseVotes": 0,
     "vibeScore": 7.8,
     "size": "27.6 KB",
     "lines": 992,
@@ -225,19 +228,19 @@
     "mode": "Conversational Fast Mode",
     "promptStyle": "Minimal Zero-Shot",
     "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-    "sourceName": "Antigravity Reference Baseline",
-    "sourceUrl": "../runs/paul_allen/mario.html",
+    "sourceName": "Antigravity Baseline",
+    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gemini38_flash_baseline.html",
     "vibeReview": "The original interactive benchmark reference. Built in seconds with zero bugs, silky 60 FPS sub-pixel physics, 6-frame coyote jump buffering, clean square wave audio sweeps, and a 120-column overworld slice.",
     "ratings": {
       "nesCrunch": 8.4,
       "physicsFeel": 8.9,
       "ambition": 7.0
     },
-    "elo": 1096,
-    "eloTier": "Silver",
-    "winRate": "43%",
-    "matches": 26,
-    "preview": "previews/gemini38_flash_baseline.png"
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/gemini38_flash_baseline.png",
+    "wins": 0,
+    "hidden": true
   },
   {
     "id": "gemini25_pro_pygame",
@@ -255,7 +258,7 @@
     "mode": "Standard Prompt",
     "promptStyle": "Max Quality Python Prompt",
     "prompt": "Build absolutely the best implementation of the super Mario game in python without any external assets.",
-    "sourceName": "r/LocalLLaMA Pastebin Thread",
+    "sourceName": "r/LocalLLaMA (Pastebin)",
     "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1jjsiiw/mario_game_made_by_new_a_gemini_pro_25_in_couple/",
     "vibeReview": "One-shot Python / PyGame implementation from Gemini 2.5 Pro that blew up with 312 upvotes on r/LocalLLaMA. Clean momentum curves, title screen, procedurally drawn bushes, clouds, and Goombas.",
     "ratings": {
@@ -263,10 +266,10 @@
       "physicsFeel": 8.5,
       "ambition": 7.8
     },
-    "elo": 1128,
-    "eloTier": "Gold",
-    "winRate": "49%",
-    "matches": 27,
-    "preview": "previews/gemini25_pro_pygame.png"
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/gemini25_pro_pygame.png",
+    "wins": 0,
+    "hidden": true
   }
 ]

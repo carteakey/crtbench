@@ -73,10 +73,10 @@ Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS i
      "id": "unique_model_id",
      "title": "Display Title of the Game",
      "author": "Your Name / Reddit Handle",
-     "category": "NES Purist | Modern Indie | Circus Reskin | Python / PyGame",
+     "category": "NES Purist | Modern Indie | Circus Reskin",
      "badge": "Short 2-3 word highlight badge",
      "file": "games/unique_model_id.html",
-     "baseVotes": 100,
+     "baseVotes": 0,
      "vibeScore": 8.5,
      "size": "45.2 KB",
      "lines": 1200,
@@ -87,12 +87,18 @@ Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS i
      "prompt": "Exact user prompt fed into the model",
      "sourceName": "Reddit thread / benchmark run / blog post",
      "sourceUrl": "URL to original post or verification",
+     "demoUrl": "Optional live web deployment URL",
      "vibeReview": "2-3 sentences evaluating gameplay feel, physics, audio, and visual quirks.",
      "ratings": {
        "nesCrunch": 8.5,
        "physicsFeel": 8.5,
        "ambition": 8.5
-     }
+     },
+     "elo": 1200,
+     "matches": 0,
+     "wins": 0,
+     "preview": "previews/unique_model_id.png",
+     "hidden": false
    }
    ```
 
