@@ -30,7 +30,9 @@
     "hidden": false,
     "harness": "Frontier API",
     "thinkingEffort": "High Reasoning CoT",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": false,
+    "license": "proprietary"
   },
   {
     "id": "gemini38_flash_full",
@@ -63,7 +65,9 @@
     "hidden": false,
     "harness": "Antigravity CLI",
     "thinkingEffort": "Full CoT Deliberation",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": false,
+    "license": "proprietary"
   },
   {
     "id": "qwen38_flash_3070_potato",
@@ -97,7 +101,9 @@
     "demoUrl": "https://www.cc8.pl/mario-q38-flash.html",
     "harness": "llama.cpp (cc8.pl)",
     "thinkingEffort": "10k CoT Budget (xhigh)",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "qwen38_gold_60k",
@@ -130,7 +136,9 @@
     "hidden": false,
     "harness": "llama.cpp Master (L3MS)",
     "thinkingEffort": "60k CoT Deliberation (59m)",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "qwen38_27b_chopsticks",
@@ -164,7 +172,9 @@
     "demoUrl": "https://indigo-carmencita-27.tiiny.site/",
     "harness": "llama.cpp (u/ChopSticksPlease)",
     "thinkingEffort": "Standard One-Shot",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "gpt6_astra_light",
@@ -197,7 +207,9 @@
     "hidden": false,
     "harness": "Frontier API",
     "thinkingEffort": "Light Reasoning CoT",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": false,
+    "license": "proprietary"
   },
   {
     "id": "qwen38_27b_circus_mikenonect",
@@ -231,7 +243,9 @@
     "demoUrl": "https://mikeveerman.github.io/qwen38-27b-mario",
     "harness": "llama.cpp (u/MikeNonect)",
     "thinkingEffort": "Overnight Batch (Q8)",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "gemini38_flash_baseline",
@@ -264,7 +278,9 @@
     "hidden": true,
     "harness": "Antigravity Interactive",
     "thinkingEffort": "Zero-Shot Fast Mode",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": false,
+    "license": "proprietary"
   },
   {
     "id": "gemini25_pro_pygame",
@@ -297,7 +313,9 @@
     "hidden": true,
     "harness": "Cloud API (u/Healthy-Nebula-3603)",
     "thinkingEffort": "Standard One-Shot",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": false,
+    "license": "proprietary"
   },
   {
     "id": "ornith35b_matrix_bros",
@@ -331,7 +349,9 @@
     "hidden": false,
     "harness": "llama.cpp (u/TimelordQ)",
     "thinkingEffort": "Direct Zero-Shot",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "gemini38_pro_wolf_raycaster",
@@ -364,7 +384,9 @@
     "matches": 0,
     "wins": 0,
     "preview": "previews/gemini38_pro_wolf_raycaster.png",
-    "hidden": false
+    "hidden": false,
+    "isOpenSource": false,
+    "license": "proprietary"
   },
   {
     "id": "qwen38_flash_retro_dungeon",
@@ -397,7 +419,9 @@
     "matches": 0,
     "wins": 0,
     "preview": "previews/qwen38_flash_retro_dungeon.png",
-    "hidden": false
+    "hidden": false,
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "gemma4_31b_neon_pacmaze",
@@ -430,7 +454,9 @@
     "matches": 0,
     "wins": 0,
     "preview": "previews/gemma4_31b_neon_pacmaze.png",
-    "hidden": false
+    "hidden": false,
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "qwen36_27b_cyber_maze",
@@ -463,7 +489,9 @@
     "matches": 0,
     "wins": 0,
     "preview": "previews/qwen36_27b_cyber_maze.png",
-    "hidden": false
+    "hidden": false,
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "glm47_flash_tetris_matrix",
@@ -496,7 +524,9 @@
     "matches": 0,
     "wins": 0,
     "preview": "previews/glm47_flash_tetris_matrix.png",
-    "hidden": false
+    "hidden": false,
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "qwen36_polyomino_puzzle",
@@ -529,6 +559,8 @@
     "matches": 0,
     "wins": 0,
     "preview": "previews/qwen36_polyomino_puzzle.png",
-    "hidden": false
+    "hidden": false,
+    "isOpenSource": true,
+    "license": "open"
   }
 ]

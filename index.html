@@ -1119,22 +1119,19 @@
 <!-- Controls Bar (Active on The Arcade Wall & Leaderboard) -->
 <div class="controls-wrap" id="wallControls">
   <div style="display:flex; flex-direction:column; gap:10px; flex:1;">
-    <!-- Genre / Discipline Filter -->
+    <!-- Genre / Game Track Filter -->
     <div class="filter-group" id="genreFilterGroup">
-      <button class="filter-btn active" data-genre="all">🎮 All Disciplines (<span id="countGenreAll">8</span>)</button>
-      <button class="filter-btn" data-genre="platformer">🏃 2D Platformer (<span id="countGenrePlatformer">8</span>)</button>
-      <button class="filter-btn" data-genre="raycaster">🔫 2.5D Raycaster (<span id="countGenreRaycaster">0</span>)</button>
-      <button class="filter-btn" data-genre="maze">👻 Arcade Maze (<span id="countGenreMaze">0</span>)</button>
-      <button class="filter-btn" data-genre="puzzle">🧱 Falling Blocks (<span id="countGenrePuzzle">0</span>)</button>
+      <button class="filter-btn active" data-genre="all">🎮 All Games (<span id="countGenreAll">14</span>)</button>
+      <button class="filter-btn" data-genre="platformer">🍄 Italian Plumber (<span id="countGenrePlatformer">8</span>)</button>
+      <button class="filter-btn" data-genre="raycaster">🔫 Doom / 3D Raycaster (<span id="countGenreRaycaster">2</span>)</button>
+      <button class="filter-btn" data-genre="maze">👻 Ghost Maze / Dot Chomper (<span id="countGenreMaze">2</span>)</button>
+      <button class="filter-btn" data-genre="puzzle">🧱 Falling Bricks (<span id="countGenrePuzzle">2</span>)</button>
     </div>
-    <!-- Sub-Filter (Style / Hardware) -->
-    <div class="filter-group" id="styleFilterGroup">
-      <button class="filter-btn active" data-filter="all">All Styles</button>
-      <button class="filter-btn" data-filter="NES Purist">NES Purist</button>
-      <button class="filter-btn" data-filter="Modern Indie">Modern Indie</button>
-      <button class="filter-btn" data-filter="Themed Reskin">Themed Reskin</button>
-      <button class="filter-btn" data-filter="local">Local RTX / Homelab</button>
-      <button class="filter-btn" data-filter="frontier">Frontier Cloud</button>
+    <!-- Model License Filter (Open Source vs Proprietary) -->
+    <div class="filter-group" id="licenseFilterGroup">
+      <button class="filter-btn active" data-license="all">🌐 All Models (<span id="countLicenseAll">14</span>)</button>
+      <button class="filter-btn" data-license="open">🔓 Open Source / Weights (<span id="countLicenseOpen">10</span>)</button>
+      <button class="filter-btn" data-license="proprietary">🔒 Proprietary / Cloud (<span id="countLicenseProp">4</span>)</button>
     </div>
   </div>
   <div style="align-self:flex-start;">
@@ -1163,12 +1160,12 @@
         <div class="arena-title">⚔️ BLIND VIBE ARENA</div>
         <div class="arena-sub">Test both implementations blind with zero bias. ELO ratings and model identities are hidden until your vote is cast.</div>
         <div style="display:flex; justify-content:center; gap:8px; margin-top:14px; flex-wrap:wrap;" id="arenaGenreButtons">
-          <span style="font-size:11px; color:var(--text-muted); align-self:center; text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">Duel Discipline:</span>
-          <button class="filter-btn active" data-arena-genre="all">🎲 In-Genre Matchup (Fair)</button>
-          <button class="filter-btn" data-arena-genre="platformer">🏃 Platformer</button>
-          <button class="filter-btn" data-arena-genre="raycaster">🔫 Raycaster</button>
-          <button class="filter-btn" data-arena-genre="maze">👻 Arcade Maze</button>
-          <button class="filter-btn" data-arena-genre="puzzle">🧱 Falling Blocks</button>
+          <span style="font-size:11px; color:var(--text-muted); align-self:center; text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">Duel Track:</span>
+          <button class="filter-btn active" data-arena-genre="all">🎲 Any Fair Matchup</button>
+          <button class="filter-btn" data-arena-genre="platformer">🍄 Italian Plumber</button>
+          <button class="filter-btn" data-arena-genre="raycaster">🔫 Doom / Raycaster</button>
+          <button class="filter-btn" data-arena-genre="maze">👻 Ghost Maze</button>
+          <button class="filter-btn" data-arena-genre="puzzle">🧱 Falling Bricks</button>
         </div>
       </div>
 
@@ -1418,20 +1415,17 @@
         <div class="field-group">
           <label class="field-label" for="subGenre">Benchmark Discipline *</label>
           <select class="field-select" id="subGenre">
-            <option value="platformer">🏃 2D Platformer (Jump Physics & Audio)</option>
-            <option value="raycaster">🔫 2.5D Raycaster (3D DDA & Projection)</option>
-            <option value="maze">👻 Arcade Maze (Graph Traversal & AI)</option>
-            <option value="puzzle">🧱 Falling Blocks (Matrix & SRS Logic)</option>
+            <option value="platformer">🍄 Italian Plumber (Jump Physics & Audio)</option>
+            <option value="raycaster">🔫 Doom / 3D Raycaster (3D DDA & Projection)</option>
+            <option value="maze">👻 Ghost Maze / Dot Chomper (Graph Traversal & AI)</option>
+            <option value="puzzle">🧱 Falling Bricks (Matrix & SRS Logic)</option>
           </select>
         </div>
         <div class="field-group">
-          <label class="field-label" for="subCategory">Style / Sub-Category</label>
-          <select class="field-select" id="subCategory">
-            <option value="NES Purist">NES Purist</option>
-            <option value="Modern Indie">Modern Indie</option>
-            <option value="Themed Reskin">Themed Reskin</option>
-            <option value="Wolf3D Classic">Wolf3D Classic</option>
-            <option value="Doom Inspired">Doom Inspired</option>
+          <label class="field-label" for="subLicense">Model License *</label>
+          <select class="field-select" id="subLicense">
+            <option value="open">🔓 Open Source / Weights (Local RTX / Mac / Self-hosted)</option>
+            <option value="proprietary">🔒 Proprietary / Cloud (OpenAI / Anthropic / Google API)</option>
           </select>
         </div>
       </div>
@@ -1498,27 +1492,38 @@
 
   function getGenreLabel(genre) {
     switch (genre) {
-      case 'raycaster': return '🔫 2.5D Raycaster';
-      case 'maze': return '👻 Arcade Maze';
-      case 'puzzle': return '🧱 Falling Blocks';
+      case 'raycaster': return '🔫 Doom / 3D Raycaster';
+      case 'maze': return '👻 Ghost Maze / Dot Chomper';
+      case 'puzzle': return '🧱 Falling Bricks';
       case 'arcade': return '🚀 Space Arcade';
-      default: return '🏃 2D Platformer';
+      default: return '🍄 Italian Plumber';
     }
   }
 
-  function updateGenreCounts() {
+  function updateFilterCounts() {
     const active = getActiveGames();
-    const counts = { all: active.length, platformer: 0, raycaster: 0, maze: 0, puzzle: 0 };
+    const genreCounts = { all: active.length, platformer: 0, raycaster: 0, maze: 0, puzzle: 0 };
+    const licenseCounts = { all: active.length, open: 0, proprietary: 0 };
+
     active.forEach(g => {
       const gen = g.genre || 'platformer';
-      counts[gen] = (counts[gen] || 0) + 1;
+      genreCounts[gen] = (genreCounts[gen] || 0) + 1;
+
+      const isOpen = g.isOpenSource === true || g.license === 'open';
+      if (isOpen) licenseCounts.open += 1;
+      else licenseCounts.proprietary += 1;
     });
-    if (document.getElementById('countGenreAll')) document.getElementById('countGenreAll').textContent = counts.all;
-    if (document.getElementById('countWallHeader')) document.getElementById('countWallHeader').textContent = counts.all;
-    if (document.getElementById('countGenrePlatformer')) document.getElementById('countGenrePlatformer').textContent = counts.platformer;
-    if (document.getElementById('countGenreRaycaster')) document.getElementById('countGenreRaycaster').textContent = counts.raycaster;
-    if (document.getElementById('countGenreMaze')) document.getElementById('countGenreMaze').textContent = counts.maze;
-    if (document.getElementById('countGenrePuzzle')) document.getElementById('countGenrePuzzle').textContent = counts.puzzle;
+
+    if (document.getElementById('countGenreAll')) document.getElementById('countGenreAll').textContent = genreCounts.all;
+    if (document.getElementById('countWallHeader')) document.getElementById('countWallHeader').textContent = genreCounts.all;
+    if (document.getElementById('countGenrePlatformer')) document.getElementById('countGenrePlatformer').textContent = genreCounts.platformer;
+    if (document.getElementById('countGenreRaycaster')) document.getElementById('countGenreRaycaster').textContent = genreCounts.raycaster;
+    if (document.getElementById('countGenreMaze')) document.getElementById('countGenreMaze').textContent = genreCounts.maze;
+    if (document.getElementById('countGenrePuzzle')) document.getElementById('countGenrePuzzle').textContent = genreCounts.puzzle;
+
+    if (document.getElementById('countLicenseAll')) document.getElementById('countLicenseAll').textContent = licenseCounts.all;
+    if (document.getElementById('countLicenseOpen')) document.getElementById('countLicenseOpen').textContent = licenseCounts.open;
+    if (document.getElementById('countLicenseProp')) document.getElementById('countLicenseProp').textContent = licenseCounts.proprietary;
   }
 
   // Fallback offline dataset (7 active, 2 hidden)
@@ -1554,7 +1559,9 @@
     "hidden": false,
     "harness": "Frontier API",
     "thinkingEffort": "High Reasoning CoT",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": false,
+    "license": "proprietary"
   },
   {
     "id": "gemini38_flash_full",
@@ -1587,7 +1594,9 @@
     "hidden": false,
     "harness": "Antigravity CLI",
     "thinkingEffort": "Full CoT Deliberation",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": false,
+    "license": "proprietary"
   },
   {
     "id": "qwen38_flash_3070_potato",
@@ -1621,7 +1630,9 @@
     "demoUrl": "https://www.cc8.pl/mario-q38-flash.html",
     "harness": "llama.cpp (cc8.pl)",
     "thinkingEffort": "10k CoT Budget (xhigh)",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "qwen38_gold_60k",
@@ -1654,7 +1665,9 @@
     "hidden": false,
     "harness": "llama.cpp Master (L3MS)",
     "thinkingEffort": "60k CoT Deliberation (59m)",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "qwen38_27b_chopsticks",
@@ -1688,7 +1701,9 @@
     "demoUrl": "https://indigo-carmencita-27.tiiny.site/",
     "harness": "llama.cpp (u/ChopSticksPlease)",
     "thinkingEffort": "Standard One-Shot",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "gpt6_astra_light",
@@ -1721,7 +1736,9 @@
     "hidden": false,
     "harness": "Frontier API",
     "thinkingEffort": "Light Reasoning CoT",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": false,
+    "license": "proprietary"
   },
   {
     "id": "qwen38_27b_circus_mikenonect",
@@ -1755,7 +1772,9 @@
     "demoUrl": "https://mikeveerman.github.io/qwen38-27b-mario",
     "harness": "llama.cpp (u/MikeNonect)",
     "thinkingEffort": "Overnight Batch (Q8)",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "gemini38_flash_baseline",
@@ -1788,7 +1807,9 @@
     "hidden": true,
     "harness": "Antigravity Interactive",
     "thinkingEffort": "Zero-Shot Fast Mode",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": false,
+    "license": "proprietary"
   },
   {
     "id": "gemini25_pro_pygame",
@@ -1821,7 +1842,9 @@
     "hidden": true,
     "harness": "Cloud API (u/Healthy-Nebula-3603)",
     "thinkingEffort": "Standard One-Shot",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": false,
+    "license": "proprietary"
   },
   {
     "id": "ornith35b_matrix_bros",
@@ -1855,7 +1878,9 @@
     "hidden": false,
     "harness": "llama.cpp (u/TimelordQ)",
     "thinkingEffort": "Direct Zero-Shot",
-    "genre": "platformer"
+    "genre": "platformer",
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "gemini38_pro_wolf_raycaster",
@@ -1888,7 +1913,9 @@
     "matches": 0,
     "wins": 0,
     "preview": "previews/gemini38_pro_wolf_raycaster.png",
-    "hidden": false
+    "hidden": false,
+    "isOpenSource": false,
+    "license": "proprietary"
   },
   {
     "id": "qwen38_flash_retro_dungeon",
@@ -1912,12 +1939,18 @@
     "sourceName": "r/LocalLLaMA & llama.cpp",
     "sourceUrl": "https://reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
     "vibeReview": "Atmospheric 2.5D gothic dungeon crawler with DDA raycasting, procedural textures, skeleton sprites, and pure Web Audio sound.",
-    "ratings": { "nesCrunch": 8.8, "physicsFeel": 9.2, "ambition": 9.5 },
+    "ratings": {
+      "nesCrunch": 8.8,
+      "physicsFeel": 9.2,
+      "ambition": 9.5
+    },
     "elo": 1200,
     "matches": 0,
     "wins": 0,
     "preview": "previews/qwen38_flash_retro_dungeon.png",
-    "hidden": false
+    "hidden": false,
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "gemma4_31b_neon_pacmaze",
@@ -1941,12 +1974,18 @@
     "sourceName": "r/LocalLLaMA Contest Post",
     "sourceUrl": "https://reddit.com/r/LocalLLaMA/",
     "vibeReview": "Voted cleanest logic in r/LocalLLaMA gamedev contest. Authentic ghost AI personalities, corner buffering, and procedural audio.",
-    "ratings": { "nesCrunch": 9.4, "physicsFeel": 9.3, "ambition": 9.0 },
+    "ratings": {
+      "nesCrunch": 9.4,
+      "physicsFeel": 9.3,
+      "ambition": 9.0
+    },
     "elo": 1200,
     "matches": 0,
     "wins": 0,
     "preview": "previews/gemma4_31b_neon_pacmaze.png",
-    "hidden": false
+    "hidden": false,
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "qwen36_27b_cyber_maze",
@@ -1970,12 +2009,18 @@
     "sourceName": "r/LocalLLaMA Post",
     "sourceUrl": "https://reddit.com/r/LocalLLaMA/",
     "vibeReview": "Sleek vector aesthetic with dynamic drone searchlight cones, EMP blast mechanics, and atmospheric synth bleeps.",
-    "ratings": { "nesCrunch": 8.2, "physicsFeel": 8.8, "ambition": 9.1 },
+    "ratings": {
+      "nesCrunch": 8.2,
+      "physicsFeel": 8.8,
+      "ambition": 9.1
+    },
     "elo": 1200,
     "matches": 0,
     "wins": 0,
     "preview": "previews/qwen36_27b_cyber_maze.png",
-    "hidden": false
+    "hidden": false,
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "glm47_flash_tetris_matrix",
@@ -1999,12 +2044,18 @@
     "sourceName": "r/LocalLLaMA One-Shot Thread",
     "sourceUrl": "https://reddit.com/r/LocalLLaMA/",
     "vibeReview": "Praised on r/LocalLLaMA as one of the first models to one-shot bug-free line clearing with SRS rotation and generative chiptune audio.",
-    "ratings": { "nesCrunch": 9.6, "physicsFeel": 9.4, "ambition": 9.2 },
+    "ratings": {
+      "nesCrunch": 9.6,
+      "physicsFeel": 9.4,
+      "ambition": 9.2
+    },
     "elo": 1200,
     "matches": 0,
     "wins": 0,
     "preview": "previews/glm47_flash_tetris_matrix.png",
-    "hidden": false
+    "hidden": false,
+    "isOpenSource": true,
+    "license": "open"
   },
   {
     "id": "qwen36_polyomino_puzzle",
@@ -2028,17 +2079,23 @@
     "sourceName": "r/LocalLLaMA Post",
     "sourceUrl": "https://reddit.com/r/LocalLLaMA/",
     "vibeReview": "Modern glassmorphism look with particle explosions on line clears, combo multipliers, and generative ambient synth audio.",
-    "ratings": { "nesCrunch": 8.6, "physicsFeel": 9.1, "ambition": 9.3 },
+    "ratings": {
+      "nesCrunch": 8.6,
+      "physicsFeel": 9.1,
+      "ambition": 9.3
+    },
     "elo": 1200,
     "matches": 0,
     "wins": 0,
     "preview": "previews/qwen36_polyomino_puzzle.png",
-    "hidden": false
+    "hidden": false,
+    "isOpenSource": true,
+    "license": "open"
   }
 ];
 
   let gamesData = [];
-  let currentFilter = 'all';
+  let currentLicense = 'all';
   let currentGenre = 'all';
   let currentSort = 'elo';
   let currentView = 'wall';
@@ -2163,7 +2220,7 @@
       console.warn('Using embedded dataset fallback:', e);
       gamesData = EMBEDDED_GAMES_DATA;
     }
-    updateGenreCounts();
+    updateFilterCounts();
     renderGrid();
     renderTable();
     setupEventListeners();
@@ -2177,14 +2234,16 @@
   function getFilteredAndSorted() {
     let active = getActiveGames();
     let filtered = active.filter(g => {
-      // 1. Discipline / Genre filter
+      // 1. Discipline / Game Track filter
       if (currentGenre !== 'all' && (g.genre || 'platformer') !== currentGenre) return false;
 
-      // 2. Hardware / Sub-category filter
-      if (currentFilter === 'all') return true;
-      if (currentFilter === 'local') return g.hardware.toLowerCase().includes('rtx') || g.hardware.toLowerCase().includes('desktop');
-      if (currentFilter === 'frontier') return g.hardware.toLowerCase().includes('cloud') || g.hardware.toLowerCase().includes('pro');
-      return g.category === currentFilter;
+      // 2. Model License filter (Open Source / Weights vs Proprietary / Cloud)
+      if (currentLicense !== 'all') {
+        const isOpen = g.isOpenSource === true || g.license === 'open';
+        if (currentLicense === 'open' && !isOpen) return false;
+        if (currentLicense === 'proprietary' && isOpen) return false;
+      }
+      return true;
     });
 
     filtered.sort((a, b) => {
@@ -2219,12 +2278,18 @@
       else if (game.badge.includes('Reddit') || game.badge.includes('Viral')) badgeClass += ' badge-viral';
       else if (game.category === 'NES Purist') badgeClass += ' badge-purist';
 
+      const isOpen = game.isOpenSource === true || game.license === 'open';
+      const licenseBadge = isOpen
+        ? `<span class="card-badge" style="background:#238636; font-size:8px; border:1px solid #2ea043;" title="Open Weights / Local Inference">🔓 Open Weights</span>`
+        : `<span class="card-badge" style="background:#1f6feb; font-size:8px; border:1px solid #388bfd;" title="Proprietary / Frontier API">🔒 Proprietary</span>`;
+
       card.innerHTML = `
         <div class="card-top">
           <div class="card-title-group">
             <div class="badge-row">
               <span class="${badgeClass}">#${idx + 1}</span>
               <span class="card-badge" style="background:#8250df; font-size:8px;">${getGenreLabel(game.genre || 'platformer')}</span>
+              ${licenseBadge}
               <span class="elo-pill ${tier.cls}">⚡ ${effectiveElo} ELO</span>
             </div>
             <div class="card-title">${game.title}</div>
@@ -2295,12 +2360,22 @@
     if (currentGenre !== 'all') {
       filtered = active.filter(g => (g.genre || 'platformer') === currentGenre);
     }
+    if (currentLicense !== 'all') {
+      filtered = filtered.filter(g => {
+        const isOpen = g.isOpenSource === true || g.license === 'open';
+        return currentLicense === 'open' ? isOpen : !isOpen;
+      });
+    }
     const sorted = [...filtered].sort((a, b) => getEffectiveElo(b) - getEffectiveElo(a));
 
     sorted.forEach((game, idx) => {
       const effectiveElo = getEffectiveElo(game);
       const matches = getEffectiveMatches(game);
       const tier = getEloTier(effectiveElo, matches);
+      const isOpen = game.isOpenSource === true || game.license === 'open';
+      const licensePill = isOpen
+        ? '<span class="card-badge" style="background:#238636; font-size:8px; padding:2px 5px; border:1px solid #2ea043;" title="Open Weights / Local">🔓 Open</span>'
+        : '<span class="card-badge" style="background:#1f6feb; font-size:8px; padding:2px 5px; border:1px solid #388bfd;" title="Proprietary / Cloud">🔒 Cloud</span>';
       const row = document.createElement('tr');
       const rankEmoji = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
       
@@ -2317,7 +2392,10 @@
           <span class="card-badge" style="background:#21262d; border:1px solid var(--card-border); color:#e6edf3; font-size:9px;">${getGenreLabel(game.genre || 'platformer')}</span>
         </td>
         <td>
-          <div style="color:var(--accent); font-family:monospace; font-size:12px; font-weight:600;">${game.model}</div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="color:var(--accent); font-family:monospace; font-size:12px; font-weight:600;">${game.model}</span>
+            ${licensePill}
+          </div>
           <div style="font-size:11px; color:#c9d1d9; margin-top:2px;">⚙️ ${game.harness}</div>
         </td>
         <td>
@@ -2362,6 +2440,7 @@
           model: mName,
           harness: g.harness,
           hardware: g.hardware,
+          isOpen: g.isOpenSource === true || g.license === 'open',
           disciplines: {},
           totalMatches: 0,
           vibeSum: 0,
@@ -2379,7 +2458,10 @@
       modelMap[mName].gameCount += 1;
     });
 
-    const modelList = Object.values(modelMap);
+    let modelList = Object.values(modelMap);
+    if (currentLicense !== 'all') {
+      modelList = modelList.filter(m => currentLicense === 'open' ? m.isOpen : !m.isOpen);
+    }
     modelList.forEach(m => {
       const discKeys = Object.keys(m.disciplines);
       m.breadth = discKeys.length;
@@ -2417,11 +2499,18 @@
         ? `<span style="color:var(--gold); font-weight:700; font-family:monospace;">⚡ ${m.disciplines['puzzle'].elo}</span>` 
         : '<span style="color:#484f58;">—</span>';
 
+      const licensePill = m.isOpen
+        ? '<span class="card-badge" style="background:#238636; font-size:8px; padding:2px 5px; border:1px solid #2ea043;" title="Open Weights / Local">🔓 Open</span>'
+        : '<span class="card-badge" style="background:#1f6feb; font-size:8px; padding:2px 5px; border:1px solid #388bfd;" title="Proprietary / Cloud">🔒 Cloud</span>';
+
       const row = document.createElement('tr');
       row.innerHTML = `
         <td style="font-weight:700; font-size:14px;">${rankEmoji}</td>
         <td>
-          <div style="font-weight:700; color:var(--accent); font-family:monospace; font-size:13px;">${m.model}</div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-weight:700; color:var(--accent); font-family:monospace; font-size:13px;">${m.model}</span>
+            ${licensePill}
+          </div>
         </td>
         <td>
           <div style="font-size:12px; color:#c9d1d9;">⚙️ ${m.harness}</div>
@@ -2585,7 +2674,7 @@
 
     showToast(`⚡ Match logged! ${arenaGameA.title}: ${signA} | ${arenaGameB.title}: ${signB}`);
 
-    updateGenreCounts();
+    updateFilterCounts();
     renderGrid();
     renderTable();
     renderPentathlonTable();
@@ -2661,13 +2750,15 @@
       });
     });
 
-    // Style / Hardware Sub-Filter Clicks
-    document.querySelectorAll('#styleFilterGroup .filter-btn').forEach(btn => {
+    // Model License Filter Clicks (Open Source vs Proprietary)
+    document.querySelectorAll('#licenseFilterGroup .filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('#styleFilterGroup .filter-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('#licenseFilterGroup .filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        currentFilter = btn.dataset.filter;
+        currentLicense = btn.dataset.license;
         renderGrid();
+        renderTable();
+        renderPentathlonTable();
       });
     });
 
@@ -2769,10 +2860,12 @@
         const author = document.getElementById('subAuthor').value.trim();
         const model = document.getElementById('subModel').value.trim();
         const genre = (document.getElementById('subGenre') ? document.getElementById('subGenre').value : '') || 'platformer';
+        const license = (document.getElementById('subLicense') ? document.getElementById('subLicense').value : 'open');
+        const isOpenSource = license === 'open';
         const harness = (document.getElementById('subHarness') ? document.getElementById('subHarness').value.trim() : '') || 'llama.cpp';
         const effort = (document.getElementById('subEffort') ? document.getElementById('subEffort').value.trim() : '') || 'Single Turn One-Shot';
         const hardware = document.getElementById('subHardware').value.trim();
-        const category = document.getElementById('subCategory').value;
+        const category = isOpenSource ? 'Open Source / Weights' : 'Proprietary Cloud';
         const badge = document.getElementById('subBadge').value.trim() || 'Community Submission';
         const source = document.getElementById('subSource').value.trim();
         const demo = document.getElementById('subDemo').value.trim();
@@ -2836,7 +2929,9 @@
           matches: 0,
           wins: 0,
           preview: `previews/${slugId}.png`,
-          hidden: false
+          hidden: false,
+          isOpenSource: isOpenSource,
+          license: license
         };
 
         generatedEntryJson = JSON.stringify(entry, null, 2);
@@ -2918,7 +3013,7 @@
     }
 
     setUserVotes(userVotes);
-    updateGenreCounts();
+    updateFilterCounts();
     renderGrid();
     renderTable();
   }

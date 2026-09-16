@@ -31,6 +31,7 @@ def main():
     parser.add_argument("--id", required=True, help="Unique identifier (e.g. claude35_sonnet_plumber)")
     parser.add_argument("--title", required=True, help="Game display title (do not include trademarked names)")
     parser.add_argument("--genre", choices=["platformer", "raycaster", "maze", "puzzle"], default="platformer", help="Discipline / Genre: platformer | raycaster | maze | puzzle")
+    parser.add_argument("--license", choices=["open", "proprietary"], default="open", help="Model weights license: open | proprietary")
     parser.add_argument("--author", required=True, help="Author name or Reddit handle")
     parser.add_argument("--model", required=True, help="Model identifier (e.g. Qwen3.8-Flash-Next)")
     parser.add_argument("--harness", default="llama.cpp", help="Harness / Inference Engine (e.g. llama.cpp, vLLM, Frontier API)")
@@ -89,6 +90,8 @@ def main():
         "id": args.id,
         "title": args.title,
         "genre": args.genre,
+        "license": args.license,
+        "isOpenSource": args.license == "open",
         "author": args.author,
         "category": args.category,
         "badge": args.badge,
