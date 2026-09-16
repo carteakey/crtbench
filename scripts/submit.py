@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PlumberBench CLI Submission Tool
+CRTBench CLI Submission Tool
 Usage:
     python3 scripts/submit.py \
       --file path/to/mario.html \
@@ -26,7 +26,7 @@ GAMES_DIR = os.path.join(REPO_ROOT, "games")
 PREVIEWS_DIR = os.path.join(REPO_ROOT, "previews")
 
 def main():
-    parser = argparse.ArgumentParser(description="Submit a new one-shot retro arcade/retro game to PlumberBench")
+    parser = argparse.ArgumentParser(description="Submit a new one-shot retro arcade/retro game to CRTBench")
     parser.add_argument("--file", required=True, help="Path to raw, unedited HTML game file")
     parser.add_argument("--id", required=True, help="Unique identifier (e.g. claude35_sonnet_plumber)")
     parser.add_argument("--title", required=True, help="Game display title (do not include trademarked names)")

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PlumberBench Submission & Dataset Validator
+CRTBench Submission & Dataset Validator
 Ensures benchmark integrity:
 1. data.json schema validation
 2. Game file existence and self-containment (zero external network assets)
@@ -47,7 +47,7 @@ def validate():
     errors = 0
     warnings = 0
 
-    log("Validating PlumberBench dataset and game implementations...", "INFO")
+    log("Validating CRTBench dataset and game implementations...", "INFO")
 
     if not os.path.exists(DATA_JSON_PATH):
         log("data.json not found!", "FAIL")

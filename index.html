@@ -3,11 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlumberBench — The One-Shot Mario LLM Benchmark</title>
+  <title>CRTBench — The Zero-Shot Retro Arcade & 3D Synthesis Arena</title>
+  <meta name="description" content="CRTBench is an open-source benchmark evaluating LLM cognitive reasoning, physical momentum, and 3D spatial trigonometry through one-shot retro arcade and raycaster game synthesis.">
+  <meta property="og:title" content="📺 CRTBench — The Zero-Shot Retro Arcade & 3D Synthesis Arena">
+  <meta property="og:description" content="Evaluating AI models on 2D Platformers, 2.5D Raycasters, Arcade Mazes, and Falling Blocks via blind head-to-head duels and community ELO.">
+  <meta property="og:image" content="previews/gemini38_pro_wolf_raycaster.png">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    body.no-scanlines .crt-scanlines { display: none !important; }
     :root {
       --bg: #090c10;
       --card-bg: #12171f;
@@ -1081,30 +1087,31 @@
 
 <!-- Top Marquee -->
 <div class="marquee-bar">
-  <div>✦ PLUMBERBENCH 2026 ✦ THE ZERO-SHOT RETRO PLATFORMER ELO ARENA</div>
-  <div>
+  <div>✦ CRTBENCH 2026 ✦ THE ZERO-SHOT RETRO ARCADE & 3D SYNTHESIS ARENA</div>
+  <div style="display:flex; align-items:center; gap:8px;">
     <span class="marquee-tag">STRICT ONE-SHOT</span> 
     <span class="marquee-tag" style="background:#f8c300; color:#000;">BLIND VIBE ARENA</span>
-    <span class="marquee-tag" style="background:#238636;">OFFICIAL SOURCES LINKED</span>
-    <span class="marquee-tag" style="background:#8250df;">INDEPENDENT RESEARCH</span>
+    <span class="marquee-tag" style="background:#238636;">4 DISCIPLINES</span>
+    <span class="marquee-tag" style="background:#8250df;">DUAL ELO</span>
+    <button id="toggleScanlinesBtn" style="background:#161d27; border:1px solid #30363d; color:#58a6ff; font-family:'Press Start 2P', monospace; font-size:8px; padding:3px 8px; border-radius:3px; cursor:pointer;">📺 CRT: ON</button>
   </div>
 </div>
 
 <!-- Hero Section -->
 <header class="hero">
-  <h1 class="hero-title">PLUMBER<span>BENCH</span></h1>
+  <h1 class="hero-title">CRT<span>BENCH</span></h1>
   <div class="hero-manifesto">
-    CRITERIA: <span>ONE-SHOT PROMPT</span> &nbsp;&bull;&nbsp; SCORING: <span>PURE VIBES & ELO</span>
+    CRITERIA: <span>ONE-SHOT PROMPT</span> &nbsp;&bull;&nbsp; SCORING: <span>PURE VIBES & DUAL ELO</span>
   </div>
   <p class="hero-subtitle">
-    Can an LLM sit in deep deliberation and one-shot an authentic, playable 2D platformer with physics, tilemaps, and chiptune audio? Evaluated via blind head-to-head duels and ranked by community ELO.
+    Can an LLM sit in deep deliberation and one-shot an authentic, playable retro arcade or 3D raycaster game with physics, spatial projection, and chiptune audio? Evaluated via fair in-genre blind duels and ranked by community ELO.
   </p>
 
   <!-- View Switcher -->
   <div class="view-nav">
-    <button class="view-nav-btn active" data-view="wall">🕹️ The Arcade Wall (<span id="countWallHeader">9</span>)</button>
+    <button class="view-nav-btn active" data-view="wall">🕹️ The Arcade Wall (<span id="countWallHeader">14</span>)</button>
     <button class="view-nav-btn" data-view="arena">⚔️ Blind Vibe Arena</button>
-    <button class="view-nav-btn" data-view="table">📊 Elo Leaderboard</button>
+    <button class="view-nav-btn" data-view="table">📊 Dual Elo Leaderboard</button>
     <button class="view-nav-btn" id="openSubmitModalBtn" style="border-color:#238636; color:#7ee787; margin-left:auto;">➕ Submit Run</button>
   </div>
 </header>
@@ -1296,9 +1303,9 @@
 <!-- Site Footer -->
 <footer class="site-footer">
   <div class="footer-inner">
-    <div class="footer-heading">PLUMBERBENCH RESEARCH INITIATIVE</div>
+    <div class="footer-heading">CRTBENCH RESEARCH INITIATIVE</div>
     <div>
-      PlumberBench is an independent, non-commercial open-source benchmark evaluating autonomous procedural code generation and real-time physical reasoning in large language models. All trademarks, service marks, and brand names are the property of their respective owners and are referenced solely for nominative identification in benchmark evaluation.
+      CRTBench is an independent, non-commercial open-source benchmark evaluating autonomous procedural code generation and real-time physical reasoning in large language models. All trademarks, service marks, and brand names are the property of their respective owners and are referenced solely for nominative identification in benchmark evaluation.
     </div>
     <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; border-top:1px solid #21262d; padding-top:12px; font-size:11px;">
       <div>Open Source under MIT License &bull; Zero external runtime dependencies</div>
@@ -1314,7 +1321,7 @@
 <div class="modal-overlay" id="arcadeModal">
   <div class="arcade-cabinet">
     <div class="cabinet-header">
-      <div class="cabinet-title" id="modalGameTitle">PLUMBERBENCH ARCADE</div>
+      <div class="cabinet-title" id="modalGameTitle">CRTBENCH ARCADE</div>
       <div class="cabinet-controls">
         <button class="cab-btn" id="modalPopout">↗ New Tab</button>
         <button class="cab-btn" id="modalRestart">🔄 Restart</button>
@@ -2605,6 +2612,17 @@
       });
     });
 
+    // CRT Scanlines Toggle
+    const toggleScanlinesBtn = document.getElementById('toggleScanlinesBtn');
+    if (toggleScanlinesBtn) {
+      toggleScanlinesBtn.addEventListener('click', () => {
+        const isOff = document.body.classList.toggle('no-scanlines');
+        toggleScanlinesBtn.textContent = isOff ? '📺 CRT: OFF' : '📺 CRT: ON';
+        toggleScanlinesBtn.style.color = isOff ? '#8b949e' : '#58a6ff';
+        toggleScanlinesBtn.style.borderColor = isOff ? '#30363d' : '#58a6ff';
+      });
+    }
+
     // Table view mode toggles (Roster vs Pentathlon)
     const btnRosterView = document.getElementById('btnRosterView');
     const btnPentathlonView = document.getElementById('btnPentathlonView');
@@ -2823,7 +2841,7 @@
 
         generatedEntryJson = JSON.stringify(entry, null, 2);
         valBox.className = 'val-box success';
-        valBox.innerHTML = `✅ <strong>Preflight Passed!</strong> Single-file verified: 0 external dependencies, <strong>${kb} KB</strong>, <strong>${lines} lines</strong>. Ready for PlumberBench!`;
+        valBox.innerHTML = `✅ <strong>Preflight Passed!</strong> Single-file verified: 0 external dependencies, <strong>${kb} KB</strong>, <strong>${lines} lines</strong>. Ready for CRTBench!`;
         
         jsonPreviewBox.style.display = 'block';
         jsonPreviewBox.textContent = generatedEntryJson;

@@ -1,9 +1,9 @@
-# 🍄 PlumberBench
+# 📺 CRTBench
 
-> **The One-Shot Retro 2D Platformer Benchmark for Large Language Models**  
-> *"Criteria: Strict One-Shot. Scoring: Pure Vibes & Blind ELO Duels."*
+> **The One-Shot Retro Arcade & 3D Synthesis Benchmark for Large Language Models**  
+> *"Criteria: Strict One-Shot. Scoring: Pure Vibes & Blind Dual ELO Duels."*
 
-[![Leaderboard](https://img.shields.io/badge/PlumberBench-ELO_Leaderboard-e52521?style=for-the-badge&logo=nintendo)](https://github.com/kartikeychauhan/plumberbench)
+[![Leaderboard](https://img.shields.io/badge/CRTBench-Dual_ELO_Leaderboard-e52521?style=for-the-badge&logo=retroarch)](https://github.com/kartikeychauhan/plumberbench)
 [![One Shot](https://img.shields.io/badge/Format-Strict_One--Shot-f8c300?style=for-the-badge)](SUBMISSIONS.md)
 [![Blind Arena](https://img.shields.io/badge/Vibe_Arena-Blind_Duel_ELO-58a6ff?style=for-the-badge)](index.html)
 [![Active Roster](https://img.shields.io/badge/Active_Entries-14_Contenders-2ea043?style=for-the-badge)](games/)
@@ -11,11 +11,11 @@
 
 ---
 
-## 🎯 The PlumberBench Manifesto
+## 🎯 The CRTBench Manifesto
 
 Standard LLM benchmarks (HumanEval, SWE-bench, GSM8K) measure narrow syntax verification or unit test satisfaction. None of them measure **experiential coherence**: can a model produce something that actually *feels good to play*?
 
-PlumberBench evaluates models across multiple fundamental game architecture disciplines:
+CRTBench evaluates models across multiple fundamental game architecture disciplines:
 1. **🏃 2D Platformer Track (Continuous Newtonian Physics):** Bounding-box penetration resolution, jump velocity accumulators, coyote buffer frames, variable jump heights, tilemap collision, and Web Audio chiptune synthesis.
 2. **🔫 2.5D Raycaster Track (3D Spatial Geometry & Trigonometry):** DDA (Digital Differential Analysis) grid traversal, ray angle stepping, fish-eye distortion correction ($\text{dist} \times \cos(\theta)$), vertical scanline slicing, and billboard sprite depth-buffering.
 3. **👻 Arcade Maze Track (Discrete Graph Traversal & Finite State Machines):** Grid-locked tile traversal, corner-turning buffering, and authentic ghost AI personalities (Chase, Scatter, and Frightened modes).
@@ -25,7 +25,7 @@ PlumberBench evaluates models across multiple fundamental game architecture disc
 
 ## ⚡ The Dual ELO Architecture
 
-PlumberBench implements a dual-tiered competitive scoring model:
+CRTBench implements a dual-tiered competitive scoring model:
 1. **In-Genre Discipline ELO:** Every duel in the **Blind Vibe Arena** strictly matches contenders within the same discipline (e.g. Raycaster vs Raycaster, Maze vs Maze). This ensures direct, apples-to-apples evaluation of specialized domain capabilities.
 2. **Omni-Arcade Model Pentathlon (Composite ELO):** AI models that compete across multiple disciplines receive an aggregate standing:
    $$\text{Composite ELO} = \frac{1}{N} \sum_{i=1}^{N} \text{ELO}_i$$
@@ -96,8 +96,8 @@ The following implementations are preserved in the repository for historical and
 
 ---
 
-## 🚀 Running PlumberBench
-
+## 🚀 Running CRTBench
+ 
 ```bash
 # Clone the repository
 git clone https://github.com/kartikeychauhan/plumberbench.git
