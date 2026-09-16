@@ -23,7 +23,7 @@ REQUIRED_FIELDS = [
     "id", "title", "author", "category", "badge", "file",
     "vibeScore", "size", "lines", "hardware", "model",
     "promptStyle", "prompt", "sourceName", "sourceUrl",
-    "ratings", "elo", "matches", "preview", "hidden"
+    "ratings", "elo", "matches", "preview", "hidden", "genre"
 ]
 
 FORBIDDEN_EXTERNAL_PATTERNS = [

@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2.5D Raycaster FPS</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #game-container {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            background: #333;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+        canvas {
+            display: block;
+            image-rendering: pixelated;
+        }
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        #hud {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(to bottom, #555, #222);
+            border-top: 4px solid #777;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+        .hud-box {
+            background: #000;
+            border: 2px solid #555;
+            padding: 5px 15px;
+            text-align: center;
+            min-width: 80px;
+            box-shadow: inset 0 0 10px rgba(255,0,0,0.2);
+        }
+        .hud-label {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+        }
+        .hud-value {
+            font-size: 28px;
+            color: #f00;
+            font-weight: bold;
+            text-shadow: 2px 2px 0px #500;
+        }
+        #face-cam {
+            width: 64px;
+            height: 64px;
+            background: #000;
+            border: 2px solid #555;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+        }
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+        }
+        #crosshair::before, #crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(0, 255, 0, 0.7);
+        }
+        #crosshair::before { top: 9px; left: 0; width: 20px; height: 2px; }
+        #crosshair::after { top: 0; left: 9px; width: 2px; height: 20px; }
+        
+        #start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: auto;
+            z-index: 100;
+        }
+        h1 { color: #f00; text-transform: uppercase; text-shadow: 3px 3px 0 #500; font-size: 48px; margin-bottom: 10px; }
+        p { color: #ccc; margin-bottom: 30px; text-align: center; line-height: 1.5; }
+        button {
+            padding: 15px 30px;
+            font-size: 24px;
+            background: #f00;
+            color: #fff;
+            border: 4px outset #f55;
+            cursor: pointer;
+            font-family: inherit;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        button:hover { background: #d00; }
+        button:active { border-style: inset; }
+        
+        #flash {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 0, 0, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.1s;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <canvas id="gameCanvas" width="800" height="520"></canvas>
+    <div id="ui-layer">
+        <div id="crosshair"></div>
+        <div id="flash"></div>
+        <canvas id="minimap" width="150" height="150" style="position: absolute; top: 10px; right: 10px; border: 2px solid #555; background: rgba(0,0,0,0.5);"></canvas>
+        
+        <div id="hud">
+            <div class="hud-box">
+                <div class="hud-label">Score</div>
+                <div class="hud-value" id="score">0</div>
+            </div>
+            <div class="hud-box">
+                <div class="hud-label">Health</div>
+                <div class="hud-value" id="health">100</div>
+            </div>
+            <div id="face-cam">😐</div>
+            <div class="hud-box">
+                <div class="hud-label">Ammo</div>
+                <div class="hud-value" id="ammo">50</div>
+            </div>
+            <div class="hud-box">
+                <div class="hud-label">Weapon</div>
+                <div class="hud-value" style="font-size: 20px;">PISTOL</div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="start-screen">
+        <h1>Raycaster FPS</h1>
+        <p>WASD to Move | Mouse/Arrows to Look<br>Click to Shoot | E to interact<br><br>Warning: Contains flashing lights and loud sounds.</p>
+        <button id="start-btn">Start Game</button>
+    </div>
+</div>
+
+<script>
+/** 
+ * MAIN GAME LOGIC 
+ * No external dependencies. 
+ */
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const SCREEN_W = canvas.width;
+const SCREEN_H = canvas.height;
+
+const mapCanvas = document.getElementById('minimap');
+const mapCtx = mapCanvas.getContext('2d');
+
+// --- AUDIO SYSTEM (Web Audio API) ---
+let audioCtx;
+function initAudio() {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+function playSound(type) {
+    if (!audioCtx) return;
+    const t = audioCtx.currentTime;
+    
+    if (type === 'shoot') {
+        // Gunshot: Noise burst + low frequency thud
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(150, t);
+        osc.frequency.exponentialRampToValueAtTime(10, t + 0.1);
+        
+        gain.gain.setValueAtTime(1, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.2);
+        
+        // Noise
+        const bufferSize = audioCtx.sampleRate * 0.2; 
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+        const noiseSource = audioCtx.createBufferSource();
+        noiseSource.buffer = buffer;
+        const noiseFilter = audioCtx.createBiquadFilter();
+        noiseFilter.type = 'highpass';
+        noiseFilter.frequency.value = 1000;
+        
+        const noiseGain = audioCtx.createGain();
+        noiseGain.gain.setValueAtTime(0.8, t);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+        
+        noiseSource.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(audioCtx.destination);
+        noiseSource.start(t);
+        
+    } else if (type === 'enemy_hurt') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(200, t);
+        osc.frequency.linearRampToValueAtTime(80, t + 0.3);
+        
+        gain.gain.setValueAtTime(0.5, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.3);
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.3);
+    } else if (type === 'player_hurt') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(100, t);
+        osc.frequency.exponentialRampToValueAtTime(50, t + 0.4);
+        
+        gain.gain.setValueAtTime(1, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.4);
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.4);
+    }
+}
+
+// --- TEXTURE GENERATION ---
+const TEX_WIDTH = 64;
+const TEX_HEIGHT = 64;
+const textures = [];
+
+function generateTextures() {
+    for (let t = 0; t < 5; t++) {
+        const tex = new Uint32Array(TEX_WIDTH * TEX_HEIGHT);
+        for (let y = 0; y < TEX_HEIGHT; y++) {
+            for (let x = 0; x < TEX_WIDTH; x++) {
+                let r = 0, g = 0, b = 0;
+                if (t === 0) { // Stone wall
+                    const noise = Math.random() * 50;
+                    const c = 100 + noise + (x % 16 === 0 || y % 16 === 0 ? -50 : 0);
+                    r = g = b = c;
+                } else if (t === 1) { // Brick wall
+                    const bx = Math.floor(x / 16);
+                    const by = Math.floor(y / 8);
+                    const offsetX = by % 2 === 0 ? 0 : 8;
+                    const isBorder = (x + offsetX) % 16 === 0 || y % 8 === 0;
+                    r = isBorder ? 100 : 180 + Math.random() * 40;
+                    g = isBorder ? 100 : 50 + Math.random() * 20;
+                    b = isBorder ? 100 : 50 + Math.random() * 20;
+                } else if (t === 2) { // Tech panel
+                    const isBorder = x < 2 || x > 61 || y < 2 || y > 61;
+                    const noise = Math.random() * 20;
+                    if (isBorder) { r = g = b = 150 + noise; }
+                    else {
+                        r = g = 50 + noise; b = 80 + noise;
+                        if ((x > 10 && x < 20) && (y > 10 && y < 20)) { r = 255; g = 50; b = 50; } // red light
+                    }
+                } else if (t === 3) { // Floor/Ceiling
+                    const color = ((x + y) % 2 === 0) ? 60 : 40;
+                    r = g = b = color;
+                } else if (t === 4) { // Enemy Sprite (basic)
+                    const cx = x - 32, cy = y - 32;
+                    const dist = Math.sqrt(cx*cx + cy*cy);
+                    if (dist < 20) {
+                        r = 200; g = 20; b = 20;
+                    } else if (dist < 25 && cy < 0) {
+                        r = 200; g = 150; b = 100; // head
+                    } else {
+                        r = g = b = 0; // Transparent (black for now, handled via alpha check)
+                    }
+                }
+                
+                // Format: A B G R (little endian)
+                tex[y * TEX_WIDTH + x] = (255 << 24) | (b << 16) | (g << 8) | r;
+            }
+        }
+        textures.push(tex);
+    }
+}
+generateTextures();
+
+// --- MAP & GAME STATE ---
+const map = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
+    [1,0,0,2,0,0,1,0,0,0,0,0,2,2,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,2,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,2,0,0,1],
+    [1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,1],
+    [1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,2,2,2,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+];
+const MAP_W = map[0].length;
+const MAP_H = map.length;
+
+let lastTime = 0;
+let frameCount = 0;
+
+const player = {
+    x: 2.5, y: 2.5,
+    dirX: -1.0, dirY: 0.0,
+    planeX: 0.0, planeY: 0.66, // FOV
+    moveSpeed: 5.0,
+    rotSpeed: 3.0,
+    health: 100,
+    ammo: 50,
+    score: 0,
+    weaponOffset: 0,
+    isShooting: false,
+    shootTimer: 0
+};
+
+const keys = { w: false, a: false, s: false, d: false, ArrowLeft: false, ArrowRight: false };
+
+// Input Handling
+window.addEventListener('keydown', e => { if(keys.hasOwnProperty(e.key)) keys[e.key] = true; });
+window.addEventListener('keyup', e => { if(keys.hasOwnProperty(e.key)) keys[e.key] = false; });
+
+// Mouse look
+document.getElementById('game-container').addEventListener('click', async () => {
+    if (!audioCtx) initAudio();
+    if (document.pointerLockElement !== canvas) {
+        canvas.requestPointerLock();
+    } else {
+        shoot();
+    }
+});
+document.addEventListener('pointerlockchange', () => {
+    if (document.pointerLockElement === canvas) {
+        document.addEventListener('mousemove', handleMouseMove);
+    } else {
+        document.removeEventListener('mousemove', handleMouseMove);
+    }
+});
+
+function handleMouseMove(e) {
+    const rot = e.movementX * 0.002;
+    rotatePlayer(-rot);
+}
+
+// Start screen
+document.getElementById('start-btn').addEventListener('click', () => {
+    initAudio();
+    document.getElementById('start-screen').style.display = 'none';
+    canvas.requestPointerLock();
+    lastTime = performance.now();
+    requestAnimationFrame(gameLoop);
+});
+
+// Enemies
+const sprites = [
+    { x: 8.5, y: 4.5, tex: 4, type: 'enemy', health: 100, state: 'idle' },
+    { x: 10.5, y: 10.5, tex: 4, type: 'enemy', health: 100, state: 'idle' },
+    { x: 4.5, y: 10.5, tex: 4, type: 'enemy', health: 100, state: 'idle' }
+];
+
+// Screen Buffer
+const ctxData = ctx.createImageData(SCREEN_W, SCREEN_H);
+const buffer = new Uint32Array(ctxData.data.buffer);
+const zBuffer = new Float64Array(SCREEN_W);
+
+function rotatePlayer(rot) {
+    const oldDirX = player.dirX;
+    player.dirX = player.dirX * Math.cos(rot) - player.dirY * Math.sin(rot);
+    player.dirY = oldDirX * Math.sin(rot) + player.dirY * Math.cos(rot);
+    const oldPlaneX = player.planeX;
+    player.planeX = player.planeX * Math.cos(rot) - player.planeY * Math.sin(rot);
+    player.planeY = oldPlaneX * Math.sin(rot) + player.planeY * Math.cos(rot);
+}
+
+function shoot() {
+    if (player.ammo <= 0 || player.isShooting) return;
+    player.ammo--;
+    player.isShooting = true;
+    player.shootTimer = 0.2;
+    playSound('shoot');
+    updateHUD();
+try{ render(); }catch(e){}
+    
+    // Hitscan
+    let hitSprite = null;
+    let closestDist = Infinity;
+    
+    // Sort sprites
+    for (let i = 0; i < sprites.length; i++) {
+        const s = sprites[i];
+        if (s.health <= 0) continue;
+        
+        const spriteX = s.x - player.x;
+        const spriteY = s.y - player.y;
+        
+        const invDet = 1.0 / (player.planeX * player.dirY - player.dirX * player.planeY);
+        const transformX = invDet * (player.dirY * spriteX - player.dirX * spriteY);
+        const transformY = invDet * (-player.planeY * spriteX + player.planeX * spriteY);
+        
+        if (transformY > 0 && Math.abs(transformX / transformY) < 0.2) {
+            if (transformY < closestDist) {
+                closestDist = transformY;
+                hitSprite = s;
+            }
+        }
+    }
+    
+    if (hitSprite) {
+        hitSprite.health -= 50;
+        playSound('enemy_hurt');
+        if (hitSprite.health <= 0) {
+            player.score += 100;
+            updateHUD();
+try{ render(); }catch(e){}
+        }
+    }
+}
+
+function update(dt) {
+    // Movement
+    const moveStep = player.moveSpeed * dt;
+    let newX = player.x;
+    let newY = player.y;
+    
+    let isMoving = false;
+    
+    if (keys.w) { newX += player.dirX * moveStep; newY += player.dirY * moveStep; isMoving = true; }
+    if (keys.s) { newX -= player.dirX * moveStep; newY -= player.dirY * moveStep; isMoving = true; }
+    
+    // Strafe
+    if (keys.a) { newX -= player.planeX * moveStep; newY -= player.planeY * moveStep; isMoving = true; }
+    if (keys.d) { newX += player.planeX * moveStep; newY += player.planeY * moveStep; isMoving = true; }
+    
+    // Bobbing
+    if (isMoving) {
+        player.weaponOffset = Math.sin(performance.now() / 150) * 10;
+    } else {
+        player.weaponOffset = 0;
+    }
+    
+    // Collision
+    if (map[Math.floor(newY)][Math.floor(player.x)] === 0) player.y = newY;
+    if (map[Math.floor(player.y)][Math.floor(newX)] === 0) player.x = newX;
+    
+    // Turning (Keyboard fallback)
+    const rotStep = player.rotSpeed * dt;
+    if (keys.ArrowRight) rotatePlayer(-rotStep);
+    if (keys.ArrowLeft) rotatePlayer(rotStep);
+    
+    // Weapon timer
+    if (player.isShooting) {
+        player.shootTimer -= dt;
+        if (player.shootTimer <= 0) player.isShooting = false;
+    }
+    
+    // Enemy AI
+    sprites.forEach(s => {
+        if (s.health > 0) {
+            const dx = player.x - s.x;
+            const dy = player.y - s.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist > 1.5 && dist < 10) {
+                // move towards player
+                const step = 2.0 * dt;
+                const dirX = dx / dist;
+                const dirY = dy / dist;
+                const nX = s.x + dirX * step;
+                const nY = s.y + dirY * step;
+                if (map[Math.floor(nY)][Math.floor(s.x)] === 0) s.y = nY;
+                if (map[Math.floor(s.y)][Math.floor(nX)] === 0) s.x = nX;
+            } else if (dist <= 1.5 && Math.random() < 0.05) {
+                player.health -= 5;
+                playSound('player_hurt');
+                updateHUD();
+try{ render(); }catch(e){}
+                
+                const flash = document.getElementById('flash');
+                flash.style.opacity = '1';
+                setTimeout(() => flash.style.opacity = '0', 100);
+                
+                if (player.health <= 0) {
+                    alert("Game Over! Score: " + player.score);
+                    location.reload();
+                }
+            }
+        }
+    });
+}
+
+function updateHUD() {
+    document.getElementById('health').innerText = player.health;
+    document.getElementById('ammo').innerText = player.ammo;
+    document.getElementById('score').innerText = player.score;
+    
+    const face = document.getElementById('face-cam');
+    if (player.health > 80) face.innerText = '😎';
+    else if (player.health > 40) face.innerText = '😐';
+    else if (player.health > 0) face.innerText = '🤕';
+    else face.innerText = '💀';
+}
+
+function render() {
+    // Clear buffer (floor and ceiling cast)
+    for (let y = 0; y < SCREEN_H; y++) {
+        const isCeil = y < SCREEN_H / 2;
+        const color = isCeil ? 0xFF333333 : 0xFF555555;
+        for (let x = 0; x < SCREEN_W; x++) {
+            buffer[y * SCREEN_W + x] = color;
+        }
+    }
+    
+    // DDA Wall Casting
+    for (let x = 0; x < SCREEN_W; x++) {
+        const cameraX = 2 * x / SCREEN_W - 1;
+        const rayDirX = player.dirX + player.planeX * cameraX;
+        const rayDirY = player.dirY + player.planeY * cameraX;
+        
+        let mapX = Math.floor(player.x);
+        let mapY = Math.floor(player.y);
+        
+        let sideDistX, sideDistY;
+        const deltaDistX = Math.abs(1 / rayDirX);
+        const deltaDistY = Math.abs(1 / rayDirY);
+        let perpWallDist;
+        
+        let stepX, stepY;
+        let hit = 0;
+        let side = 0;
+        
+        if (rayDirX < 0) { stepX = -1; sideDistX = (player.x - mapX) * deltaDistX; }
+        else { stepX = 1; sideDistX = (mapX + 1.0 - player.x) * deltaDistX; }
+        
+        if (rayDirY < 0) { stepY = -1; sideDistY = (player.y - mapY) * deltaDistY; }
+        else { stepY = 1; sideDistY = (mapY + 1.0 - player.y) * deltaDistY; }
+        
+        // DDA
+        while (hit === 0) {
+            if (sideDistX < sideDistY) {
+                sideDistX += deltaDistX;
+                mapX += stepX;
+                side = 0;
+            } else {
+                sideDistY += deltaDistY;
+                mapY += stepY;
+                side = 1;
+            }
+            if (map[mapY][mapX] > 0) hit = 1;
+        }
+        
+        if (side === 0) perpWallDist = (mapX - player.x + (1 - stepX) / 2) / rayDirX;
+        else perpWallDist = (mapY - player.y + (1 - stepY) / 2) / rayDirY;
+        
+        zBuffer[x] = perpWallDist;
+        
+        const lineHeight = Math.floor(SCREEN_H / perpWallDist);
+        let drawStart = -lineHeight / 2 + SCREEN_H / 2;
+        if (drawStart < 0) drawStart = 0;
+        let drawEnd = lineHeight / 2 + SCREEN_H / 2;
+        if (drawEnd >= SCREEN_H) drawEnd = SCREEN_H - 1;
+        
+        const texNum = map[mapY][mapX] - 1;
+        let wallX;
+        if (side === 0) wallX = player.y + perpWallDist * rayDirY;
+        else wallX = player.x + perpWallDist * rayDirX;
+        wallX -= Math.floor(wallX);
+        
+        let texX = Math.floor(wallX * TEX_WIDTH);
+        if (side === 0 && rayDirX > 0) texX = TEX_WIDTH - texX - 1;
+        if (side === 1 && rayDirY < 0) texX = TEX_WIDTH - texX - 1;
+        
+        const step = 1.0 * TEX_HEIGHT / lineHeight;
+        let texPos = (drawStart - SCREEN_H / 2 + lineHeight / 2) * step;
+        
+        const tex = textures[texNum];
+        for (let y = Math.floor(drawStart); y < drawEnd; y++) {
+            const texY = Math.floor(texPos) & (TEX_HEIGHT - 1);
+            texPos += step;
+            let color = tex[texY * TEX_WIDTH + texX];
+            
+            // shading
+            if (side === 1) {
+                const r = ((color & 0x000000FF) >> 1) & 0x000000FF;
+                const g = ((color & 0x0000FF00) >> 1) & 0x0000FF00;
+                const b = ((color & 0x00FF0000) >> 1) & 0x00FF0000;
+                color = (color & 0xFF000000) | b | g | r;
+            }
+            
+            buffer[y * SCREEN_W + x] = color;
+        }
+    }
+    
+    // Sprite Rendering
+    // Sort sprites
+    for(let i=0; i<sprites.length; i++) {
+        sprites[i].distance = ((player.x - sprites[i].x) * (player.x - sprites[i].x) + (player.y - sprites[i].y) * (player.y - sprites[i].y));
+    }
+    sprites.sort((a,b) => b.distance - a.distance);
+    
+    for (let i = 0; i < sprites.length; i++) {
+        const s = sprites[i];
+        if (s.health <= 0) continue; // dead
+        
+        const spriteX = s.x - player.x;
+        const spriteY = s.y - player.y;
+        
+        const invDet = 1.0 / (player.planeX * player.dirY - player.dirX * player.planeY);
+        
+        const transformX = invDet * (player.dirY * spriteX - player.dirX * spriteY);
+        const transformY = invDet * (-player.planeY * spriteX + player.planeX * spriteY);
+        
+        const spriteScreenX = Math.floor((SCREEN_W / 2) * (1 + transformX / transformY));
+        
+        const spriteHeight = Math.abs(Math.floor(SCREEN_H / transformY));
+        let drawStartY = -spriteHeight / 2 + SCREEN_H / 2;
+        if (drawStartY < 0) drawStartY = 0;
+        let drawEndY = spriteHeight / 2 + SCREEN_H / 2;
+        if (drawEndY >= SCREEN_H) drawEndY = SCREEN_H - 1;
+        
+        const spriteWidth = Math.abs(Math.floor(SCREEN_H / transformY));
+        let drawStartX = -spriteWidth / 2 + spriteScreenX;
+        if (drawStartX < 0) drawStartX = 0;
+        let drawEndX = spriteWidth / 2 + spriteScreenX;
+        if (drawEndX >= SCREEN_W) drawEndX = SCREEN_W - 1;
+        
+        const tex = textures[s.tex];
+        for (let stripe = Math.floor(drawStartX); stripe < drawEndX; stripe++) {
+            const texX = Math.floor(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * TEX_WIDTH / spriteWidth) / 256;
+            
+            if (transformY > 0 && stripe > 0 && stripe < SCREEN_W && transformY < zBuffer[stripe]) {
+                for (let y = Math.floor(drawStartY); y < drawEndY; y++) {
+                    const d = (y) * 256 - SCREEN_H * 128 + spriteHeight * 128;
+                    const texY = ((d * TEX_HEIGHT) / spriteHeight) / 256;
+                    
+                    const color = tex[Math.floor(texY) * TEX_WIDTH + Math.floor(texX)];
+                    // black is transparent
+                    if ((color & 0x00FFFFFF) !== 0) {
+                        buffer[y * SCREEN_W + stripe] = color;
+                    }
+                }
+            }
+        }
+    }
+    
+    // Draw Weapon
+    const wWidth = 256;
+    const wHeight = 256;
+    const wX = SCREEN_W / 2 - wWidth / 2 + 50;
+    const wY = SCREEN_H - wHeight + player.weaponOffset;
+    
+    ctx.putImageData(ctxData, 0, 0);
+    
+    // Draw gun sprite manually onto canvas
+    ctx.fillStyle = '#666';
+    ctx.fillRect(wX + 100, wY + 100, 50, 150); // barrel
+    ctx.fillStyle = '#333';
+    ctx.fillRect(wX + 110, wY + 100, 30, 150);
+    
+    if (player.isShooting) {
+        ctx.fillStyle = 'yellow';
+        ctx.beginPath();
+        ctx.arc(wX + 125, wY + 80, 40 + Math.random()*20, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(wX + 125, wY + 80, 20 + Math.random()*10, 0, Math.PI*2);
+        ctx.fill();
+    }
+    
+    // Minimap
+    mapCtx.fillStyle = '#000';
+    mapCtx.fillRect(0,0,150,150);
+    const tileW = 150 / MAP_W;
+    const tileH = 150 / MAP_H;
+    
+    for(let y=0; y<MAP_H; y++) {
+        for(let x=0; x<MAP_W; x++) {
+            if(map[y][x] > 0) {
+                mapCtx.fillStyle = map[y][x] === 1 ? '#fff' : '#aaa';
+                mapCtx.fillRect(x*tileW, y*tileH, tileW, tileH);
+            }
+        }
+    }
+    // Enemies on minimap
+    sprites.forEach(s => {
+        if(s.health > 0) {
+            mapCtx.fillStyle = 'red';
+            mapCtx.fillRect(s.x*tileW - 2, s.y*tileH - 2, 4, 4);
+        }
+    });
+    // Player on minimap
+    mapCtx.fillStyle = 'green';
+    mapCtx.beginPath();
+    mapCtx.arc(player.x*tileW, player.y*tileH, 3, 0, Math.PI*2);
+    mapCtx.fill();
+    
+    // FOV cone
+    mapCtx.strokeStyle = 'rgba(0,255,0,0.5)';
+    mapCtx.beginPath();
+    mapCtx.moveTo(player.x*tileW, player.y*tileH);
+    mapCtx.lineTo((player.x + player.dirX + player.planeX)*tileW, (player.y + player.dirY + player.planeY)*tileH);
+    mapCtx.moveTo(player.x*tileW, player.y*tileH);
+    mapCtx.lineTo((player.x + player.dirX - player.planeX)*tileW, (player.y + player.dirY - player.planeY)*tileH);
+    mapCtx.stroke();
+}
+
+function gameLoop(time) {
+    const dt = (time - lastTime) / 1000.0;
+    lastTime = time;
+    
+    update(dt);
+    render();
+    
+    frameCount++;
+    requestAnimationFrame(gameLoop);
+}
+
+// Initial HUD update
+updateHUD();
+try{ render(); }catch(e){}
+
+</script>
+</body>
+</html>

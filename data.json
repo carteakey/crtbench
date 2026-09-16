@@ -29,7 +29,8 @@
     "wins": 0,
     "hidden": false,
     "harness": "Frontier API",
-    "thinkingEffort": "High Reasoning CoT"
+    "thinkingEffort": "High Reasoning CoT",
+    "genre": "platformer"
   },
   {
     "id": "gemini38_flash_full",
@@ -61,7 +62,8 @@
     "wins": 0,
     "hidden": false,
     "harness": "Antigravity CLI",
-    "thinkingEffort": "Full CoT Deliberation"
+    "thinkingEffort": "Full CoT Deliberation",
+    "genre": "platformer"
   },
   {
     "id": "qwen38_flash_3070_potato",
@@ -94,7 +96,8 @@
     "hidden": false,
     "demoUrl": "https://www.cc8.pl/mario-q38-flash.html",
     "harness": "llama.cpp (cc8.pl)",
-    "thinkingEffort": "10k CoT Budget (xhigh)"
+    "thinkingEffort": "10k CoT Budget (xhigh)",
+    "genre": "platformer"
   },
   {
     "id": "qwen38_gold_60k",
@@ -126,7 +129,8 @@
     "wins": 0,
     "hidden": false,
     "harness": "llama.cpp Master (L3MS)",
-    "thinkingEffort": "60k CoT Deliberation (59m)"
+    "thinkingEffort": "60k CoT Deliberation (59m)",
+    "genre": "platformer"
   },
   {
     "id": "qwen38_27b_chopsticks",
@@ -159,7 +163,8 @@
     "hidden": false,
     "demoUrl": "https://indigo-carmencita-27.tiiny.site/",
     "harness": "llama.cpp (u/ChopSticksPlease)",
-    "thinkingEffort": "Standard One-Shot"
+    "thinkingEffort": "Standard One-Shot",
+    "genre": "platformer"
   },
   {
     "id": "gpt6_astra_light",
@@ -191,7 +196,8 @@
     "wins": 0,
     "hidden": false,
     "harness": "Frontier API",
-    "thinkingEffort": "Light Reasoning CoT"
+    "thinkingEffort": "Light Reasoning CoT",
+    "genre": "platformer"
   },
   {
     "id": "qwen38_27b_circus_mikenonect",
@@ -224,7 +230,8 @@
     "hidden": false,
     "demoUrl": "https://mikeveerman.github.io/qwen38-27b-mario",
     "harness": "llama.cpp (u/MikeNonect)",
-    "thinkingEffort": "Overnight Batch (Q8)"
+    "thinkingEffort": "Overnight Batch (Q8)",
+    "genre": "platformer"
   },
   {
     "id": "gemini38_flash_baseline",
@@ -256,7 +263,8 @@
     "wins": 0,
     "hidden": true,
     "harness": "Antigravity Interactive",
-    "thinkingEffort": "Zero-Shot Fast Mode"
+    "thinkingEffort": "Zero-Shot Fast Mode",
+    "genre": "platformer"
   },
   {
     "id": "gemini25_pro_pygame",
@@ -288,7 +296,8 @@
     "wins": 0,
     "hidden": true,
     "harness": "Cloud API (u/Healthy-Nebula-3603)",
-    "thinkingEffort": "Standard One-Shot"
+    "thinkingEffort": "Standard One-Shot",
+    "genre": "platformer"
   },
   {
     "id": "ornith35b_matrix_bros",
@@ -321,6 +330,40 @@
     "preview": "previews/ornith35b_matrix_bros.png",
     "hidden": false,
     "harness": "llama.cpp (u/TimelordQ)",
-    "thinkingEffort": "Direct Zero-Shot"
+    "thinkingEffort": "Direct Zero-Shot",
+    "genre": "platformer"
+  },
+  {
+    "id": "gemini38_pro_wolf_raycaster",
+    "title": "Operation Wolf3D: Raycast 60",
+    "author": "Gemini 3.8 Pro",
+    "genre": "raycaster",
+    "category": "Wolf3D Classic",
+    "badge": "Inaugural 3D Raycaster",
+    "file": "games/gemini38_pro_wolf_raycaster.html",
+    "baseVotes": 1,
+    "vibeScore": 9.2,
+    "size": "25.6 KB",
+    "lines": 763,
+    "hardware": "Frontier Cloud API",
+    "model": "Gemini 3.8 Pro",
+    "harness": "Antigravity Pro Engine",
+    "thinkingEffort": "High CoT Deliberation",
+    "mode": "High CoT Deliberation",
+    "promptStyle": "DDA 3D FPS Specification",
+    "prompt": "Write a complete, fully playable 2.5D Raycaster FPS game (inspired by Wolfenstein 3D and Doom) in a single HTML file with embedded CSS and JavaScript. Zero external dependencies or libraries (no Three.js, pure Canvas 2D).\n\nMust include:\n1. A 60 FPS DDA (Digital Differential Analysis) raycaster engine with fish-eye distortion correction (cos angle multiplier).\n2. Procedurally generated wall textures (e.g. brick, stone, and tech panel patterns drawn via procedural canvas math).\n3. Player movement with WASD (forward, backward, strafe left/right) and Arrow keys / Mouse for turning, with wall collision sliding.\n4. Top-down minimap HUD in a corner showing walls and player FOV cone.\n5. First-person weapon view (pistol/shotgun) with recoil bobbing, muzzle flash, and hitscan shooting.\n6. Web Audio API procedural sound effects (gunshot, bullet hit, enemy groans, footsteps) without external audio files.\n7. Enemy sprites rendered with depth-sorted billboarding and simple line-of-sight chase & shoot AI.\n8. Retro HUD for Health, Ammo, Score, and Face / Status indicator.",
+    "sourceName": "PlumberBench 3D Track Run",
+    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gemini38_pro_wolf_raycaster.html",
+    "vibeReview": "Inaugural contender for PlumberBench 2.5D Raycaster discipline. Implements a complete DDA raycasting engine on pure 2D Canvas with procedural stone/tech textures, fish-eye distortion correction, depth-sorted billboard enemy sprites, corner minimap, muzzle flash recoil, and Web Audio synthesized gunshots.",
+    "ratings": {
+      "nesCrunch": 9.0,
+      "physicsFeel": 9.3,
+      "ambition": 9.5
+    },
+    "elo": 1200,
+    "matches": 0,
+    "wins": 0,
+    "preview": "previews/gemini38_pro_wolf_raycaster.png",
+    "hidden": false
   }
 ]

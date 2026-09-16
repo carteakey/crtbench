@@ -6,7 +6,8 @@
 [![Leaderboard](https://img.shields.io/badge/PlumberBench-ELO_Leaderboard-e52521?style=for-the-badge&logo=nintendo)](https://github.com/kartikeychauhan/plumberbench)
 [![One Shot](https://img.shields.io/badge/Format-Strict_One--Shot-f8c300?style=for-the-badge)](SUBMISSIONS.md)
 [![Blind Arena](https://img.shields.io/badge/Vibe_Arena-Blind_Duel_ELO-58a6ff?style=for-the-badge)](index.html)
-[![Active Roster](https://img.shields.io/badge/Active_Entries-8_Contenders-2ea043?style=for-the-badge)](games/)
+[![Active Roster](https://img.shields.io/badge/Active_Entries-9_Contenders-2ea043?style=for-the-badge)](games/)
+[![Disciplines](https://img.shields.io/badge/Disciplines-Platformer_%7C_Raycaster-8250df?style=for-the-badge)](index.html)
 
 ---
 
@@ -14,29 +15,29 @@
 
 Standard LLM benchmarks (HumanEval, SWE-bench, GSM8K) measure narrow syntax verification or unit test satisfaction. None of them measure **experiential coherence**: can a model produce something that actually *feels good to play*?
 
-Building an authentic 2D platformer from a single prompt is the ultimate gauntlet for frontier and local models:
-1. **Multimodal Spatial Reasoning**: Constructing coherent level topography, tile collision masks, bounding-box penetration resolution, and gravity curves.
-2. **Hard Real-Time Game Loops**: 60 FPS deterministic execution loops, fixed-timestep physics accumulators, and zero-allocation frame routines.
-3. **Chiptune Audio DSP**: Authentic NES (2A03) audio had no MP3s or WAV files. The model must synthesize square waves, triangle basslines, and pseudo-random shift-register white noise drums directly in Web Audio API code.
-4. **Procedural Sprite Synthesis**: Zero external images or CDN downloads. Every character sprite, obstacle, block, and coin must be drawn pixel-by-pixel with Canvas 2D or SVG math.
-5. **"Game Feel" (Juice)**: Variable jump height tied to button hold duration, acceleration curves, skid turn inertia, coyote jump buffer time, stomp bounce recoil, and kinetic ricochet physics.
+PlumberBench evaluates models across multiple fundamental game architecture disciplines:
+1. **🏃 2D Platformer Track (Continuous Newtonian Physics):** Bounding-box penetration resolution, jump velocity accumulators, coyote buffer frames, variable jump heights, tilemap collision, and Web Audio chiptune synthesis.
+2. **🔫 2.5D Raycaster Track (3D Spatial Geometry & Trigonometry):** DDA (Digital Differential Analysis) grid traversal, ray angle stepping, fish-eye distortion correction ($\text{dist} \times \cos(\theta)$), vertical scanline slicing, and billboard sprite depth-buffering.
+3. **👻 Arcade Maze Track (Discrete Graph Traversal - Planned):** Grid containment, intersection decision trees, and ghost AI finite state machines (Chase, Scatter, Frightened).
+4. **🧱 Falling Blocks Track (Matrix Transformations - Planned):** 2D matrix rotations, Super Rotation System (SRS) kick tables, and line clearing loops.
 
 ---
 
-## ⚡ Active Web Leaderboard (8 Contenders)
+## ⚡ Active Web Leaderboard (9 Contenders)
 
-All active contenders are strict **single-prompt, single-file HTML/JS/CSS games** with zero dependencies. ELO ratings initialize at baseline **1200** and evolve dynamically through user votes in the **Blind Vibe Arena**.
+All active contenders are strict **single-prompt, single-file HTML/JS/CSS games** with zero dependencies. ELO ratings initialize at baseline **1200** and evolve dynamically through fair **In-Genre Blind Duels**.
 
-| Rank | Contender | Model & Harness | Thinking Effort & Hardware | Base ELO | Vibe | Radar (Crunch / Phys / Amb) | Official Source Links |
-| :---: | :--- | :--- | :--- | :---: | :---: | :---: | :--- |
-| 🥇 | [Three Worlds Odyssey](games/gpt6_astra_high.html) | **GPT-6 Astra**<br>`Frontier API` | **High Reasoning CoT**<br>`Frontier Cloud API` | **1200** | 9.4 | 7.5 / 9.5 / 9.8 | [Run Artifact](games/gpt6_astra_high.html) |
-| 🥈 | [The 2.6k Deluxe Platformer](games/gemini38_flash_full.html) | **Gemini 3.8 Flash**<br>`Antigravity CLI` | **Full CoT Deliberation**<br>`Antigravity Pro Engine` | **1200** | 9.1 | 9.5 / 9.6 / 9.2 | [Run Artifact](games/gemini38_flash_full.html) |
-| 🥉 | [Super Pixel Bros (Course 1-1)](games/qwen38_flash_3070_potato.html) | **Qwen3.8-Flash-Next**<br>`llama.cpp (cc8.pl)` | **10k CoT Budget (xhigh)**<br>`RTX 3070 8GB + 80GB DDR4` | **1200** | 8.9 | 9.2 / 8.9 / 8.8 | [Reddit Thread](https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/) &bull; [Author's Live Demo](https://www.cc8.pl/mario-q38-flash.html) |
-| 4 | [The Matrix Bros (Cyber Edition)](games/ornith35b_matrix_bros.html) | **Ornith-1.5-35B**<br>`llama.cpp (u/TimelordQ)` | **Direct Zero-Shot**<br>`Local RTX 3090 24GB` | **1200** | 8.8 | 8.8 / 8.7 / 9.3 | [Reddit Thread](https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/) &bull; [GitHub Demo](https://timelordq.github.io/The-Matrix-Bros/index.html) |
-| 5 | [Qwen 27B Tiiny NES Replica](games/qwen38_27b_chopsticks.html) | **Qwen3.8-27B**<br>`llama.cpp (u/ChopSticksPlease)` | **Standard One-Shot**<br>`Local RTX 3090 24GB` | **1200** | 8.7 | 9.0 / 8.6 / 8.5 | [Reddit Thread](https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/) &bull; [Tiiny Host Demo](https://indigo-carmencita-27.tiiny.site/) |
-| 6 | [The 60,000-Token Monolith](games/qwen38_gold_60k.html) | **Qwen3.8-Flash-Next**<br>`llama.cpp Master (L3MS)` | **60k CoT Deliberation (59m)**<br>`Local RTX 4070 12GB` | **1200** | 8.5 | 9.2 / 8.0 / 9.4 | [L3MS Run](games/qwen38_gold_60k.html) |
-| 7 | [Super Meadow: A Little Adventure](games/gpt6_astra_light.html) | **GPT-6 Astra**<br>`Frontier API` | **Light Reasoning CoT**<br>`Frontier Cloud API` | **1200** | 8.6 | 6.0 / 9.2 / 8.8 | [Run Artifact](games/gpt6_astra_light.html) |
-| 8 | [Circus Jumper](games/qwen38_27b_circus_mikenonect.html) | **Qwen3.8-27B**<br>`llama.cpp (u/MikeNonect)` | **Overnight Batch (Q8)**<br>`Framework Desktop` | **1200** | 8.4 | 5.5 / 8.8 / 9.0 | [Reddit Thread (629 upvotes)](https://www.reddit.com/r/LocalLLaMA/comments/1vp438p/if_you_would_have_told_me_half_a_year_ago_that_a/) &bull; [GitHub Demo](https://mikeveerman.github.io/qwen38-27b-mario) |
+| Rank | Contender | Discipline | Model & Harness | Thinking Effort & Hardware | Base ELO | Vibe | Radar (Crunch / Phys / Amb) | Official Source Links |
+| :---: | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :--- |
+| 🥇 | [Three Worlds Odyssey](games/gpt6_astra_high.html) | 🏃 Platformer | **GPT-6 Astra**<br>`Frontier API` | **High Reasoning CoT**<br>`Frontier Cloud API` | **1200** | 9.4 | 7.5 / 9.5 / 9.8 | [Run Artifact](games/gpt6_astra_high.html) |
+| 🥈 | [The 2.6k Deluxe Platformer](games/gemini38_flash_full.html) | 🏃 Platformer | **Gemini 3.8 Flash**<br>`Antigravity CLI` | **Full CoT Deliberation**<br>`Antigravity Pro Engine` | **1200** | 9.1 | 9.5 / 9.6 / 9.2 | [Run Artifact](games/gemini38_flash_full.html) |
+| 🥉 | [Operation Wolf3D](games/gemini38_pro_wolf_raycaster.html) | 🔫 Raycaster | **Gemini 3.8 Pro**<br>`Antigravity Pro` | **High CoT Deliberation**<br>`Frontier Cloud API` | **1200** | 9.2 | 9.0 / 9.3 / 9.5 | [Run Artifact](games/gemini38_pro_wolf_raycaster.html) |
+| 4 | [Super Pixel Bros (Course 1-1)](games/qwen38_flash_3070_potato.html) | 🏃 Platformer | **Qwen3.8-Flash-Next**<br>`llama.cpp (cc8.pl)` | **10k CoT Budget (xhigh)**<br>`RTX 3070 8GB + 80GB DDR4` | **1200** | 8.9 | 9.2 / 8.9 / 8.8 | [Reddit Thread](https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/) &bull; [Author's Live Demo](https://www.cc8.pl/mario-q38-flash.html) |
+| 5 | [The Matrix Bros (Cyber Edition)](games/ornith35b_matrix_bros.html) | 🏃 Platformer | **Ornith-1.5-35B**<br>`llama.cpp (u/TimelordQ)` | **Direct Zero-Shot**<br>`Local RTX 3090 24GB` | **1200** | 8.8 | 8.8 / 8.7 / 9.3 | [Reddit Thread](https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/) &bull; [GitHub Demo](https://timelordq.github.io/The-Matrix-Bros/index.html) |
+| 6 | [Qwen 27B Tiiny NES Replica](games/qwen38_27b_chopsticks.html) | 🏃 Platformer | **Qwen3.8-27B**<br>`llama.cpp (u/ChopSticksPlease)` | **Standard One-Shot**<br>`Local RTX 3090 24GB` | **1200** | 8.7 | 9.0 / 8.6 / 8.5 | [Reddit Thread](https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/) &bull; [Tiiny Host Demo](https://indigo-carmencita-27.tiiny.site/) |
+| 7 | [The 60,000-Token Monolith](games/qwen38_gold_60k.html) | 🏃 Platformer | **Qwen3.8-Flash-Next**<br>`llama.cpp Master (L3MS)` | **60k CoT Deliberation (59m)**<br>`Local RTX 4070 12GB` | **1200** | 8.5 | 9.2 / 8.0 / 9.4 | [L3MS Run](games/qwen38_gold_60k.html) |
+| 8 | [Super Meadow: A Little Adventure](games/gpt6_astra_light.html) | 🏃 Platformer | **GPT-6 Astra**<br>`Frontier API` | **Light Reasoning CoT**<br>`Frontier Cloud API` | **1200** | 8.6 | 6.0 / 9.2 / 8.8 | [Run Artifact](games/gpt6_astra_light.html) |
+| 9 | [Circus Jumper](games/qwen38_27b_circus_mikenonect.html) | 🏃 Platformer | **Qwen3.8-27B**<br>`llama.cpp (u/MikeNonect)` | **Overnight Batch (Q8)**<br>`Framework Desktop` | **1200** | 8.4 | 5.5 / 8.8 / 9.0 | [Reddit Thread (629 upvotes)](https://www.reddit.com/r/LocalLLaMA/comments/1vp438p/if_you_would_have_told_me_half_a_year_ago_that_a/) &bull; [GitHub Demo](https://mikeveerman.github.io/qwen38-27b-mario) |
 
 ---
 
@@ -47,10 +48,10 @@ All active contenders are strict **single-prompt, single-file HTML/JS/CSS games*
 | ![Astra High](previews/gpt6_astra_high.png) | ![Gemini Full](previews/gemini38_flash_full.png) | ![Qwen Potato](previews/qwen38_flash_3070_potato.png) |
 | **Three Worlds Edition** | **2.6k Deluxe NES Physics** | **RTX 3070 8GB Potato** |
 
-| [The Matrix Bros (Ornith 35B)](games/ornith35b_matrix_bros.html) | [Qwen 27B Tiiny (ChopSticks)](games/qwen38_27b_chopsticks.html) | [The 60k Monolith (Qwen Gold)](games/qwen38_gold_60k.html) |
+| [The Matrix Bros (Ornith 35B)](games/ornith35b_matrix_bros.html) | [Qwen 27B Tiiny (ChopSticks)](games/qwen38_27b_chopsticks.html) | [Operation Wolf3D (Gemini Pro)](games/gemini38_pro_wolf_raycaster.html) |
 | :---: | :---: | :---: |
-| ![Matrix Bros](previews/ornith35b_matrix_bros.png) | ![ChopSticks](previews/qwen38_27b_chopsticks.png) | ![Qwen Gold](previews/qwen38_gold_60k.png) |
-| **Cyber Katakana Rain** | **ChopSticks NES Replica** | **CRT Shaders & Pipes** |
+| ![Matrix Bros](previews/ornith35b_matrix_bros.png) | ![ChopSticks](previews/qwen38_27b_chopsticks.png) | ![Operation Wolf3D](previews/gemini38_pro_wolf_raycaster.png) |
+| **Cyber Katakana Rain** | **ChopSticks NES Replica** | **3D DDA Raycaster FPS** |
 
 ---
 

@@ -1102,23 +1102,35 @@
 
   <!-- View Switcher -->
   <div class="view-nav">
-    <button class="view-nav-btn active" data-view="wall">🕹️ The Arcade Wall (8)</button>
+    <button class="view-nav-btn active" data-view="wall">🕹️ The Arcade Wall (<span id="countWallHeader">9</span>)</button>
     <button class="view-nav-btn" data-view="arena">⚔️ Blind Vibe Arena</button>
     <button class="view-nav-btn" data-view="table">📊 Elo Leaderboard</button>
     <button class="view-nav-btn" id="openSubmitModalBtn" style="border-color:#238636; color:#7ee787; margin-left:auto;">➕ Submit Run</button>
   </div>
 </header>
 
-<!-- Controls Bar (Active on Wall of Mario) -->
+<!-- Controls Bar (Active on The Arcade Wall & Leaderboard) -->
 <div class="controls-wrap" id="wallControls">
-  <div class="filter-group">
-    <button class="filter-btn active" data-filter="all">All Active (8)</button>
-    <button class="filter-btn" data-filter="NES Purist">NES Purists</button>
-    <button class="filter-btn" data-filter="Modern Indie">Modern Indie</button>
-    <button class="filter-btn" data-filter="local">Local Hardware</button>
-    <button class="filter-btn" data-filter="frontier">Frontier Cloud</button>
+  <div style="display:flex; flex-direction:column; gap:10px; flex:1;">
+    <!-- Genre / Discipline Filter -->
+    <div class="filter-group" id="genreFilterGroup">
+      <button class="filter-btn active" data-genre="all">🎮 All Disciplines (<span id="countGenreAll">8</span>)</button>
+      <button class="filter-btn" data-genre="platformer">🏃 2D Platformer (<span id="countGenrePlatformer">8</span>)</button>
+      <button class="filter-btn" data-genre="raycaster">🔫 2.5D Raycaster (<span id="countGenreRaycaster">0</span>)</button>
+      <button class="filter-btn" data-genre="maze">👻 Arcade Maze (<span id="countGenreMaze">0</span>)</button>
+      <button class="filter-btn" data-genre="puzzle">🧱 Falling Blocks (<span id="countGenrePuzzle">0</span>)</button>
+    </div>
+    <!-- Sub-Filter (Style / Hardware) -->
+    <div class="filter-group" id="styleFilterGroup">
+      <button class="filter-btn active" data-filter="all">All Styles</button>
+      <button class="filter-btn" data-filter="NES Purist">NES Purist</button>
+      <button class="filter-btn" data-filter="Modern Indie">Modern Indie</button>
+      <button class="filter-btn" data-filter="Themed Reskin">Themed Reskin</button>
+      <button class="filter-btn" data-filter="local">Local RTX / Homelab</button>
+      <button class="filter-btn" data-filter="frontier">Frontier Cloud</button>
+    </div>
   </div>
-  <div>
+  <div style="align-self:flex-start;">
     <select id="sortSelect" class="sort-select">
       <option value="elo">Sort by: ELO Rating (Highest)</option>
       <option value="vibe">Sort by: Vibe Score</option>
@@ -1143,6 +1155,12 @@
       <div class="arena-header">
         <div class="arena-title">⚔️ BLIND VIBE ARENA</div>
         <div class="arena-sub">Test both implementations blind with zero bias. ELO ratings and model identities are hidden until your vote is cast.</div>
+        <div style="display:flex; justify-content:center; gap:8px; margin-top:14px; flex-wrap:wrap;" id="arenaGenreButtons">
+          <span style="font-size:11px; color:var(--text-muted); align-self:center; text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">Duel Discipline:</span>
+          <button class="filter-btn active" data-arena-genre="all">🎲 In-Genre Matchup (Fair)</button>
+          <button class="filter-btn" data-arena-genre="platformer">🏃 Platformer Only</button>
+          <button class="filter-btn" data-arena-genre="raycaster">🔫 Raycaster Only</button>
+        </div>
       </div>
 
       <!-- Reveal Result Box (Appears after voting) -->
@@ -1209,6 +1227,7 @@
             <th>Rank</th>
             <th>Preview</th>
             <th>Contender</th>
+            <th>Discipline</th>
             <th>Model & Harness</th>
             <th>Thinking Effort & Hardware</th>
             <th>ELO Rating</th>
@@ -1347,17 +1366,28 @@
 
       <div class="form-grid-2">
         <div class="field-group">
-          <label class="field-label" for="subCategory">Category</label>
+          <label class="field-label" for="subGenre">Benchmark Discipline *</label>
+          <select class="field-select" id="subGenre">
+            <option value="platformer">🏃 2D Platformer (Jump Physics & Audio)</option>
+            <option value="raycaster">🔫 2.5D Raycaster (3D DDA & Projection)</option>
+            <option value="maze">👻 Arcade Maze (Graph Traversal & AI)</option>
+            <option value="puzzle">🧱 Falling Blocks (Matrix & SRS Logic)</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="subCategory">Style / Sub-Category</label>
           <select class="field-select" id="subCategory">
             <option value="NES Purist">NES Purist</option>
             <option value="Modern Indie">Modern Indie</option>
             <option value="Themed Reskin">Themed Reskin</option>
+            <option value="Wolf3D Classic">Wolf3D Classic</option>
+            <option value="Doom Inspired">Doom Inspired</option>
           </select>
         </div>
-        <div class="field-group">
-          <label class="field-label" for="subBadge">Badge / Highlight</label>
-          <input class="field-input" id="subBadge" placeholder="e.g. 500 Reddit Upvotes / One-Shot">
-        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="subBadge">Badge / Highlight</label>
+        <input class="field-input" id="subBadge" placeholder="e.g. 500 Reddit Upvotes / One-Shot">
       </div>
 
       <div class="form-grid-2">
@@ -1416,6 +1446,31 @@
 (() => {
   'use strict';
 
+  function getGenreLabel(genre) {
+    switch (genre) {
+      case 'raycaster': return '🔫 2.5D Raycaster';
+      case 'maze': return '👻 Arcade Maze';
+      case 'puzzle': return '🧱 Falling Blocks';
+      case 'arcade': return '🚀 Space Arcade';
+      default: return '🏃 2D Platformer';
+    }
+  }
+
+  function updateGenreCounts() {
+    const active = getActiveGames();
+    const counts = { all: active.length, platformer: 0, raycaster: 0, maze: 0, puzzle: 0 };
+    active.forEach(g => {
+      const gen = g.genre || 'platformer';
+      counts[gen] = (counts[gen] || 0) + 1;
+    });
+    if (document.getElementById('countGenreAll')) document.getElementById('countGenreAll').textContent = counts.all;
+    if (document.getElementById('countWallHeader')) document.getElementById('countWallHeader').textContent = counts.all;
+    if (document.getElementById('countGenrePlatformer')) document.getElementById('countGenrePlatformer').textContent = counts.platformer;
+    if (document.getElementById('countGenreRaycaster')) document.getElementById('countGenreRaycaster').textContent = counts.raycaster;
+    if (document.getElementById('countGenreMaze')) document.getElementById('countGenreMaze').textContent = counts.maze;
+    if (document.getElementById('countGenrePuzzle')) document.getElementById('countGenrePuzzle').textContent = counts.puzzle;
+  }
+
   // Fallback offline dataset (7 active, 2 hidden)
   const EMBEDDED_GAMES_DATA = [
   {
@@ -1448,7 +1503,8 @@
     "wins": 0,
     "hidden": false,
     "harness": "Frontier API",
-    "thinkingEffort": "High Reasoning CoT"
+    "thinkingEffort": "High Reasoning CoT",
+    "genre": "platformer"
   },
   {
     "id": "gemini38_flash_full",
@@ -1480,7 +1536,8 @@
     "wins": 0,
     "hidden": false,
     "harness": "Antigravity CLI",
-    "thinkingEffort": "Full CoT Deliberation"
+    "thinkingEffort": "Full CoT Deliberation",
+    "genre": "platformer"
   },
   {
     "id": "qwen38_flash_3070_potato",
@@ -1513,7 +1570,8 @@
     "hidden": false,
     "demoUrl": "https://www.cc8.pl/mario-q38-flash.html",
     "harness": "llama.cpp (cc8.pl)",
-    "thinkingEffort": "10k CoT Budget (xhigh)"
+    "thinkingEffort": "10k CoT Budget (xhigh)",
+    "genre": "platformer"
   },
   {
     "id": "qwen38_gold_60k",
@@ -1545,7 +1603,8 @@
     "wins": 0,
     "hidden": false,
     "harness": "llama.cpp Master (L3MS)",
-    "thinkingEffort": "60k CoT Deliberation (59m)"
+    "thinkingEffort": "60k CoT Deliberation (59m)",
+    "genre": "platformer"
   },
   {
     "id": "qwen38_27b_chopsticks",
@@ -1578,7 +1637,8 @@
     "hidden": false,
     "demoUrl": "https://indigo-carmencita-27.tiiny.site/",
     "harness": "llama.cpp (u/ChopSticksPlease)",
-    "thinkingEffort": "Standard One-Shot"
+    "thinkingEffort": "Standard One-Shot",
+    "genre": "platformer"
   },
   {
     "id": "gpt6_astra_light",
@@ -1610,7 +1670,8 @@
     "wins": 0,
     "hidden": false,
     "harness": "Frontier API",
-    "thinkingEffort": "Light Reasoning CoT"
+    "thinkingEffort": "Light Reasoning CoT",
+    "genre": "platformer"
   },
   {
     "id": "qwen38_27b_circus_mikenonect",
@@ -1643,7 +1704,8 @@
     "hidden": false,
     "demoUrl": "https://mikeveerman.github.io/qwen38-27b-mario",
     "harness": "llama.cpp (u/MikeNonect)",
-    "thinkingEffort": "Overnight Batch (Q8)"
+    "thinkingEffort": "Overnight Batch (Q8)",
+    "genre": "platformer"
   },
   {
     "id": "gemini38_flash_baseline",
@@ -1675,7 +1737,8 @@
     "wins": 0,
     "hidden": true,
     "harness": "Antigravity Interactive",
-    "thinkingEffort": "Zero-Shot Fast Mode"
+    "thinkingEffort": "Zero-Shot Fast Mode",
+    "genre": "platformer"
   },
   {
     "id": "gemini25_pro_pygame",
@@ -1707,7 +1770,8 @@
     "wins": 0,
     "hidden": true,
     "harness": "Cloud API (u/Healthy-Nebula-3603)",
-    "thinkingEffort": "Standard One-Shot"
+    "thinkingEffort": "Standard One-Shot",
+    "genre": "platformer"
   },
   {
     "id": "ornith35b_matrix_bros",
@@ -1740,12 +1804,47 @@
     "preview": "previews/ornith35b_matrix_bros.png",
     "hidden": false,
     "harness": "llama.cpp (u/TimelordQ)",
-    "thinkingEffort": "Direct Zero-Shot"
+    "thinkingEffort": "Direct Zero-Shot",
+    "genre": "platformer"
+  },
+  {
+    "id": "gemini38_pro_wolf_raycaster",
+    "title": "Operation Wolf3D: Raycast 60",
+    "author": "Gemini 3.8 Pro",
+    "genre": "raycaster",
+    "category": "Wolf3D Classic",
+    "badge": "Inaugural 3D Raycaster",
+    "file": "games/gemini38_pro_wolf_raycaster.html",
+    "baseVotes": 1,
+    "vibeScore": 9.2,
+    "size": "25.6 KB",
+    "lines": 763,
+    "hardware": "Frontier Cloud API",
+    "model": "Gemini 3.8 Pro",
+    "harness": "Antigravity Pro Engine",
+    "thinkingEffort": "High CoT Deliberation",
+    "mode": "High CoT Deliberation",
+    "promptStyle": "DDA 3D FPS Specification",
+    "prompt": "Write a complete, fully playable 2.5D Raycaster FPS game (inspired by Wolfenstein 3D and Doom) in a single HTML file with embedded CSS and JavaScript. Zero external dependencies or libraries (no Three.js, pure Canvas 2D).\n\nMust include:\n1. A 60 FPS DDA (Digital Differential Analysis) raycaster engine with fish-eye distortion correction (cos angle multiplier).\n2. Procedurally generated wall textures (e.g. brick, stone, and tech panel patterns drawn via procedural canvas math).\n3. Player movement with WASD (forward, backward, strafe left/right) and Arrow keys / Mouse for turning, with wall collision sliding.\n4. Top-down minimap HUD in a corner showing walls and player FOV cone.\n5. First-person weapon view (pistol/shotgun) with recoil bobbing, muzzle flash, and hitscan shooting.\n6. Web Audio API procedural sound effects (gunshot, bullet hit, enemy groans, footsteps) without external audio files.\n7. Enemy sprites rendered with depth-sorted billboarding and simple line-of-sight chase & shoot AI.\n8. Retro HUD for Health, Ammo, Score, and Face / Status indicator.",
+    "sourceName": "PlumberBench 3D Track Run",
+    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gemini38_pro_wolf_raycaster.html",
+    "vibeReview": "Inaugural contender for PlumberBench 2.5D Raycaster discipline. Implements a complete DDA raycasting engine on pure 2D Canvas with procedural stone/tech textures, fish-eye distortion correction, depth-sorted billboard enemy sprites, corner minimap, muzzle flash recoil, and Web Audio synthesized gunshots.",
+    "ratings": {
+      "nesCrunch": 9.0,
+      "physicsFeel": 9.3,
+      "ambition": 9.5
+    },
+    "elo": 1200,
+    "matches": 0,
+    "wins": 0,
+    "preview": "previews/gemini38_pro_wolf_raycaster.png",
+    "hidden": false
   }
 ];
 
   let gamesData = [];
   let currentFilter = 'all';
+  let currentGenre = 'all';
   let currentSort = 'elo';
   let currentView = 'wall';
   let activeGameId = null;
@@ -1754,6 +1853,7 @@
   let arenaGameA = null;
   let arenaGameB = null;
   let arenaVoted = false;
+  let arenaGenreFilter = 'all';
 
   // Local Storage Keys
   const VOTE_STORAGE_KEY = 'pb_user_votes';
@@ -1868,6 +1968,7 @@
       console.warn('Using embedded dataset fallback:', e);
       gamesData = EMBEDDED_GAMES_DATA;
     }
+    updateGenreCounts();
     renderGrid();
     renderTable();
     setupEventListeners();
@@ -1881,6 +1982,10 @@
   function getFilteredAndSorted() {
     let active = getActiveGames();
     let filtered = active.filter(g => {
+      // 1. Discipline / Genre filter
+      if (currentGenre !== 'all' && (g.genre || 'platformer') !== currentGenre) return false;
+
+      // 2. Hardware / Sub-category filter
       if (currentFilter === 'all') return true;
       if (currentFilter === 'local') return g.hardware.toLowerCase().includes('rtx') || g.hardware.toLowerCase().includes('desktop');
       if (currentFilter === 'frontier') return g.hardware.toLowerCase().includes('cloud') || g.hardware.toLowerCase().includes('pro');
@@ -1924,6 +2029,7 @@
           <div class="card-title-group">
             <div class="badge-row">
               <span class="${badgeClass}">#${idx + 1}</span>
+              <span class="card-badge" style="background:#8250df; font-size:8px;">${getGenreLabel(game.genre || 'platformer')}</span>
               <span class="elo-pill ${tier.cls}">⚡ ${effectiveElo} ELO</span>
             </div>
             <div class="card-title">${game.title}</div>
@@ -2006,6 +2112,9 @@
         <td>
           <div style="font-weight:700; color:#fff;">${game.title}</div>
           <div style="font-size:11px; color:var(--text-muted);">${game.category} &bull; ${game.author}</div>
+        </td>
+        <td>
+          <span class="card-badge" style="background:#21262d; border:1px solid var(--card-border); color:#e6edf3; font-size:9px;">${getGenreLabel(game.genre || 'platformer')}</span>
         </td>
         <td>
           <div style="color:var(--accent); font-family:monospace; font-size:12px; font-weight:600;">${game.model}</div>
@@ -2152,6 +2261,7 @@
 
     showToast(`⚡ Match logged! ${arenaGameA.title}: ${signA} | ${arenaGameB.title}: ${signB}`);
 
+    updateGenreCounts();
     renderGrid();
     renderTable();
   }
@@ -2269,6 +2379,7 @@
         const title = document.getElementById('subTitle').value.trim();
         const author = document.getElementById('subAuthor').value.trim();
         const model = document.getElementById('subModel').value.trim();
+        const genre = (document.getElementById('subGenre') ? document.getElementById('subGenre').value : '') || 'platformer';
         const harness = (document.getElementById('subHarness') ? document.getElementById('subHarness').value.trim() : '') || 'llama.cpp';
         const effort = (document.getElementById('subEffort') ? document.getElementById('subEffort').value.trim() : '') || 'Single Turn One-Shot';
         const hardware = document.getElementById('subHardware').value.trim();
@@ -2312,6 +2423,7 @@
           id: slugId,
           title: title,
           author: author,
+          genre: genre,
           category: category,
           badge: badge,
           file: `games/${slugId}.html`,
@@ -2417,6 +2529,7 @@
     }
 
     setUserVotes(userVotes);
+    updateGenreCounts();
     renderGrid();
     renderTable();
   }
