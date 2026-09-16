@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Neon Phantom Maze: Classic Arcade Chase</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        #hud {
+            display: flex;
+            justify-content: space-between;
+            width: 448px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .score-val { color: #ff00ff; }
+        canvas {
+            background-color: #000;
+            border: 2px solid #00f;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="hud">
+        <div>1UP: <span id="score" class="score-val">0</span></div>
+        <div>HIGH SCORE: <span id="highScore" class="score-val">10000</span></div>
+        <div>LIVES: <span id="lives">3</span></div>
+        <div>LEVEL: <span id="level">1</span></div>
+    </div>
+    <canvas id="gameCanvas" width="448" height="496"></canvas>
+    
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 28x31 Maze (0=dot, 1=wall, 2=empty, 3=power pill)
+        const maze = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1],
+            [1,3,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,3,1],
+            [1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,0,1],
+            [1,0,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,0,1],
+            [1,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,1],
+            [1,1,1,1,1,1,0,1,1,1,1,1,2,1,1,2,1,1,1,1,1,0,1,1,1,1,1,1],
+            [2,2,2,2,2,1,0,1,1,1,1,1,2,1,1,2,1,1,1,1,1,0,1,2,2,2,2,2],
+            [2,2,2,2,2,1,0,1,1,2,2,2,2,2,2,2,2,2,2,1,1,0,1,2,2,2,2,2],
+            [1,1,1,1,1,1,0,1,1,2,1,1,1,2,2,1,1,1,2,1,1,0,1,1,1,1,1,1],
+            [2,2,2,2,2,2,0,2,2,2,1,2,2,2,2,2,2,1,2,2,2,0,2,2,2,2,2,2],
+            [1,1,1,1,1,1,0,1,1,2,1,1,1,1,1,1,1,1,2,1,1,0,1,1,1,1,1,1],
+            [2,2,2,2,2,1,0,1,1,2,2,2,2,2,2,2,2,2,2,1,1,0,1,2,2,2,2,2],
+            [2,2,2,2,2,1,0,1,1,2,1,1,1,1,1,1,1,1,2,1,1,0,1,2,2,2,2,2],
+            [1,1,1,1,1,1,0,1,1,2,1,1,1,1,1,1,1,1,2,1,1,0,1,1,1,1,1,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1],
+            [1,3,0,0,1,1,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,1,1,0,0,3,1],
+            [1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1],
+            [1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1],
+            [1,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,1],
+            [1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1],
+            [1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ];
+
+        const TILE = 16;
+        let score = 0, lives = 3, level = 1;
+        let p = { x: 14, y: 20, dx: -1, dy: 0, nextDx: -1, nextDy: 0, speed: 0.1 };
+        
+        const ghosts = [
+            { x: 14, y: 11, dx: 1, dy: 0, color: 'red', mode: 'chase' },
+            { x: 13, y: 13, dx: 0, dy: -1, color: 'pink', mode: 'chase' },
+            { x: 15, y: 13, dx: 0, dy: -1, color: 'cyan', mode: 'chase' },
+            { x: 14, y: 13, dx: 0, dy: -1, color: 'orange', mode: 'scatter' }
+        ];
+
+        let audioCtx;
+        function playChomp() {
+            if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        document.addEventListener('keydown', e => {
+            if(e.key==='ArrowLeft') { p.nextDx=-1; p.nextDy=0; }
+            if(e.key==='ArrowRight'){ p.nextDx=1; p.nextDy=0; }
+            if(e.key==='ArrowUp')   { p.nextDx=0; p.nextDy=-1; }
+            if(e.key==='ArrowDown') { p.nextDx=0; p.nextDy=1; }
+        });
+
+        function isWall(x, y) {
+            let cx = Math.round(x), cy = Math.round(y);
+            if(cy < 0 || cy >= maze.length) return false;
+            if(cx < 0 || cx >= maze[0].length) return false;
+            return maze[cy][cx] === 1;
+        }
+
+        function update() {
+            let cx = Math.round(p.x), cy = Math.round(p.y);
+            
+            // Try corner turning
+            if (Math.abs(p.x - cx) < 0.2 && Math.abs(p.y - cy) < 0.2) {
+                if (!isWall(cx + p.nextDx, cy + p.nextDy)) {
+                    p.dx = p.nextDx;
+                    p.dy = p.nextDy;
+                    p.x = cx; p.y = cy; // snap to grid on turn
+                }
+            }
+
+            if (!isWall(p.x + p.dx * p.speed, p.y + p.dy * p.speed)) {
+                p.x += p.dx * p.speed;
+                p.y += p.dy * p.speed;
+            }
+
+            // Wrap around tunnel
+            if (p.x < -1) p.x = maze[0].length;
+            if (p.x > maze[0].length) p.x = -1;
+
+            // Eat dots
+            let ix = Math.floor(p.x + 0.5), iy = Math.floor(p.y + 0.5);
+            if (maze[iy] && maze[iy][ix] === 0) {
+                maze[iy][ix] = 2;
+                score += 10;
+                document.getElementById('score').innerText = score;
+                playChomp();
+            } else if (maze[iy] && maze[iy][ix] === 3) {
+                maze[iy][ix] = 2;
+                score += 50;
+                document.getElementById('score').innerText = score;
+                ghosts.forEach(g => g.mode = 'frightened');
+                setTimeout(() => ghosts.forEach(g => g.mode = 'chase'), 6000);
+            }
+            
+            // Very basic ghost movement (random walk for demo)
+            ghosts.forEach(g => {
+                let gx = Math.round(g.x), gy = Math.round(g.y);
+                if (Math.abs(g.x - gx) < 0.1 && Math.abs(g.y - gy) < 0.1) {
+                    let dirs = [[1,0], [-1,0], [0,1], [0,-1]].filter(d => !isWall(gx + d[0], gy + d[1]) && (d[0] !== -g.dx || d[1] !== -g.dy));
+                    if(dirs.length > 0) {
+                        let chosen = dirs[Math.floor(Math.random() * dirs.length)];
+                        g.dx = chosen[0]; g.dy = chosen[1];
+                        g.x = gx; g.y = gy;
+                    }
+                }
+                g.x += g.dx * 0.05;
+                g.y += g.dy * 0.05;
+            });
+        }
+
+        function draw() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for(let y=0; y<maze.length; y++) {
+                for(let x=0; x<maze[y].length; x++) {
+                    if(maze[y][x] === 1) {
+                        ctx.strokeStyle = '#22f';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(x*TILE, y*TILE, TILE, TILE);
+                    } else if(maze[y][x] === 0) {
+                        ctx.fillStyle = '#ffb8ae';
+                        ctx.fillRect(x*TILE + TILE/2 - 2, y*TILE + TILE/2 - 2, 4, 4);
+                    } else if(maze[y][x] === 3) {
+                        ctx.fillStyle = '#ffb8ae';
+                        ctx.beginPath();
+                        ctx.arc(x*TILE + TILE/2, y*TILE + TILE/2, 6, 0, Math.PI*2);
+                        ctx.fill();
+                    }
+                }
+            }
+
+            // Player
+            ctx.fillStyle = '#ff0';
+            ctx.beginPath();
+            ctx.arc(p.x*TILE + TILE/2, p.y*TILE + TILE/2, TILE/1.5, 0.2*Math.PI, 1.8*Math.PI);
+            ctx.lineTo(p.x*TILE + TILE/2, p.y*TILE + TILE/2);
+            ctx.fill();
+
+            // Ghosts
+            ghosts.forEach(g => {
+                ctx.fillStyle = g.mode === 'frightened' ? '#00f' : g.color;
+                ctx.beginPath();
+                ctx.arc(g.x*TILE + TILE/2, g.y*TILE + TILE/2, TILE/1.5, Math.PI, 0);
+                ctx.fillRect(g.x*TILE - TILE/6, g.y*TILE + TILE/2, TILE/1.5*2, TILE/1.5);
+                ctx.fill();
+            });
+        }
+
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+        loop();
+    </script>
+</body>
+</html>

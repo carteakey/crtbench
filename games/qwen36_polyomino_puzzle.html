@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Quantum Cascade: Polyomino Drop</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+    body {
+        background: #050510;
+        color: #0ff;
+        font-family: 'Orbitron', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        overflow: hidden;
+        background-image: radial-gradient(circle at 50% 50%, #1a1a3a 0%, #050510 100%);
+    }
+    #ui-container {
+        display: flex;
+        gap: 30px;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        padding: 30px;
+        border: 1px solid rgba(0, 255, 255, 0.1);
+        border-radius: 20px;
+        box-shadow: 0 0 40px rgba(0, 255, 255, 0.1), inset 0 0 20px rgba(0, 255, 255, 0.05);
+    }
+    .panel {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        width: 140px;
+    }
+    .glass-box {
+        background: rgba(0, 255, 255, 0.05);
+        border: 1px solid rgba(0, 255, 255, 0.2);
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.05);
+    }
+    .glass-box .label {
+        font-size: 12px;
+        letter-spacing: 2px;
+        color: rgba(0, 255, 255, 0.6);
+        margin-bottom: 5px;
+    }
+    .glass-box .value {
+        font-size: 24px;
+        font-weight: 700;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    }
+    #game-canvas {
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        border-radius: 10px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(0, 255, 255, 0.05);
+    }
+    #particle-canvas {
+        position: absolute;
+        pointer-events: none;
+    }
+    .game-area {
+        position: relative;
+    }
+    #start-screen {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(5,5,16,0.9);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+        backdrop-filter: blur(5px);
+    }
+    .glow-text {
+        font-size: 40px;
+        font-weight: 700;
+        color: #fff;
+        text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0ff;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .subtitle {
+        color: rgba(0, 255, 255, 0.7);
+        letter-spacing: 4px;
+    }
+    #combo-display {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 60px;
+        font-weight: 700;
+        color: #f0f;
+        text-shadow: 0 0 20px #f0f, 0 0 40px #f0f;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+    }
+</style>
+</head>
+<body>
+
+<div id="ui-container">
+    <div class="panel">
+        <div class="glass-box">
+            <div class="label">HOLD (C)</div>
+            <canvas id="hold-canvas" width="100" height="100"></canvas>
+        </div>
+        <div class="glass-box">
+            <div class="label">SCORE</div>
+            <div class="value" id="score">0</div>
+        </div>
+        <div class="glass-box">
+            <div class="label">COMBO</div>
+            <div class="value" id="combo">0</div>
+        </div>
+    </div>
+    
+    <div class="game-area">
+        <canvas id="game-canvas" width="300" height="600"></canvas>
+        <canvas id="particle-canvas" width="300" height="600" style="top:0; left:0;"></canvas>
+        <div id="combo-display">2x!</div>
+    </div>
+    
+    <div class="panel">
+        <div class="glass-box">
+            <div class="label">NEXT</div>
+            <canvas id="next-canvas" width="100" height="100"></canvas>
+        </div>
+        <div class="glass-box">
+            <div class="label">LEVEL</div>
+            <div class="value" id="level">1</div>
+        </div>
+        <div class="glass-box" style="font-size: 10px; text-align: left; opacity: 0.7;">
+            [←][→] Move<br>
+            [↑] Rotate<br>
+            [↓] Soft Drop<br>
+            [Space] Hard Drop
+        </div>
+    </div>
+</div>
+
+<div id="start-screen">
+    <div class="glow-text">QUANTUM<br>CASCADE</div>
+    <div class="subtitle">PRESS SPACE TO INITIATE</div>
+</div>
+
+<script>
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+    const pCanvas = document.getElementById('particle-canvas');
+    const pCtx = pCanvas.getContext('2d');
+    
+    const hCanvas = document.getElementById('hold-canvas');
+    const hCtx = hCanvas.getContext('2d');
+    const nCanvas = document.getElementById('next-canvas');
+    const nCtx = nCanvas.getContext('2d');
+
+    const COLS = 10;
+    const ROWS = 20;
+    const BLOCK_SIZE = 30; // 300x600
+
+    // Colors (Neon)
+    const COLORS = [
+        null,
+        'rgba(0, 255, 255, 1)',   // I - Cyan
+        'rgba(0, 100, 255, 1)',   // J - Blue
+        'rgba(255, 150, 0, 1)',   // L - Orange
+        'rgba(255, 255, 0, 1)',   // O - Yellow
+        'rgba(0, 255, 0, 1)',     // S - Green
+        'rgba(255, 0, 255, 1)',   // T - Purple
+        'rgba(255, 0, 0, 1)'      // Z - Red
+    ];
+
+    const PIECES = [
+        [],
+        [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],
+        [[2,0,0],[2,2,2],[0,0,0]],
+        [[0,0,3],[3,3,3],[0,0,0]],
+        [[4,4],[4,4]],
+        [[0,5,5],[5,5,0],[0,0,0]],
+        [[0,6,0],[6,6,6],[0,0,0]],
+        [[7,7,0],[0,7,7],[0,0,0]]
+    ];
+
+    let board = Array.from({length: ROWS}, () => Array(COLS).fill(0));
+    
+    let player = {
+        pos: {x: 0, y: 0}, // y is float for smooth falling
+        matrix: null,
+        score: 0,
+        level: 1,
+        lines: 0,
+        combo: 0
+    };
+
+    let bag = [];
+    let nextPiece = null;
+    let holdPiece = null;
+    let hasHeld = false;
+    let lockTimer = 0;
+    const LOCK_DELAY = 500; // ms
+
+    // Particles
+    let particles = [];
+    
+    // Audio Context
+    let audioCtx;
+    function initAudio() {
+        if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playAmbient() {
+        if(!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+        
+        osc.type = 'sine';
+        osc.frequency.value = 50 + Math.random() * 100;
+        
+        filter.type = 'lowpass';
+        filter.frequency.value = 400;
+        
+        gain.gain.setValueAtTime(0, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 1);
+        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 3);
+        
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.start();
+        osc.stop(audioCtx.currentTime + 3);
+    }
+
+    function playSFX(type) {
+        if(!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        if (type === 'lock') {
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        } else if (type === 'clear') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(400 + player.combo*50, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(800 + player.combo*100, audioCtx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        }
+    }
+
+    function generateBag() {
+        let b = [1,2,3,4,5,6,7];
+        for(let i = b.length-1; i>0; i--) {
+            const j = Math.floor(Math.random()*(i+1));
+            [b[i], b[j]] = [b[j], b[i]];
+        }
+        return b;
+    }
+
+    function getNext() {
+        if(bag.length === 0) bag = generateBag();
+        return PIECES[bag.pop()];
+    }
+
+    function resetPlayer() {
+        if(!nextPiece) nextPiece = getNext();
+        player.matrix = nextPiece;
+        nextPiece = getNext();
+        player.pos.y = 0;
+        player.pos.x = Math.floor(COLS/2) - Math.floor(player.matrix[0].length/2);
+        hasHeld = false;
+        lockTimer = 0;
+        
+        if (collide(board, {matrix: player.matrix, pos: {x: player.pos.x, y: Math.floor(player.pos.y)}})) {
+            board.forEach(row => row.fill(0));
+            player.score = 0;
+            player.level = 1;
+            player.combo = 0;
+            updateUI();
+        }
+        drawNext();
+        drawHold();
+    }
+
+    function drawBlock(ctx, x, y, size, color, ghost=false) {
+        ctx.fillStyle = color;
+        if(ghost) {
+            ctx.globalAlpha = 0.2;
+            ctx.fillRect(x, y, size, size);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, size, size);
+            ctx.globalAlpha = 1.0;
+        } else {
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = color;
+            ctx.fillRect(x + 1, y + 1, size - 2, size - 2);
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.fillRect(x + 2, y + 2, size - 4, size / 4);
+        }
+    }
+
+    function drawMatrix(matrix, offset, context, size=BLOCK_SIZE, ghost=false) {
+        matrix.forEach((row, y) => {
+            row.forEach((val, x) => {
+                if (val !== 0) {
+                    drawBlock(context, (x + offset.x) * size, (y + offset.y) * size, size, COLORS[val], ghost);
+                }
+            });
+        });
+    }
+
+    function drawNext() {
+        nCtx.clearRect(0,0,100,100);
+        if(nextPiece) {
+            drawMatrix(nextPiece, {x: 2 - nextPiece[0].length/2, y: 2 - nextPiece.length/2}, nCtx, 20);
+        }
+    }
+
+    function drawHold() {
+        hCtx.clearRect(0,0,100,100);
+        if(holdPiece) {
+            drawMatrix(holdPiece, {x: 2 - holdPiece[0].length/2, y: 2 - holdPiece.length/2}, hCtx, 20);
+        }
+    }
+
+    function collide(board, p) {
+        const m = p.matrix;
+        const o = p.pos;
+        for (let y = 0; y < m.length; ++y) {
+            for (let x = 0; x < m[y].length; ++x) {
+                if (m[y][x] !== 0 &&
+                   (board[y + o.y] && board[y + o.y][x + o.x]) !== 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function merge(board, p) {
+        p.matrix.forEach((row, y) => {
+            row.forEach((val, x) => {
+                if (val !== 0) {
+                    board[y + Math.floor(p.pos.y)][x + p.pos.x] = val;
+                }
+            });
+        });
+    }
+
+    function rotate(matrix) {
+        const N = matrix.length;
+        const result = matrix.map((row, i) =>
+            row.map((val, j) => matrix[N - 1 - j][i])
+        );
+        return result;
+    }
+
+    function spawnParticles(y, colorIndex) {
+        const color = COLORS[colorIndex];
+        for(let i=0; i<30; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: y * BLOCK_SIZE + Math.random() * BLOCK_SIZE,
+                vx: (Math.random() - 0.5) * 10,
+                vy: (Math.random() - 0.5) * 10,
+                life: 1.0,
+                color: color
+            });
+        }
+    }
+
+    function updateParticles(dt) {
+        pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+        for(let i=particles.length-1; i>=0; i--) {
+            let p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= dt * 0.002;
+            if(p.life <= 0) {
+                particles.splice(i, 1);
+            } else {
+                pCtx.globalAlpha = p.life;
+                pCtx.fillStyle = p.color;
+                pCtx.beginPath();
+                pCtx.arc(p.x, p.y, p.life * 3, 0, Math.PI*2);
+                pCtx.fill();
+            }
+        }
+        pCtx.globalAlpha = 1.0;
+    }
+
+    function showCombo() {
+        if(player.combo > 1) {
+            const cd = document.getElementById('combo-display');
+            cd.innerText = player.combo + 'x Combo!';
+            cd.style.opacity = 1;
+            setTimeout(() => { cd.style.opacity = 0; }, 1000);
+        }
+    }
+
+    function sweep() {
+        let rowCount = 0;
+        outer: for (let y = board.length - 1; y >= 0; --y) {
+            for (let x = 0; x < board[y].length; ++x) {
+                if (board[y][x] === 0) continue outer;
+            }
+            const rowColor = board[y][0];
+            spawnParticles(y, rowColor);
+            board.splice(y, 1);
+            board.unshift(new Array(COLS).fill(0));
+            rowCount++;
+            y++; // Check same row index again after unshift
+        }
+
+        if (rowCount > 0) {
+            player.combo++;
+            playSFX('clear');
+            showCombo();
+            player.score += [0, 100, 300, 500, 800][rowCount] * player.level * player.combo;
+            player.lines += rowCount;
+            player.level = Math.floor(player.lines / 10) + 1;
+        } else {
+            player.combo = 0;
+        }
+        updateUI();
+    }
+
+    function updateUI() {
+        document.getElementById('score').innerText = player.score;
+        document.getElementById('level').innerText = player.level;
+        document.getElementById('combo').innerText = player.combo;
+    }
+
+    function getGhostY() {
+        let y = Math.floor(player.pos.y);
+        while(!collide(board, {matrix: player.matrix, pos: {x: player.pos.x, y: y+1}})) {
+            y++;
+        }
+        return y;
+    }
+
+    function draw() {
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        
+        // Grid
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        for(let i=0; i<COLS; i++) {
+            ctx.beginPath(); ctx.moveTo(i*BLOCK_SIZE, 0); ctx.lineTo(i*BLOCK_SIZE, canvas.height); ctx.stroke();
+        }
+        for(let i=0; i<ROWS; i++) {
+            ctx.beginPath(); ctx.moveTo(0, i*BLOCK_SIZE); ctx.lineTo(canvas.width, i*BLOCK_SIZE); ctx.stroke();
+        }
+
+        drawMatrix(board, {x:0, y:0}, ctx);
+        
+        if(player.matrix) {
+            drawMatrix(player.matrix, {x: player.pos.x, y: getGhostY()}, ctx, BLOCK_SIZE, true);
+            drawMatrix(player.matrix, player.pos, ctx);
+        }
+    }
+
+    let lastTime = 0;
+    let isPlaying = false;
+    let ambientTimer = 0;
+
+    function update(time = 0) {
+        if (!isPlaying) return;
+        const dt = time - lastTime;
+        lastTime = time;
+        
+        ambientTimer += dt;
+        if(ambientTimer > 4000) {
+            playAmbient();
+            ambientTimer = 0;
+        }
+
+        // Smooth falling
+        const dropSpeed = Math.max(0.001, 0.005 + (player.level - 1) * 0.001); // squares per ms
+        
+        // Check collision at next integer Y
+        const nextIntY = Math.floor(player.pos.y + 1);
+        if (collide(board, {matrix: player.matrix, pos: {x: player.pos.x, y: nextIntY}})) {
+            player.pos.y = nextIntY - 1; // Align to grid
+            lockTimer += dt;
+            if(lockTimer > LOCK_DELAY) {
+                merge(board, {matrix: player.matrix, pos: {x: player.pos.x, y: Math.floor(player.pos.y)}});
+                playSFX('lock');
+                sweep();
+                resetPlayer();
+            }
+        } else {
+            player.pos.y += dropSpeed * dt;
+            lockTimer = 0; // Reset lock if falling
+        }
+
+        updateParticles(dt);
+        draw();
+        requestAnimationFrame(update);
+    }
+
+    document.addEventListener('keydown', e => {
+        if(!isPlaying && e.code === 'Space') {
+            document.getElementById('start-screen').style.display = 'none';
+            initAudio();
+            isPlaying = true;
+            resetPlayer();
+            lastTime = performance.now();
+            update(lastTime);
+            return;
+        }
+        if(!isPlaying) return;
+
+        let floorY = Math.floor(player.pos.y);
+        
+        if (e.code === 'ArrowLeft') {
+            player.pos.x--;
+            if (collide(board, {matrix: player.matrix, pos: {x: player.pos.x, y: floorY}})) {
+                player.pos.x++;
+            } else { lockTimer = 0; }
+        } else if (e.code === 'ArrowRight') {
+            player.pos.x++;
+            if (collide(board, {matrix: player.matrix, pos: {x: player.pos.x, y: floorY}})) {
+                player.pos.x--;
+            } else { lockTimer = 0; }
+        } else if (e.code === 'ArrowDown') {
+            if (!collide(board, {matrix: player.matrix, pos: {x: player.pos.x, y: floorY + 1}})) {
+                player.pos.y = floorY + 1;
+            }
+        } else if (e.code === 'ArrowUp') {
+            let m = rotate(player.matrix);
+            let p = {matrix: m, pos: {x: player.pos.x, y: floorY}};
+            if (!collide(board, p)) {
+                player.matrix = m;
+                lockTimer = 0;
+            }
+        } else if (e.code === 'Space') {
+            player.pos.y = getGhostY();
+            lockTimer = LOCK_DELAY + 1; // Force immediate lock on next frame
+        } else if (e.code === 'KeyC') {
+            if(!hasHeld) {
+                if(holdPiece) {
+                    let t = player.matrix;
+                    player.matrix = holdPiece;
+                    holdPiece = t;
+                    player.pos.y = 0;
+                    player.pos.x = Math.floor(COLS/2) - Math.floor(player.matrix[0].length/2);
+                } else {
+                    holdPiece = player.matrix;
+                    resetPlayer();
+                }
+                hasHeld = true;
+                drawHold();
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

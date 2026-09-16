@@ -1158,8 +1158,10 @@
         <div style="display:flex; justify-content:center; gap:8px; margin-top:14px; flex-wrap:wrap;" id="arenaGenreButtons">
           <span style="font-size:11px; color:var(--text-muted); align-self:center; text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">Duel Discipline:</span>
           <button class="filter-btn active" data-arena-genre="all">🎲 In-Genre Matchup (Fair)</button>
-          <button class="filter-btn" data-arena-genre="platformer">🏃 Platformer Only</button>
-          <button class="filter-btn" data-arena-genre="raycaster">🔫 Raycaster Only</button>
+          <button class="filter-btn" data-arena-genre="platformer">🏃 Platformer</button>
+          <button class="filter-btn" data-arena-genre="raycaster">🔫 Raycaster</button>
+          <button class="filter-btn" data-arena-genre="maze">👻 Arcade Maze</button>
+          <button class="filter-btn" data-arena-genre="puzzle">🧱 Falling Blocks</button>
         </div>
       </div>
 
@@ -1184,8 +1186,14 @@
             <div id="cabADetails" style="margin-bottom:12px;">
               <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity hidden. Play to test jumping physics, audio crunch, and NES momentum.</div>
             </div>
-            <button class="btn-play" style="margin-top:auto;" id="cabAPlayBtn">▶ PLAY CHALLENGER A</button>
+            <button class="btn-arena-play" id="cabAPlayBtn">▶ TEST CHALLENGER A</button>
           </div>
+        </div>
+
+        <!-- VS Divider -->
+        <div class="arena-vs">
+          <div class="arena-vs-badge">VS</div>
+          <div class="arena-vs-sub">HEAD-TO-HEAD</div>
         </div>
 
         <!-- Cabinet Right -->
@@ -1202,7 +1210,7 @@
             <div id="cabBDetails" style="margin-bottom:12px;">
               <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity hidden. Play to test jumping physics, audio crunch, and NES momentum.</div>
             </div>
-            <button class="btn-play" style="margin-top:auto;" id="cabBPlayBtn">▶ PLAY CHALLENGER B</button>
+            <button class="btn-arena-play" id="cabBPlayBtn">▶ TEST CHALLENGER B</button>
           </div>
         </div>
       </div>
@@ -1220,7 +1228,18 @@
 
   <!-- 3. Leaderboard Table View -->
   <div id="tableView" style="display:none;">
-    <div class="table-container">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px; border-bottom:1px solid #21262d; padding-bottom:12px;">
+      <div style="display:flex; gap:8px;">
+        <button class="filter-btn active" id="btnRosterView">🎮 Individual Game Roster</button>
+        <button class="filter-btn" id="btnPentathlonView">🏆 Omni-Arcade Model Pentathlon (Composite ELO)</button>
+      </div>
+      <div style="font-size:12px; color:var(--text-muted);" id="tableHelpText">
+        Ranked by In-Genre Discipline ELO. In duels, contenders only face their own discipline.
+      </div>
+    </div>
+
+    <!-- Table 1: Individual Game Roster -->
+    <div class="table-container" id="gameRosterTableContainer">
       <table class="elo-table">
         <thead>
           <tr>
@@ -1230,7 +1249,7 @@
             <th>Discipline</th>
             <th>Model & Harness</th>
             <th>Thinking Effort & Hardware</th>
-            <th>ELO Rating</th>
+            <th>In-Genre ELO</th>
             <th>Tier</th>
             <th>Matches</th>
             <th>Vibe</th>
@@ -1244,6 +1263,30 @@
         </thead>
         <tbody id="tableBody">
           <!-- Table rows rendered here by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Table 2: Model Pentathlon Composite Leaderboard -->
+    <div class="table-container" id="pentathlonTableContainer" style="display:none;">
+      <table class="elo-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Model / AI System</th>
+            <th>Primary Harness & Hardware</th>
+            <th style="text-align:center;">🏃 Platformer</th>
+            <th style="text-align:center;">🔫 Raycaster</th>
+            <th style="text-align:center;">👻 Arcade Maze</th>
+            <th style="text-align:center;">🧱 Falling Blocks</th>
+            <th>Mastery Breadth</th>
+            <th>Composite Arcade ELO</th>
+            <th>Omni-Tier</th>
+            <th>Total Duels</th>
+          </tr>
+        </thead>
+        <tbody id="pentathlonBody">
+          <!-- Model composite rows rendered here by JS -->
         </tbody>
       </table>
     </div>
@@ -1839,6 +1882,151 @@
     "wins": 0,
     "preview": "previews/gemini38_pro_wolf_raycaster.png",
     "hidden": false
+  },
+  {
+    "id": "qwen38_flash_retro_dungeon",
+    "title": "Dungeon of the Crimson Keep: Raycast 3D",
+    "genre": "raycaster",
+    "author": "Qwen3.8-Flash-Next (llama.cpp)",
+    "category": "3D Raycaster",
+    "badge": "60 FPS DDA Raycaster",
+    "file": "games/qwen38_flash_retro_dungeon.html",
+    "baseVotes": 0,
+    "vibeScore": 9.2,
+    "size": "22.3 KB",
+    "lines": 600,
+    "hardware": "RTX 3070 8GB + 80GB DDR4",
+    "model": "Qwen3.8-Flash-Next",
+    "harness": "llama.cpp (master b78a39a2f)",
+    "thinkingEffort": "10k CoT Budget (xhigh)",
+    "mode": "10k CoT Budget (xhigh)",
+    "promptStyle": "Single-Shot Zero Dependency Prompt",
+    "prompt": "Create a fully playable 2.5D retro dungeon raycaster in a single HTML file with embedded CSS and JavaScript. Include 60 FPS DDA raycasting, procedural stone textures, WASD sliding collision, minimap FOV cone, first-person fire wand with recoil, Web Audio procedural sounds, depth-sorted skeleton enemies with chase AI, and retro health/mana HUD. Zero external dependencies.",
+    "sourceName": "r/LocalLLaMA & llama.cpp",
+    "sourceUrl": "https://reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
+    "vibeReview": "Atmospheric 2.5D gothic dungeon crawler with DDA raycasting, procedural textures, skeleton sprites, and pure Web Audio sound.",
+    "ratings": { "nesCrunch": 8.8, "physicsFeel": 9.2, "ambition": 9.5 },
+    "elo": 1200,
+    "matches": 0,
+    "wins": 0,
+    "preview": "previews/qwen38_flash_retro_dungeon.png",
+    "hidden": false
+  },
+  {
+    "id": "gemma4_31b_neon_pacmaze",
+    "title": "Neon Phantom Maze: Classic Arcade Chase",
+    "genre": "maze",
+    "author": "Gemma 4 31B (r/LocalLLaMA Contest)",
+    "category": "Modern Indie",
+    "badge": "r/LocalLLaMA Contest Winner",
+    "file": "games/gemma4_31b_neon_pacmaze.html",
+    "baseVotes": 0,
+    "vibeScore": 9.3,
+    "size": "9.0 KB",
+    "lines": 217,
+    "hardware": "RTX 4090 24GB",
+    "model": "Gemma 4 31B",
+    "harness": "llama.cpp (vibe-bench)",
+    "thinkingEffort": "High CoT Deliberation",
+    "mode": "High CoT Deliberation",
+    "promptStyle": "Single-Shot Zero Dependency Prompt",
+    "prompt": "Write a complete, playable classic arcade maze chase game in a single HTML file with embedded CSS/JS. Must include authentic tilemap maze with blue rounded-corner walls, pellet dots, power pills, fruit bonus, 4 distinct ghost AI states (Chase, Scatter, Frightened), corner-turning buffer, procedural Web Audio chomp/siren sound, HUD, and tunnel wrapping. Zero external dependencies.",
+    "sourceName": "r/LocalLLaMA Contest Post",
+    "sourceUrl": "https://reddit.com/r/LocalLLaMA/",
+    "vibeReview": "Voted cleanest logic in r/LocalLLaMA gamedev contest. Authentic ghost AI personalities, corner buffering, and procedural audio.",
+    "ratings": { "nesCrunch": 9.4, "physicsFeel": 9.3, "ambition": 9.0 },
+    "elo": 1200,
+    "matches": 0,
+    "wins": 0,
+    "preview": "previews/gemma4_31b_neon_pacmaze.png",
+    "hidden": false
+  },
+  {
+    "id": "qwen36_27b_cyber_maze",
+    "title": "Cyber Labyrinth: Vector Ghost Run",
+    "genre": "maze",
+    "author": "Qwen 3.6 27B (r/LocalLLaMA)",
+    "category": "Themed Reskin",
+    "badge": "Community Submission",
+    "file": "games/qwen36_27b_cyber_maze.html",
+    "baseVotes": 0,
+    "vibeScore": 8.8,
+    "size": "5.9 KB",
+    "lines": 157,
+    "hardware": "RTX 3090 24GB",
+    "model": "Qwen 3.6 27B",
+    "harness": "vLLM local",
+    "thinkingEffort": "Single Turn One-Shot",
+    "mode": "Single Turn One-Shot",
+    "promptStyle": "Single-Shot Zero Dependency Prompt",
+    "prompt": "Build a cyberpunk vector-neon arcade maze game in a single HTML file. Control a cyber-probe gathering energy nodes while evading 4 sentinel drones with active searchlight vision cones. Spacebar triggers an EMP burst when charged. Use procedural Web Audio synths and CRT glow post-processing. Zero external dependencies.",
+    "sourceName": "r/LocalLLaMA Post",
+    "sourceUrl": "https://reddit.com/r/LocalLLaMA/",
+    "vibeReview": "Sleek vector aesthetic with dynamic drone searchlight cones, EMP blast mechanics, and atmospheric synth bleeps.",
+    "ratings": { "nesCrunch": 8.2, "physicsFeel": 8.8, "ambition": 9.1 },
+    "elo": 1200,
+    "matches": 0,
+    "wins": 0,
+    "preview": "previews/qwen36_27b_cyber_maze.png",
+    "hidden": false
+  },
+  {
+    "id": "glm47_flash_tetris_matrix",
+    "title": "Blockfall 1989: Falling Polyominoes",
+    "genre": "puzzle",
+    "author": "GLM-4.7 Flash (r/LocalLLaMA)",
+    "category": "NES Purist",
+    "badge": "r/LocalLLaMA Milestone",
+    "file": "games/glm47_flash_tetris_matrix.html",
+    "baseVotes": 0,
+    "vibeScore": 9.4,
+    "size": "16.3 KB",
+    "lines": 574,
+    "hardware": "RTX 4070 Ti 12GB",
+    "model": "GLM-4.7 Flash",
+    "harness": "llama.cpp",
+    "thinkingEffort": "CoT Reasoning Deliberation",
+    "mode": "CoT Reasoning Deliberation",
+    "promptStyle": "Single-Shot Zero Dependency Prompt",
+    "prompt": "Create a fully functional, bug-free falling blocks game in a single HTML file with embedded CSS/JS. Must include 10x20 matrix, 7 standard tetromino shapes, SRS wall kicks, ghost piece landing preview, hold piece buffer (C key), line-clearing flash animation, scaling gravity speeds, and procedural Web Audio 8-bit chiptune theme. Zero external dependencies.",
+    "sourceName": "r/LocalLLaMA One-Shot Thread",
+    "sourceUrl": "https://reddit.com/r/LocalLLaMA/",
+    "vibeReview": "Praised on r/LocalLLaMA as one of the first models to one-shot bug-free line clearing with SRS rotation and generative chiptune audio.",
+    "ratings": { "nesCrunch": 9.6, "physicsFeel": 9.4, "ambition": 9.2 },
+    "elo": 1200,
+    "matches": 0,
+    "wins": 0,
+    "preview": "previews/glm47_flash_tetris_matrix.png",
+    "hidden": false
+  },
+  {
+    "id": "qwen36_polyomino_puzzle",
+    "title": "Quantum Cascade: Polyomino Drop",
+    "genre": "puzzle",
+    "author": "Qwen 3.6 27B (r/LocalLLaMA)",
+    "category": "Modern Indie",
+    "badge": "Community Submission",
+    "file": "games/qwen36_polyomino_puzzle.html",
+    "baseVotes": 0,
+    "vibeScore": 9.0,
+    "size": "17.8 KB",
+    "lines": 579,
+    "hardware": "RTX 3090 24GB",
+    "model": "Qwen 3.6 27B",
+    "harness": "vLLM local",
+    "thinkingEffort": "Single Turn One-Shot",
+    "mode": "Single Turn One-Shot",
+    "promptStyle": "Single-Shot Zero Dependency Prompt",
+    "prompt": "Write a modern glassmorphism falling block puzzle game in a single HTML file. Include particle explosion effects on row clears, ghost piece landing indicator, lock delay, combo counter, and procedural ambient synth audio using Web Audio API. Zero external dependencies.",
+    "sourceName": "r/LocalLLaMA Post",
+    "sourceUrl": "https://reddit.com/r/LocalLLaMA/",
+    "vibeReview": "Modern glassmorphism look with particle explosions on line clears, combo multipliers, and generative ambient synth audio.",
+    "ratings": { "nesCrunch": 8.6, "physicsFeel": 9.1, "ambition": 9.3 },
+    "elo": 1200,
+    "matches": 0,
+    "wins": 0,
+    "preview": "previews/qwen36_polyomino_puzzle.png",
+    "hidden": false
   }
 ];
 
@@ -2093,9 +2281,14 @@
 
   function renderTable() {
     const tbody = document.getElementById('tableBody');
+    if (!tbody) return;
     tbody.innerHTML = '';
     const active = getActiveGames();
-    const sorted = [...active].sort((a, b) => getEffectiveElo(b) - getEffectiveElo(a));
+    let filtered = active;
+    if (currentGenre !== 'all') {
+      filtered = active.filter(g => (g.genre || 'platformer') === currentGenre);
+    }
+    const sorted = [...filtered].sort((a, b) => getEffectiveElo(b) - getEffectiveElo(a));
 
     sorted.forEach((game, idx) => {
       const effectiveElo = getEffectiveElo(game);
@@ -2147,7 +2340,104 @@
     });
   }
 
-  // Setup Blind Elo Arena Duel
+  function renderPentathlonTable() {
+    const tbody = document.getElementById('pentathlonBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const active = getActiveGames();
+
+    // Group by model
+    const modelMap = {};
+    active.forEach(g => {
+      const mName = g.model;
+      if (!modelMap[mName]) {
+        modelMap[mName] = {
+          model: mName,
+          harness: g.harness,
+          hardware: g.hardware,
+          disciplines: {},
+          totalMatches: 0,
+          vibeSum: 0,
+          gameCount: 0
+        };
+      }
+      const gen = g.genre || 'platformer';
+      const elo = getEffectiveElo(g);
+      const matches = getEffectiveMatches(g);
+      if (!modelMap[mName].disciplines[gen] || elo > modelMap[mName].disciplines[gen].elo) {
+        modelMap[mName].disciplines[gen] = { elo, game: g };
+      }
+      modelMap[mName].totalMatches += matches;
+      modelMap[mName].vibeSum += g.vibeScore;
+      modelMap[mName].gameCount += 1;
+    });
+
+    const modelList = Object.values(modelMap);
+    modelList.forEach(m => {
+      const discKeys = Object.keys(m.disciplines);
+      m.breadth = discKeys.length;
+      let sumElo = 0;
+      discKeys.forEach(k => { sumElo += m.disciplines[k].elo; });
+      m.compositeElo = Math.round(sumElo / m.breadth);
+      m.avgVibe = (m.vibeSum / m.gameCount).toFixed(1);
+    });
+
+    // Sort: highest breadth (descending) then by composite ELO (descending)
+    modelList.sort((a, b) => {
+      if (b.breadth !== a.breadth) return b.breadth - a.breadth;
+      return b.compositeElo - a.compositeElo;
+    });
+
+    modelList.forEach((m, idx) => {
+      const rankEmoji = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+      let tierBadge = '<span class="elo-pill tier-challenger">🎯 Specialist</span>';
+      if (m.breadth >= 3) {
+        tierBadge = '<span class="elo-pill tier-master">👑 Omni Grandmaster</span>';
+      } else if (m.breadth === 2) {
+        tierBadge = '<span class="elo-pill tier-diamond">⚡ Dual-Track</span>';
+      }
+
+      const platCell = m.disciplines['platformer'] 
+        ? `<span style="color:var(--gold); font-weight:700; font-family:monospace;">⚡ ${m.disciplines['platformer'].elo}</span>` 
+        : '<span style="color:#484f58;">—</span>';
+      const rayCell = m.disciplines['raycaster'] 
+        ? `<span style="color:var(--gold); font-weight:700; font-family:monospace;">⚡ ${m.disciplines['raycaster'].elo}</span>` 
+        : '<span style="color:#484f58;">—</span>';
+      const mazeCell = m.disciplines['maze'] 
+        ? `<span style="color:var(--gold); font-weight:700; font-family:monospace;">⚡ ${m.disciplines['maze'].elo}</span>` 
+        : '<span style="color:#484f58;">—</span>';
+      const puzzleCell = m.disciplines['puzzle'] 
+        ? `<span style="color:var(--gold); font-weight:700; font-family:monospace;">⚡ ${m.disciplines['puzzle'].elo}</span>` 
+        : '<span style="color:#484f58;">—</span>';
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td style="font-weight:700; font-size:14px;">${rankEmoji}</td>
+        <td>
+          <div style="font-weight:700; color:var(--accent); font-family:monospace; font-size:13px;">${m.model}</div>
+        </td>
+        <td>
+          <div style="font-size:12px; color:#c9d1d9;">⚙️ ${m.harness}</div>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">💻 ${m.hardware}</div>
+        </td>
+        <td style="text-align:center;">${platCell}</td>
+        <td style="text-align:center;">${rayCell}</td>
+        <td style="text-align:center;">${mazeCell}</td>
+        <td style="text-align:center;">${puzzleCell}</td>
+        <td>
+          <span class="card-badge" style="background:#238636; font-size:10px;">${m.breadth} / 4 Disciplines</span>
+        </td>
+        <td style="font-family:'Press Start 2P', monospace; font-size:12px; color:var(--gold);">
+          ⚡ ${m.compositeElo}
+        </td>
+        <td>${tierBadge}</td>
+        <td style="font-family:monospace;">${m.totalMatches}</td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  // Setup Blind Elo Arena Duel (Fair In-Genre Matchmaking)
   function setupArenaMatchup() {
     const active = getActiveGames();
     if (active.length < 2) return;
@@ -2155,29 +2445,53 @@
     arenaVoted = false;
     document.getElementById('arenaRevealBox').style.display = 'none';
 
-    // Pick two random distinct games
-    let idxA = Math.floor(Math.random() * active.length);
+    let pool = [];
+    if (arenaGenreFilter === 'all') {
+      // Find all disciplines that have at least 2 contenders
+      const counts = {};
+      active.forEach(g => {
+        const gen = g.genre || 'platformer';
+        counts[gen] = (counts[gen] || 0) + 1;
+      });
+      const validGenres = Object.keys(counts).filter(k => counts[k] >= 2);
+      if (validGenres.length === 0) return;
+      const pickedGenre = validGenres[Math.floor(Math.random() * validGenres.length)];
+      pool = active.filter(g => (g.genre || 'platformer') === pickedGenre);
+    } else {
+      pool = active.filter(g => (g.genre || 'platformer') === arenaGenreFilter);
+    }
+
+    if (pool.length < 2) {
+      showToast(`Need at least 2 contenders in ${getGenreLabel(arenaGenreFilter)} to duel!`);
+      return;
+    }
+
+    let idxA = Math.floor(Math.random() * pool.length);
     let idxB;
     do {
-      idxB = Math.floor(Math.random() * active.length);
+      idxB = Math.floor(Math.random() * pool.length);
     } while (idxB === idxA);
 
-    arenaGameA = active[idxA];
-    arenaGameB = active[idxB];
+    arenaGameA = pool[idxA];
+    arenaGameB = pool[idxB];
+
+    const genreLabel = getGenreLabel(arenaGameA.genre || 'platformer');
 
     // BLIND SETUP: Do NOT show ELO or model identities!
-    document.getElementById('cabAName').textContent = 'CHALLENGER ALPHA';
+    document.getElementById('cabAName').textContent = `CHALLENGER ALPHA`;
     document.getElementById('cabAElo').style.display = 'none';
     document.getElementById('cabAImg').src = arenaGameA.preview;
     document.getElementById('cabADetails').innerHTML = `
-      <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity and ELO hidden for blind testing. Play to test momentum, collision feel, and audio crunch.</div>
+      <div style="display:inline-block; margin-bottom:6px;"><span class="card-badge" style="background:#8250df; font-size:10px;">${genreLabel}</span></div>
+      <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity hidden for blind testing. Play to evaluate gameplay feel, collision response, and procedural audio.</div>
     `;
 
-    document.getElementById('cabBName').textContent = 'CHALLENGER BETA';
+    document.getElementById('cabBName').textContent = `CHALLENGER BETA`;
     document.getElementById('cabBElo').style.display = 'none';
     document.getElementById('cabBImg').src = arenaGameB.preview;
     document.getElementById('cabBDetails').innerHTML = `
-      <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity and ELO hidden for blind testing. Play to test momentum, collision feel, and audio crunch.</div>
+      <div style="display:inline-block; margin-bottom:6px;"><span class="card-badge" style="background:#8250df; font-size:10px;">${genreLabel}</span></div>
+      <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity hidden for blind testing. Play to evaluate gameplay feel, collision response, and procedural audio.</div>
     `;
 
     // Re-enable vote buttons
@@ -2218,12 +2532,14 @@
     const newEloB = eloB + deltaB;
     const signA = deltaA >= 0 ? `+${deltaA}` : `${deltaA}`;
     const signB = deltaB >= 0 ? `+${deltaB}` : `${deltaB}`;
+    const genreLabel = getGenreLabel(arenaGameA.genre || 'platformer');
 
     // REVEAL IDENTITIES POST-VOTE
     document.getElementById('cabAName').textContent = arenaGameA.title;
     document.getElementById('cabAElo').style.display = 'inline-flex';
     document.getElementById('cabAElo').innerHTML = `⚡ ${newEloA} ELO (${signA})`;
     document.getElementById('cabADetails').innerHTML = `
+      <div style="display:inline-block; margin-bottom:6px;"><span class="card-badge" style="background:#8250df; font-size:10px;">${genreLabel}</span></div>
       <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:2px;">${arenaGameA.model}</div>
       <div style="color:var(--gold); font-size:12px; margin-bottom:2px;">🧠 ${arenaGameA.thinkingEffort} &bull; ⚙️ ${arenaGameA.harness}</div>
       <div style="color:var(--text-muted); font-size:11px; margin-bottom:6px;">💻 ${arenaGameA.hardware} &bull; ${arenaGameA.size}</div>
@@ -2234,6 +2550,7 @@
     document.getElementById('cabBElo').style.display = 'inline-flex';
     document.getElementById('cabBElo').innerHTML = `⚡ ${newEloB} ELO (${signB})`;
     document.getElementById('cabBDetails').innerHTML = `
+      <div style="display:inline-block; margin-bottom:6px;"><span class="card-badge" style="background:#8250df; font-size:10px;">${genreLabel}</span></div>
       <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:2px;">${arenaGameB.model}</div>
       <div style="color:var(--gold); font-size:12px; margin-bottom:2px;">🧠 ${arenaGameB.thinkingEffort} &bull; ⚙️ ${arenaGameB.harness}</div>
       <div style="color:var(--text-muted); font-size:11px; margin-bottom:6px;">💻 ${arenaGameB.hardware} &bull; ${arenaGameB.size}</div>
@@ -2244,7 +2561,7 @@
     const revealBox = document.getElementById('arenaRevealBox');
     revealBox.style.display = 'block';
     revealBox.innerHTML = `
-      <div style="font-family:'Press Start 2P', monospace; font-size:11px; color:var(--gold); margin-bottom:6px;">🎉 DUEL REVEALED!</div>
+      <div style="font-family:'Press Start 2P', monospace; font-size:11px; color:var(--gold); margin-bottom:6px;">🎉 DUEL REVEALED [${genreLabel}]!</div>
       <div style="font-size:13px; line-height:1.6;">
         <strong>Challenger A:</strong> ${arenaGameA.title} (${arenaGameA.model}) &rarr; <strong>${newEloA} ELO (${signA})</strong> &nbsp;&bull;&nbsp; <a href="${arenaGameA.sourceUrl}" target="_blank" style="color:var(--accent);">Source ↗</a><br>
         <strong>Challenger B:</strong> ${arenaGameB.title} (${arenaGameB.model}) &rarr; <strong>${newEloB} ELO (${signB})</strong> &nbsp;&bull;&nbsp; <a href="${arenaGameB.sourceUrl}" target="_blank" style="color:var(--accent);">Source ↗</a>
@@ -2264,6 +2581,7 @@
     updateGenreCounts();
     renderGrid();
     renderTable();
+    renderPentathlonTable();
   }
 
   function setupEventListeners() {
@@ -2279,16 +2597,69 @@
         document.getElementById('wallControls').style.display = view === 'wall' ? 'flex' : 'none';
         document.getElementById('arenaView').style.display = view === 'arena' ? 'block' : 'none';
         document.getElementById('tableView').style.display = view === 'table' ? 'block' : 'none';
+
+        if (view === 'table') {
+          renderTable();
+          renderPentathlonTable();
+        }
       });
     });
 
-    // Filter clicks
-    document.querySelectorAll('.filter-btn').forEach(btn => {
+    // Table view mode toggles (Roster vs Pentathlon)
+    const btnRosterView = document.getElementById('btnRosterView');
+    const btnPentathlonView = document.getElementById('btnPentathlonView');
+    const gameRosterContainer = document.getElementById('gameRosterTableContainer');
+    const pentathlonContainer = document.getElementById('pentathlonTableContainer');
+    const tableHelpText = document.getElementById('tableHelpText');
+
+    if (btnRosterView && btnPentathlonView) {
+      btnRosterView.addEventListener('click', () => {
+        btnRosterView.classList.add('active');
+        btnPentathlonView.classList.remove('active');
+        gameRosterContainer.style.display = 'block';
+        pentathlonContainer.style.display = 'none';
+        if (tableHelpText) tableHelpText.textContent = 'Ranked by In-Genre Discipline ELO. In duels, contenders only face their own discipline.';
+        renderTable();
+      });
+
+      btnPentathlonView.addEventListener('click', () => {
+        btnPentathlonView.classList.add('active');
+        btnRosterView.classList.remove('active');
+        gameRosterContainer.style.display = 'none';
+        pentathlonContainer.style.display = 'block';
+        if (tableHelpText) tableHelpText.textContent = 'Omni-Arcade Standing: Cross-discipline average ELO across platformer, raycaster, maze, and puzzle tracks.';
+        renderPentathlonTable();
+      });
+    }
+
+    // Genre / Discipline Filter Clicks
+    document.querySelectorAll('#genreFilterGroup .filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('#genreFilterGroup .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentGenre = btn.dataset.genre;
+        renderGrid();
+        renderTable();
+      });
+    });
+
+    // Style / Hardware Sub-Filter Clicks
+    document.querySelectorAll('#styleFilterGroup .filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#styleFilterGroup .filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentFilter = btn.dataset.filter;
         renderGrid();
+      });
+    });
+
+    // Arena Discipline Filter Clicks
+    document.querySelectorAll('#arenaGenreButtons .filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#arenaGenreButtons .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        arenaGenreFilter = btn.dataset.arenaGenre;
+        setupArenaMatchup();
       });
     });
 

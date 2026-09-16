@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cyber Labyrinth: Vector Ghost Run</title>
+    <style>
+        body { 
+            background: #000; 
+            color: #0f0; 
+            font-family: "Courier New", monospace; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0; 
+            padding: 20px;
+            overflow: hidden; 
+        }
+        .crt::before { 
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; 
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); 
+            z-index: 2; background-size: 100% 3px, 3px 100%; pointer-events: none; 
+        }
+        canvas { 
+            background: #000; 
+            box-shadow: 0 0 30px #0f0; 
+            filter: contrast(1.2) brightness(1.2) drop-shadow(0 0 5px #0f0); 
+            border: 2px solid #0f0;
+        }
+        #ui { 
+            width: 800px; 
+            display: flex; 
+            justify-content: space-between; 
+            font-size: 20px; 
+            text-shadow: 0 0 10px #0f0; 
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body class="crt">
+    <div id="ui">
+        <div>DATA PACKETS: <span id="score">0</span></div>
+        <div>EMP SYSTEM: <span id="emp">CHARGED (SPACE)</span></div>
+        <div>NODES: <span id="nodes">3</span></div>
+    </div>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let p = { x: 400, y: 300, vx: 0, vy: 0, speed: 4, empReady: true };
+        let drones = [
+            { x: 100, y: 100, vx: 2, vy: 0, state: 'patrol' },
+            { x: 700, y: 100, vx: -2, vy: 0, state: 'patrol' },
+            { x: 100, y: 500, vx: 0, vy: -2, state: 'patrol' },
+            { x: 700, y: 500, vx: 0, vy: -2, state: 'patrol' }
+        ];
+
+        let audioCtx;
+        function playSynth(freq, type, dur) {
+            if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
+            osc.start(); osc.stop(audioCtx.currentTime + dur);
+        }
+        
+        document.addEventListener('keydown', e => {
+            if(e.key === 'ArrowLeft') { p.vx = -p.speed; p.vy = 0; }
+            if(e.key === 'ArrowRight') { p.vx = p.speed; p.vy = 0; }
+            if(e.key === 'ArrowUp') { p.vx = 0; p.vy = -p.speed; }
+            if(e.key === 'ArrowDown') { p.vx = 0; p.vy = p.speed; }
+            if(e.key === ' ' && p.empReady) {
+                p.empReady = false;
+                document.getElementById('emp').innerText = "RECHARGING...";
+                playSynth(100, 'square', 0.5);
+                drones.forEach(d => d.state = 'jammed');
+                setTimeout(() => { 
+                    p.empReady = true; 
+                    document.getElementById('emp').innerText = "CHARGED (SPACE)";
+                    drones.forEach(d => d.state = 'patrol'); 
+                }, 5000);
+            }
+        });
+        
+        function update() {
+            p.x += p.vx; p.y += p.vy;
+            if(p.x < 10) p.x = 10; if(p.x > 790) p.x = 790;
+            if(p.y < 10) p.y = 10; if(p.y > 590) p.y = 590;
+            
+            drones.forEach(d => {
+                if (d.state !== 'jammed') {
+                    d.x += d.vx; d.y += d.vy;
+                    if(d.x < 50 || d.x > 750) d.vx *= -1;
+                    if(d.y < 50 || d.y > 550) d.vy *= -1;
+                }
+            });
+        }
+        
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 10, 0.4)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Grid
+            ctx.strokeStyle = '#020';
+            ctx.lineWidth = 1;
+            for(let i=0; i<800; i+=40) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,600); ctx.stroke(); }
+            for(let i=0; i<600; i+=40) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(800,i); ctx.stroke(); }
+            
+            // Player
+            ctx.fillStyle = '#0f0';
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 8, 0, Math.PI*2);
+            ctx.fill();
+            
+            // EMP Aura
+            if (!p.empReady) {
+                ctx.strokeStyle = 'rgba(0, 255, 255, 0.5)';
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 80, 0, Math.PI*2);
+                ctx.stroke();
+            }
+            
+            // Drones
+            drones.forEach(d => {
+                ctx.fillStyle = d.state === 'jammed' ? '#555' : '#f00';
+                ctx.beginPath();
+                ctx.moveTo(d.x, d.y-10);
+                ctx.lineTo(d.x+10, d.y+10);
+                ctx.lineTo(d.x-10, d.y+10);
+                ctx.fill();
+                
+                if (d.state !== 'jammed') {
+                    ctx.fillStyle = 'rgba(255, 0, 0, 0.15)';
+                    ctx.beginPath();
+                    ctx.moveTo(d.x, d.y);
+                    let angle = Math.atan2(d.vy, d.vx);
+                    ctx.arc(d.x, d.y, 150, angle - 0.5, angle + 0.5);
+                    ctx.fill();
+                }
+            });
+        }
+        
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+        loop();
+    </script>
+</body>
+</html>

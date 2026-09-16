@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dungeon of the Crimson Keep: Raycast 3D</title>
+<style>
+    body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: monospace; }
+    canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+    #ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+    .hud-text { color: red; font-size: 24px; font-weight: bold; text-shadow: 2px 2px 0 #000; }
+    #status { position: absolute; bottom: 20px; left: 20px; }
+    #minimap-container { position: absolute; top: 20px; left: 20px; border: 2px solid #555; background: rgba(0,0,0,0.5); }
+    #minimap { width: 150px; height: 150px; }
+    #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,0,0,0); transition: background 0.1s; }
+    #start-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); color: red; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: auto; z-index: 10; cursor: pointer; }
+    #start-screen h1 { font-size: 48px; margin-bottom: 20px; text-shadow: 4px 4px 0 #400; }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="ui">
+    <div id="overlay"></div>
+    <div id="minimap-container"><canvas id="minimap" width="150" height="150"></canvas></div>
+    <div id="status" class="hud-text">LEVEL: 1 | HP: <span id="hp">100</span> | MANA: <span id="mana">50</span> | SCORE: <span id="score">0</span></div>
+</div>
+<div id="start-screen" onclick="init()">
+    <h1>Dungeon of the Crimson Keep</h1>
+    <p>Click to Start / Lock Mouse</p>
+    <p>WASD to Move | Mouse to Look | Click to Cast</p>
+</div>
+<script>
+// Game state
+const W = 640, H = 400; // Internal resolution
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d', { alpha: false });
+canvas.width = W; canvas.height = H;
+
+const mCanvas = document.getElementById('minimap');
+const mCtx = mCanvas.getContext('2d');
+
+let lastTime = performance.now();
+let audioCtx;
+
+// Input
+const keys = {};
+let mouseMovement = 0;
+
+document.addEventListener('keydown', e => keys[e.code] = true);
+document.addEventListener('keyup', e => keys[e.code] = false);
+document.addEventListener('mousemove', e => {
+    if(document.pointerLockElement === canvas) {
+        mouseMovement += e.movementX;
+    }
+});
+canvas.addEventListener('mousedown', e => {
+    if(document.pointerLockElement !== canvas) {
+        canvas.requestPointerLock();
+    } else {
+        player.shoot();
+    }
+});
+
+// Map
+const mapW = 24, mapH = 24;
+const worldMap = [
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,2,2,2,2,0,0,0,0,1],
+  [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,2,0,0,2,0,0,0,0,1],
+  [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,2,0,0,2,0,0,0,0,1],
+  [1,1,1,3,1,1,1,0,0,0,0,0,0,0,0,2,2,0,2,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+];
+
+// Procedural Textures (64x64)
+const texWidth = 64, texHeight = 64;
+const textures = [];
+function genTextures() {
+    for(let i=0; i<8; i++) textures[i] = new Uint32Array(texWidth * texHeight);
+    
+    for(let x=0; x<texWidth; x++){
+        for(let y=0; y<texHeight; y++){
+            const xor = (x * 256 / texWidth) ^ (y * 256 / texHeight);
+            const ycolor = (y * 256 / texHeight);
+            const xycolor = ycolor * 128 / texHeight + xor;
+            const idx = texWidth * y + x;
+            
+            // 1: Gray Stone Bricks
+            let noise = Math.random() * 40 - 20;
+            let brickX = x % 32, brickY = y % 16;
+            if(y%32 > 15) brickX = (x+16) % 32;
+            let edge = (brickX < 2 || brickY < 2) ? 0 : 1;
+            let c = 80 + noise + edge * 40;
+            textures[1][idx] = 0xFF000000 | (c<<16) | (c<<8) | c;
+            
+            // 2: Mossy Wall
+            let moss = (Math.sin(x*0.2) + Math.cos(y*0.3)) > 0 ? 1 : 0;
+            let g = 100 + noise + moss * 50;
+            textures[2][idx] = 0xFF000000 | ((c*0.5)<<16) | (g<<8) | (c*0.5);
+
+            // 3: Iron Door
+            let iron = (x%8 < 2 || y%8 < 2) ? 50 : 120 + noise;
+            let riv = (x%8 == 4 && y%8 == 4) ? 200 : iron;
+            textures[3][idx] = 0xFF000000 | (riv<<16) | (riv<<8) | riv;
+
+            // 4: Red Crypt
+            textures[4][idx] = 0xFF000000 | (c<<16) | ((c*0.2)<<8) | (c*0.2);
+
+            // 5: Gargoyle Statue Block
+            textures[5][idx] = 0xFF000000 | (xycolor<<16) | (xycolor<<8) | xycolor;
+        }
+    }
+}
+genTextures();
+
+// procedural sprite textures
+const spriteTex = [];
+function genSpriteTextures() {
+    for(let i=0; i<2; i++) spriteTex[i] = new Uint32Array(texWidth * texHeight);
+    
+    // Skeleton (Enemy)
+    for(let x=0; x<texWidth; x++){
+        for(let y=0; y<texHeight; y++){
+            const dx = x - 32;
+            const dy = y - 32;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            const idx = texWidth * y + x;
+            spriteTex[0][idx] = 0; // transparent
+            // Head
+            if (y > 10 && y < 24 && Math.abs(x - 32) < 8) spriteTex[0][idx] = 0xFFDDDDDD;
+            // Eyes
+            if (y > 14 && y < 18 && (Math.abs(x - 29) < 2 || Math.abs(x - 35) < 2)) spriteTex[0][idx] = 0xFF0000FF; // Red in ABGR
+            // Body
+            if (y >= 24 && y < 44 && Math.abs(x - 32) < 4) spriteTex[0][idx] = 0xFFCCCCCC;
+            // Ribs
+            if (y >= 26 && y < 36 && y%3==0 && Math.abs(x - 32) < 12) spriteTex[0][idx] = 0xFFCCCCCC;
+            // Arms
+            if (y >= 24 && y < 40 && (Math.abs(x - 22) < 2 || Math.abs(x - 42) < 2)) spriteTex[0][idx] = 0xFFCCCCCC;
+            // Legs
+            if (y >= 44 && y < 60 && (Math.abs(x - 28) < 2 || Math.abs(x - 36) < 2)) spriteTex[0][idx] = 0xFFCCCCCC;
+        }
+    }
+}
+genSpriteTextures();
+
+// Player
+const player = {
+    x: 22.0, y: 11.5,
+    dirX: -1, dirY: 0,
+    planeX: 0, planeY: 0.66,
+    moveSpeed: 0, rotSpeed: 0,
+    hp: 100, mana: 50, score: 0,
+    weaponOffset: 0, weaponState: 'idle', weaponTimer: 0,
+    
+    shoot() {
+        if(this.mana <= 0 || this.weaponState !== 'idle') return;
+        this.mana--;
+        document.getElementById('mana').innerText = this.mana;
+        this.weaponState = 'recoil';
+        this.weaponTimer = 15; // frames
+        playSound('shoot');
+        
+        // Raycast attack
+        let rayDirX = this.dirX;
+        let rayDirY = this.dirY;
+        
+        let hit = false;
+        for(let s of sprites) {
+            if(!s.alive) continue;
+            let sx = s.x - this.x;
+            let sy = s.y - this.y;
+            let dist = Math.sqrt(sx*sx + sy*sy);
+            let nX = sx/dist;
+            let nY = sy/dist;
+            let dp = nX*rayDirX + nY*rayDirY;
+            if(dp > 0.95) {
+                s.hp -= 20;
+                if(s.hp <= 0) {
+                    s.alive = false;
+                    this.score += 100;
+                    document.getElementById('score').innerText = this.score;
+                    playSound('die');
+                } else {
+                    playSound('hit');
+                }
+                hit = true;
+                break;
+            }
+        }
+        if(!hit) playSound('wall');
+    },
+    
+    update(dt) {
+        this.moveSpeed = dt * 5.0;
+        this.rotSpeed = dt * 3.0;
+        
+        // Mouse turn
+        if(mouseMovement !== 0) {
+            let rot = mouseMovement * 0.003;
+            let oldDirX = this.dirX;
+            this.dirX = this.dirX * Math.cos(-rot) - this.dirY * Math.sin(-rot);
+            this.dirY = oldDirX * Math.sin(-rot) + this.dirY * Math.cos(-rot);
+            let oldPlaneX = this.planeX;
+            this.planeX = this.planeX * Math.cos(-rot) - this.planeY * Math.sin(-rot);
+            this.planeY = oldPlaneX * Math.sin(-rot) + this.planeY * Math.cos(-rot);
+            mouseMovement = 0;
+        }
+        
+        if (keys['ArrowRight']) {
+            let oldDirX = this.dirX;
+            this.dirX = this.dirX * Math.cos(-this.rotSpeed) - this.dirY * Math.sin(-this.rotSpeed);
+            this.dirY = oldDirX * Math.sin(-this.rotSpeed) + this.dirY * Math.cos(-this.rotSpeed);
+            let oldPlaneX = this.planeX;
+            this.planeX = this.planeX * Math.cos(-this.rotSpeed) - this.planeY * Math.sin(-this.rotSpeed);
+            this.planeY = oldPlaneX * Math.sin(-this.rotSpeed) + this.planeY * Math.cos(-this.rotSpeed);
+        }
+        if (keys['ArrowLeft']) {
+            let oldDirX = this.dirX;
+            this.dirX = this.dirX * Math.cos(this.rotSpeed) - this.dirY * Math.sin(this.rotSpeed);
+            this.dirY = oldDirX * Math.sin(this.rotSpeed) + this.dirY * Math.cos(this.rotSpeed);
+            let oldPlaneX = this.planeX;
+            this.planeX = this.planeX * Math.cos(this.rotSpeed) - this.planeY * Math.sin(this.rotSpeed);
+            this.planeY = oldPlaneX * Math.sin(this.rotSpeed) + this.planeY * Math.cos(this.rotSpeed);
+        }
+        
+        let mvX = 0, mvY = 0;
+        if (keys['KeyW'] || keys['ArrowUp']) { mvX += this.dirX; mvY += this.dirY; }
+        if (keys['KeyS'] || keys['ArrowDown']) { mvX -= this.dirX; mvY -= this.dirY; }
+        if (keys['KeyD']) { mvX += this.planeX; mvY += this.planeY; }
+        if (keys['KeyA']) { mvX -= this.planeX; mvY -= this.planeY; }
+        
+        if (mvX !== 0 || mvY !== 0) {
+            let len = Math.sqrt(mvX*mvX + mvY*mvY);
+            mvX = (mvX / len) * this.moveSpeed;
+            mvY = (mvY / len) * this.moveSpeed;
+            
+            // Wall sliding collision
+            let padding = 0.2;
+            let checkX = mvX > 0 ? padding : -padding;
+            let checkY = mvY > 0 ? padding : -padding;
+            
+            if(worldMap[Math.floor(this.x + mvX + checkX)][Math.floor(this.y)] === 0) this.x += mvX;
+            if(worldMap[Math.floor(this.x)][Math.floor(this.y + mvY + checkY)] === 0) this.y += mvY;
+        }
+        
+        // Weapon anim
+        if(this.weaponState === 'recoil') {
+            this.weaponTimer--;
+            this.weaponOffset = Math.sin(this.weaponTimer / 15 * Math.PI) * 50;
+            if(this.weaponTimer <= 0) this.weaponState = 'idle';
+        }
+    }
+};
+
+// Sprites
+const sprites = [
+    {x: 20.5, y: 11.5, tex: 0, alive: true, hp: 40},
+    {x: 18.5, y: 10.5, tex: 0, alive: true, hp: 40},
+    {x: 10.5, y: 4.5, tex: 0, alive: true, hp: 40},
+    {x: 10.5, y: 6.5, tex: 0, alive: true, hp: 40},
+    {x: 4.5, y: 18.5, tex: 0, alive: true, hp: 40}
+];
+
+// Audio
+function initAudio() {
+    if(!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+}
+
+function playSound(type) {
+    if(!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    let now = audioCtx.currentTime;
+    if(type === 'shoot') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        osc.start(now);
+        osc.stop(now + 0.1);
+    } else if(type === 'hit') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        osc.start(now);
+        osc.stop(now + 0.1);
+    } else if(type === 'die') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(200, now);
+        osc.frequency.linearRampToValueAtTime(50, now + 0.5);
+        gain.gain.setValueAtTime(0.8, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+        osc.start(now);
+        osc.stop(now + 0.5);
+    } else if (type === 'wall') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(100, now);
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+        osc.start(now);
+        osc.stop(now + 0.05);
+    }
+}
+
+// Rendering buffers
+const imgData = ctx.createImageData(W, H);
+const buf = new ArrayBuffer(imgData.data.length);
+const buf8 = new Uint8ClampedArray(buf);
+const buf32 = new Uint32Array(buf);
+const zBuffer = new Float32Array(W);
+
+function clearScreen() {
+    for(let i=0; i<W*H; i++) {
+        let y = Math.floor(i / W);
+        // ceiling (dark grey)
+        if(y < H/2) buf32[i] = 0xFF222222;
+        // floor (darker grey)
+        else buf32[i] = 0xFF111111;
+    }
+}
+
+function drawWeapon() {
+    const cx = W/2;
+    const cy = H;
+    const wy = H - 150 + player.weaponOffset;
+    const wx = cx;
+    
+    // wand base
+    ctx.fillStyle = '#654321';
+    ctx.fillRect(wx - 10, wy, 20, 150);
+    
+    // crystal
+    ctx.fillStyle = '#ff0000';
+    ctx.beginPath();
+    ctx.moveTo(wx, wy - 30);
+    ctx.lineTo(wx - 15, wy);
+    ctx.lineTo(wx + 15, wy);
+    ctx.fill();
+    
+    // muzzle flash
+    if(player.weaponState === 'recoil') {
+        ctx.fillStyle = `rgba(255, 100, 0, ${player.weaponTimer / 15})`;
+        ctx.beginPath();
+        ctx.arc(wx, wy - 30, 40 + Math.random()*20, 0, Math.PI*2);
+        ctx.fill();
+    }
+}
+
+function renderMap() {
+    mCtx.clearRect(0,0,150,150);
+    let scale = 150 / mapW;
+    for(let x=0; x<mapW; x++){
+        for(let y=0; y<mapH; y++){
+            if(worldMap[x][y] > 0) {
+                mCtx.fillStyle = '#555';
+                mCtx.fillRect(x*scale, y*scale, scale, scale);
+            }
+        }
+    }
+    // player
+    mCtx.fillStyle = '#f00';
+    mCtx.beginPath();
+    mCtx.arc(player.x*scale, player.y*scale, 2, 0, Math.PI*2);
+    mCtx.fill();
+    // fov
+    mCtx.strokeStyle = 'rgba(255,0,0,0.5)';
+    mCtx.beginPath();
+    mCtx.moveTo(player.x*scale, player.y*scale);
+    mCtx.lineTo((player.x + player.dirX*5 + player.planeX*5)*scale, (player.y + player.dirY*5 + player.planeY*5)*scale);
+    mCtx.lineTo((player.x + player.dirX*5 - player.planeX*5)*scale, (player.y + player.dirY*5 - player.planeY*5)*scale);
+    mCtx.closePath();
+    mCtx.stroke();
+}
+
+function render() {
+    clearScreen();
+    
+    // Raycasting
+    for(let x=0; x<W; x++) {
+        let cameraX = 2 * x / W - 1;
+        let rayDirX = player.dirX + player.planeX * cameraX;
+        let rayDirY = player.dirY + player.planeY * cameraX;
+        
+        let mapX = Math.floor(player.x);
+        let mapY = Math.floor(player.y);
+        
+        let sideDistX, sideDistY;
+        let deltaDistX = Math.abs(1 / rayDirX);
+        let deltaDistY = Math.abs(1 / rayDirY);
+        let perpWallDist;
+        
+        let stepX, stepY;
+        let hit = 0, side;
+        
+        if (rayDirX < 0) {
+            stepX = -1;
+            sideDistX = (player.x - mapX) * deltaDistX;
+        } else {
+            stepX = 1;
+            sideDistX = (mapX + 1.0 - player.x) * deltaDistX;
+        }
+        if (rayDirY < 0) {
+            stepY = -1;
+            sideDistY = (player.y - mapY) * deltaDistY;
+        } else {
+            stepY = 1;
+            sideDistY = (mapY + 1.0 - player.y) * deltaDistY;
+        }
+        
+        while (hit === 0) {
+            if (sideDistX < sideDistY) {
+                sideDistX += deltaDistX;
+                mapX += stepX;
+                side = 0;
+            } else {
+                sideDistY += deltaDistY;
+                mapY += stepY;
+                side = 1;
+            }
+            if (worldMap[mapX][mapY] > 0) hit = 1;
+        }
+        
+        if (side === 0) perpWallDist = (sideDistX - deltaDistX);
+        else perpWallDist = (sideDistY - deltaDistY);
+        
+        let lineHeight = Math.floor(H / perpWallDist);
+        let pitch = 0; 
+        
+        let drawStart = -lineHeight / 2 + H / 2 + pitch;
+        if(drawStart < 0) drawStart = 0;
+        let drawEnd = lineHeight / 2 + H / 2 + pitch;
+        if(drawEnd >= H) drawEnd = H - 1;
+        
+        let texNum = worldMap[mapX][mapY] - 1;
+        if(texNum < 0 || texNum > 7) texNum = 0;
+        
+        let wallX;
+        if (side === 0) wallX = player.y + perpWallDist * rayDirY;
+        else wallX = player.x + perpWallDist * rayDirX;
+        wallX -= Math.floor(wallX);
+        
+        let texX = Math.floor(wallX * texWidth);
+        if(side === 0 && rayDirX > 0) texX = texWidth - texX - 1;
+        if(side === 1 && rayDirY < 0) texX = texWidth - texX - 1;
+        
+        let step = 1.0 * texHeight / lineHeight;
+        let texPos = (drawStart - pitch - H / 2 + lineHeight / 2) * step;
+        
+        for(let y = drawStart; y < drawEnd; y++) {
+            let texY = Math.floor(texPos) & (texHeight - 1);
+            texPos += step;
+            let color = textures[texNum][texWidth * texY + texX];
+            
+            // depth shading
+            let shade = Math.min(1.0, 1.0 / (perpWallDist * 0.2));
+            if(side === 1) shade *= 0.5; // side shading
+            
+            let r = ((color & 0xFF) * shade) & 0xFF;
+            let g = (((color >> 8) & 0xFF) * shade) & 0xFF;
+            let b = (((color >> 16) & 0xFF) * shade) & 0xFF;
+            
+            buf32[y * W + x] = 0xFF000000 | (b << 16) | (g << 8) | r;
+        }
+        
+        zBuffer[x] = perpWallDist;
+    }
+    
+    // Sprites
+    for(let i=0; i<sprites.length; i++) {
+        sprites[i].order = (player.x - sprites[i].x)**2 + (player.y - sprites[i].y)**2;
+    }
+    sprites.sort((a,b) => b.order - a.order);
+    
+    for(let i=0; i<sprites.length; i++) {
+        if(!sprites[i].alive) continue;
+        
+        let spriteX = sprites[i].x - player.x;
+        let spriteY = sprites[i].y - player.y;
+        
+        let invDet = 1.0 / (player.planeX * player.dirY - player.dirX * player.planeY);
+        
+        let transformX = invDet * (player.dirY * spriteX - player.dirX * spriteY);
+        let transformY = invDet * (-player.planeY * spriteX + player.planeX * spriteY);
+        
+        let spriteScreenX = Math.floor((W / 2) * (1 + transformX / transformY));
+        
+        let spriteHeight = Math.abs(Math.floor(H / transformY));
+        let drawStartY = -spriteHeight / 2 + H / 2;
+        if(drawStartY < 0) drawStartY = 0;
+        let drawEndY = spriteHeight / 2 + H / 2;
+        if(drawEndY >= H) drawEndY = H - 1;
+        
+        let spriteWidth = Math.abs(Math.floor(H / transformY));
+        let drawStartX = -spriteWidth / 2 + spriteScreenX;
+        if(drawStartX < 0) drawStartX = 0;
+        let drawEndX = spriteWidth / 2 + spriteScreenX;
+        if(drawEndX >= W) drawEndX = W - 1;
+        
+        for(let stripe = drawStartX; stripe < drawEndX; stripe++) {
+            let texX = Math.floor(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * texWidth / spriteWidth) / 256;
+            if(transformY > 0 && stripe > 0 && stripe < W && transformY < zBuffer[stripe]) {
+                for(let y = drawStartY; y < drawEndY; y++) {
+                    let d = (y) * 256 - H * 128 + spriteHeight * 128;
+                    let texY = Math.floor((d * texHeight) / spriteHeight) / 256;
+                    let color = spriteTex[sprites[i].tex][Math.floor(texWidth * texY + texX)];
+                    if((color & 0x00FFFFFF) !== 0) {
+                        let shade = Math.min(1.0, 1.0 / (transformY * 0.2));
+                        let r = ((color & 0xFF) * shade) & 0xFF;
+                        let g = (((color >> 8) & 0xFF) * shade) & 0xFF;
+                        let b = (((color >> 16) & 0xFF) * shade) & 0xFF;
+                        buf32[y * W + stripe] = 0xFF000000 | (b << 16) | (g << 8) | r;
+                    }
+                }
+            }
+        }
+    }
+    
+    imgData.data.set(buf8);
+    ctx.putImageData(imgData, 0, 0);
+    
+    drawWeapon();
+    renderMap();
+}
+
+function updateEnemies(dt) {
+    for(let s of sprites) {
+        if(!s.alive) continue;
+        let dx = player.x - s.x;
+        let dy = player.y - s.y;
+        let dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < 8 && dist > 0.8) {
+            // Chase
+            let mvX = (dx/dist) * dt * 1.5;
+            let mvY = (dy/dist) * dt * 1.5;
+            if(worldMap[Math.floor(s.x + mvX)][Math.floor(s.y)] === 0) s.x += mvX;
+            if(worldMap[Math.floor(s.x)][Math.floor(s.y + mvY)] === 0) s.y += mvY;
+        } else if (dist <= 0.8 && Math.random() < 0.05) {
+            player.hp -= 5;
+            document.getElementById('hp').innerText = player.hp;
+            document.getElementById('overlay').style.background = 'rgba(255,0,0,0.5)';
+            setTimeout(() => document.getElementById('overlay').style.background = 'transparent', 100);
+            playSound('hit');
+            if(player.hp <= 0) {
+                alert('You died! Score: ' + player.score);
+                location.reload();
+            }
+        }
+    }
+}
+
+function gameLoop(time) {
+    let dt = (time - lastTime) / 1000;
+    lastTime = time;
+    if(dt > 0.1) dt = 0.1; // clamp dt
+    
+    player.update(dt);
+    updateEnemies(dt);
+    render();
+    
+    requestAnimationFrame(gameLoop);
+}
+
+function init() {
+    initAudio();
+    document.getElementById('start-screen').style.display = 'none';
+    canvas.requestPointerLock();
+    lastTime = performance.now();
+    requestAnimationFrame(gameLoop);
+}
+</script>
+</body>
+</html>
