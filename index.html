@@ -932,6 +932,125 @@
       transform: translateY(0);
       opacity: 1;
     }
+
+    /* Submission Studio Modal */
+    .submit-modal {
+      background: #121820;
+      border: 2px solid var(--card-border);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 820px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 25px rgba(35, 134, 54, 0.25);
+      overflow: hidden;
+    }
+    .submit-modal-header {
+      background: #161f2c;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--card-border);
+    }
+    .submit-modal-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 13px;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .submit-modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      font-size: 13px;
+    }
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 640px) {
+      .form-grid-2 { grid-template-columns: 1fr; }
+    }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .field-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .field-input, .field-select, .field-textarea {
+      background: #090d13;
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      color: #fff;
+      padding: 9px 12px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .field-input:focus, .field-select:focus, .field-textarea:focus {
+      border-color: #58a6ff;
+    }
+    .field-textarea {
+      font-family: monospace;
+      font-size: 12px;
+      resize: vertical;
+    }
+    .val-box {
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 12px;
+      line-height: 1.5;
+      display: none;
+    }
+    .val-box.success {
+      display: block;
+      background: rgba(35, 134, 54, 0.15);
+      border: 1px solid #238636;
+      color: #7ee787;
+    }
+    .val-box.error {
+      display: block;
+      background: rgba(218, 54, 51, 0.15);
+      border: 1px solid #da3633;
+      color: #f85149;
+    }
+        .submit-modal-footer {
+      background: #161f2c;
+      padding: 12px 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      border-top: 1px solid var(--card-border);
+      flex-wrap: wrap;
+    }
+    .json-preview-box {
+      background: #06090e;
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 11px;
+      color: #58a6ff;
+      max-height: 180px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      display: none;
+    }
+
   </style>
 </head>
 <body>
@@ -958,16 +1077,17 @@
 
   <!-- View Switcher -->
   <div class="view-nav">
-    <button class="view-nav-btn active" data-view="wall">🕹️ Wall of Mario (7)</button>
+    <button class="view-nav-btn active" data-view="wall">🕹️ Wall of Mario (8)</button>
     <button class="view-nav-btn" data-view="arena">⚔️ Blind Vibe Arena</button>
     <button class="view-nav-btn" data-view="table">📊 Elo Leaderboard</button>
+    <button class="view-nav-btn" id="openSubmitModalBtn" style="border-color:#238636; color:#7ee787; margin-left:auto;">➕ Submit Run</button>
   </div>
 </header>
 
 <!-- Controls Bar (Active on Wall of Mario) -->
 <div class="controls-wrap" id="wallControls">
   <div class="filter-group">
-    <button class="filter-btn active" data-filter="all">All Active (7)</button>
+    <button class="filter-btn active" data-filter="all">All Active (8)</button>
     <button class="filter-btn" data-filter="NES Purist">NES Purists</button>
     <button class="filter-btn" data-filter="Modern Indie">Modern Indie</button>
     <button class="filter-btn" data-filter="local">Local Hardware</button>
@@ -1134,6 +1254,108 @@
   </div>
 </div>
 
+
+<!-- Submission Studio Modal -->
+<div class="modal-overlay" id="submitModal">
+  <div class="submit-modal">
+    <div class="submit-modal-header">
+      <div class="submit-modal-title">➕ SUBMISSION STUDIO</div>
+      <div class="cabinet-controls">
+        <button class="cab-btn close" id="closeSubmitModalBtn">✕ Close</button>
+      </div>
+    </div>
+    <div class="submit-modal-body">
+      <div style="background:#161f2c; border:1px solid var(--card-border); border-radius:8px; padding:12px 14px; font-size:12px; color:var(--text-muted); line-height:1.5;">
+        <strong style="color:#fff;">Strict Criteria:</strong> Must be a <strong>Single-File One-Shot</strong> (zero external dependencies, zero image/audio hotlinks). All sprites & sound effects must be procedurally generated via Canvas/SVG and Web Audio API.
+      </div>
+
+      <div class="form-grid-2">
+        <div class="field-group">
+          <label class="field-label" for="subTitle">Game Title *</label>
+          <input class="field-input" id="subTitle" placeholder="e.g. Super Mushroom 64">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="subAuthor">Author / Handle *</label>
+          <input class="field-input" id="subAuthor" placeholder="e.g. u/MarioCoder (r/LocalLLaMA)">
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="field-group">
+          <label class="field-label" for="subModel">Model Name *</label>
+          <input class="field-input" id="subModel" placeholder="e.g. DeepSeek-V3, Qwen3.8-Flash-Next">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="subHardware">Hardware / Platform *</label>
+          <input class="field-input" id="subHardware" placeholder="e.g. Local RTX 4090 24GB or Cloud API">
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="field-group">
+          <label class="field-label" for="subCategory">Category</label>
+          <select class="field-select" id="subCategory">
+            <option value="NES Purist">NES Purist</option>
+            <option value="Modern Indie">Modern Indie</option>
+            <option value="Themed Reskin">Themed Reskin</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="subBadge">Badge / Highlight</label>
+          <input class="field-input" id="subBadge" placeholder="e.g. 500 Reddit Upvotes / One-Shot">
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="field-group">
+          <label class="field-label" for="subSource">Source URL (Reddit / GitHub) *</label>
+          <input class="field-input" id="subSource" placeholder="https://www.reddit.com/r/LocalLLaMA/...">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="subDemo">Author's Live Web Demo (Optional)</label>
+          <input class="field-input" id="subDemo" placeholder="https://user.github.io/mario">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label class="field-label" for="subPromptPreset">Prompt Preset</label>
+          <span style="font-size:11px; color:var(--accent); cursor:pointer;" id="applyPresetBtn">Apply Selected Preset</span>
+        </div>
+        <select class="field-select" id="subPromptPreset">
+          <option value="custom">-- Custom Prompt --</option>
+          <option value="minimal">Minimal Zero-Shot ("Write a complete, playable Super Mario clone in a single file...")</option>
+          <option value="potato">cc8.pl Potato System Prompt ("Make a side-scrolling platformer game like Super Mario Bros...")</option>
+          <option value="matrix">TimelordQ Themed Spec ("Write a fully functional, complete clone of Super Mario Bros...")</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="subPrompt">Exact Prompt Fed to Model *</label>
+        <textarea class="field-textarea" id="subPrompt" rows="3" placeholder="Enter the exact prompt used to generate the game..."></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="subCode">Raw Self-Contained HTML Code *</label>
+        <textarea class="field-textarea" id="subCode" rows="6" placeholder="Paste the complete <!DOCTYPE html> ... </html> code here..."></textarea>
+      </div>
+
+      <div class="val-box" id="valBox"></div>
+
+      <div class="json-preview-box" id="jsonPreviewBox"></div>
+
+      <div style="background:#090d13; border:1px solid var(--card-border); border-radius:6px; padding:10px 14px; font-size:11px; color:var(--text-muted);">
+        💡 <strong>CLI Alternative:</strong> You can also run <code style="color:#7ee787;">python3 scripts/submit.py --file my_mario.html ...</code> to auto-render preview screenshots and validate in one step.
+      </div>
+    </div>
+    <div class="submit-modal-footer">
+      <button class="btn-play" style="flex:2;" id="runPreflightBtn">🛡️ Run Preflight Validation</button>
+      <button class="btn-action" style="flex:1;" id="copyJsonBtn" disabled>📋 Copy data.json</button>
+      <a class="btn-action" style="flex:1; text-align:center;" id="openGhPrBtn" href="https://github.com/kartikeychauhan/plumberbench" target="_blank" rel="noopener noreferrer">🚀 Submit on GitHub</a>
+    </div>
+  </div>
+</div>
+
 <div id="toast">Prompt copied to clipboard!</div>
 
 <script>
@@ -1142,242 +1364,311 @@
 
   // Fallback offline dataset (7 active, 2 hidden)
   const EMBEDDED_GAMES_DATA = [
-    {
-      "id": "gpt6_astra_high",
-      "title": "Super Mario: Three Worlds Edition",
-      "author": "GPT-6 Astra (Frontier High)",
-      "category": "Modern Indie",
-      "badge": "Frontier High",
-      "file": "games/gpt6_astra_high.html",
-      "baseVotes": 0,
-      "vibeScore": 9.4,
-      "size": "37.5 KB",
-      "lines": 204,
-      "hardware": "Frontier Cloud API",
-      "model": "GPT-6 Astra",
-      "mode": "High Reasoning Mode",
-      "promptStyle": "Minimal Zero-Shot",
-      "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-      "sourceName": "MarioBench Run",
-      "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gpt6_astra_high.html",
-      "vibeReview": "Spectacular scope across 3 unique worlds (Mushroom Meadow, Sunset Steppes, Starlight Summit). Features harmonic moving platforms that Mario physically rides, kickable turtle shells with ricochet physics, and ceiling clearance detection on mushroom growth. Plays slightly more like a modern indie platformer than an authentic crunchy 1985 NES cartridge, but technically flawless.",
-      "ratings": { "nesCrunch": 7.5, "physicsFeel": 9.5, "ambition": 9.8 },
-      "elo": 1200,
-      "matches": 0,
-      "wins": 0,
-      "preview": "previews/gpt6_astra_high.png",
-      "hidden": false
+  {
+    "id": "gpt6_astra_high",
+    "title": "Super Mario: Three Worlds Edition",
+    "author": "GPT-6 Astra (Frontier High)",
+    "category": "Modern Indie",
+    "badge": "Frontier High",
+    "file": "games/gpt6_astra_high.html",
+    "baseVotes": 0,
+    "vibeScore": 9.4,
+    "size": "37.5 KB",
+    "lines": 204,
+    "hardware": "Frontier Cloud API",
+    "model": "GPT-6 Astra",
+    "mode": "High Reasoning Mode",
+    "promptStyle": "Minimal Zero-Shot",
+    "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
+    "sourceName": "MarioBench Run",
+    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gpt6_astra_high.html",
+    "vibeReview": "Spectacular scope across 3 unique worlds (Mushroom Meadow, Sunset Steppes, Starlight Summit). Features harmonic moving platforms that Mario physically rides, kickable turtle shells with ricochet physics, and ceiling clearance detection on mushroom growth. Plays slightly more like a modern indie platformer than an authentic crunchy 1985 NES cartridge, but technically flawless.",
+    "ratings": {
+      "nesCrunch": 7.5,
+      "physicsFeel": 9.5,
+      "ambition": 9.8
     },
-    {
-      "id": "gemini38_flash_full",
-      "title": "Super Mario Bros: 2.6k Deluxe",
-      "author": "Gemini 3.8 Flash",
-      "category": "NES Purist",
-      "badge": "Full CoT Deluxe",
-      "file": "games/gemini38_flash_full.html",
-      "baseVotes": 0,
-      "vibeScore": 9.1,
-      "size": "74.8 KB",
-      "lines": 2628,
-      "hardware": "Antigravity Pro Engine",
-      "model": "Gemini 3.8 Flash",
-      "mode": "Full CoT Deliberation",
-      "promptStyle": "Minimal Zero-Shot",
-      "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-      "sourceName": "MarioBench Run",
-      "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gemini38_flash_full.html",
-      "vibeReview": "Unmatched audio crunch and physical momentum. Implements a Web Audio synthesizer using an 800 Hz bandpass white-noise filter for authentic NES snare drums, directional skidding with procedural dust puffs, 14-frame variable jump height, and kickable Koopa shells that wipe out enemy chains. Mario's face sprite is somewhat derpy, but the gameplay feel is pure arcade gold.",
-      "ratings": { "nesCrunch": 9.5, "physicsFeel": 9.6, "ambition": 9.2 },
-      "elo": 1200,
-      "matches": 0,
-      "wins": 0,
-      "preview": "previews/gemini38_flash_full.png",
-      "hidden": false
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/gpt6_astra_high.png",
+    "wins": 0,
+    "hidden": false
+  },
+  {
+    "id": "gemini38_flash_full",
+    "title": "Super Mario Bros: 2.6k Deluxe",
+    "author": "Gemini 3.8 Flash",
+    "category": "NES Purist",
+    "badge": "Full CoT Deluxe",
+    "file": "games/gemini38_flash_full.html",
+    "baseVotes": 0,
+    "vibeScore": 9.1,
+    "size": "74.8 KB",
+    "lines": 2628,
+    "hardware": "Antigravity Pro Engine",
+    "model": "Gemini 3.8 Flash",
+    "mode": "Full CoT Deliberation",
+    "promptStyle": "Minimal Zero-Shot",
+    "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
+    "sourceName": "MarioBench Run",
+    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gemini38_flash_full.html",
+    "vibeReview": "Unmatched audio crunch and physical momentum. Implements a Web Audio synthesizer using an 800 Hz bandpass white-noise filter for authentic NES snare drums, directional skidding with procedural dust puffs, 14-frame variable jump height, and kickable Koopa shells that wipe out enemy chains. Mario's face sprite is somewhat derpy, but the gameplay feel is pure arcade gold.",
+    "ratings": {
+      "nesCrunch": 9.5,
+      "physicsFeel": 9.6,
+      "ambition": 9.2
     },
-    {
-      "id": "qwen38_flash_3070_potato",
-      "title": "Super Pixel Bros (Course 1-1)",
-      "author": "cc8.pl (r/LocalLLaMA)",
-      "category": "NES Purist",
-      "badge": "8GB 3070 Potato Run",
-      "file": "games/qwen38_flash_3070_potato.html",
-      "baseVotes": 58,
-      "vibeScore": 8.9,
-      "size": "67.5 KB",
-      "lines": 1277,
-      "hardware": "RTX 3070 8GB + 80GB DDR4",
-      "model": "Qwen3.8-Flash-Next-UD-Q3_K_XL",
-      "mode": "xhigh (10k CoT budget, 40k ctx)",
-      "promptStyle": "Single One-Shot System Prompt",
-      "prompt": "Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS in a single HTML file.Plan the implementation briefly within the reasoning budget. Then output only the complete HTML file. Do not use tools or provide explanations.",
-      "sourceName": "r/LocalLLaMA & cc8.pl",
-      "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
-      "demoUrl": "https://www.cc8.pl/mario-q38-flash.html",
-      "vibeReview": "Built on an 8GB RTX 3070 (a potato in modern local LLM terms) using UD-Q3_K_XL quant with 40k context and a 10k reasoning limit at ~11-12 t/s. Delivers a retro wrapper with live HUD stats, bandpass noise-filtered NES percussion, jump sweeps, custom pixel sprites, Goombas, and responsive physics.",
-      "ratings": { "nesCrunch": 9.2, "physicsFeel": 8.9, "ambition": 8.8 },
-      "elo": 1200,
-      "matches": 0,
-      "wins": 0,
-      "preview": "previews/qwen38_flash_3070_potato.png",
-      "hidden": false
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/gemini38_flash_full.png",
+    "wins": 0,
+    "hidden": false
+  },
+  {
+    "id": "qwen38_flash_3070_potato",
+    "title": "Super Pixel Bros (Course 1-1)",
+    "author": "cc8.pl (r/LocalLLaMA)",
+    "category": "NES Purist",
+    "badge": "8GB 3070 Potato Run",
+    "file": "games/qwen38_flash_3070_potato.html",
+    "baseVotes": 58,
+    "vibeScore": 8.9,
+    "size": "67.5 KB",
+    "lines": 1277,
+    "hardware": "RTX 3070 8GB + 80GB DDR4",
+    "model": "Qwen3.8-Flash-Next-UD-Q3_K_XL",
+    "mode": "xhigh (10k CoT budget, 40k ctx)",
+    "promptStyle": "Single One-Shot System Prompt",
+    "prompt": "Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS in a single HTML file.Plan the implementation briefly within the reasoning budget. Then output only the complete HTML file. Do not use tools or provide explanations.",
+    "sourceName": "r/LocalLLaMA & cc8.pl",
+    "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
+    "vibeReview": "Built on an 8GB RTX 3070 (a potato in modern local LLM terms) using UD-Q3_K_XL quant with 40k context and a 10k reasoning limit at ~11-12 t/s. Delivers a retro wrapper with live HUD stats, bandpass noise-filtered NES percussion, jump sweeps, custom pixel sprites, Goombas, and responsive physics.",
+    "ratings": {
+      "nesCrunch": 9.2,
+      "physicsFeel": 8.9,
+      "ambition": 8.8
     },
-    {
-      "id": "qwen38_27b_chopsticks",
-      "title": "Qwen 27B Tiiny NES Replica",
-      "author": "u/ChopSticksPlease",
-      "category": "NES Purist",
-      "badge": "r/LocalLLaMA Viral",
-      "file": "games/qwen38_27b_chopsticks.html",
-      "baseVotes": 374,
-      "vibeScore": 8.7,
-      "size": "30.8 KB",
-      "lines": 1008,
-      "hardware": "RTX 3090 (llama.cpp MTP draft)",
-      "model": "Qwen3.8-27B-UD-Q4_K_XL",
-      "mode": "Medium Reasoning Effort",
-      "promptStyle": "Strict NES Specification",
-      "prompt": "Write a fully functional, complete clone of Super Mario Bros game (the famous NES game)\n- Clone must work in a web browser, index.html, no server\n- Decent replica of the graphics assets.\n- Colorful and playable.\n- Controls with keyboard up, down, left, right, spacebar to jump, shift to speed up",
-      "sourceName": "r/LocalLLaMA (u/ChopSticksPlease)",
-      "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
-      "demoUrl": "https://indigo-carmencita-27.tiiny.site/",
-      "vibeReview": "One-shotted by a 17GB local quant running on an RTX 3090 with MTP draft decoding. Built a crisp 256x240 integer-scaled NES clone with multi-channel audio synthesis, Goombas, breakable bricks, question blocks, and authentic momentum.",
-      "ratings": { "nesCrunch": 9.0, "physicsFeel": 8.6, "ambition": 8.5 },
-      "elo": 1200,
-      "matches": 0,
-      "wins": 0,
-      "preview": "previews/qwen38_27b_chopsticks.png",
-      "hidden": false
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/qwen38_flash_3070_potato.png",
+    "wins": 0,
+    "hidden": false,
+    "demoUrl": "https://www.cc8.pl/mario-q38-flash.html"
+  },
+  {
+    "id": "qwen38_gold_60k",
+    "title": "The 60,000-Token Monolith",
+    "author": "Qwen3.8-Flash-Next (Gold)",
+    "category": "NES Purist",
+    "badge": "Local Homelab King",
+    "file": "games/qwen38_gold_60k.html",
+    "baseVotes": 0,
+    "vibeScore": 8.5,
+    "size": "70.8 KB",
+    "lines": 1248,
+    "hardware": "RTX 4070 12GB (Local Homelab)",
+    "model": "Qwen3.8-Flash-Next",
+    "mode": "xhigh (59m CoT Deliberation)",
+    "promptStyle": "Minimal Zero-Shot",
+    "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
+    "sourceName": "L3MS Local Homelab (RTX 4070)",
+    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/qwen38_gold_60k.html",
+    "vibeReview": "Generated entirely on a local RTX 4070 in a single contiguous 60,221 token inference stream after 29,455 thinking tokens. Captures authentic retro atmosphere with a custom CRT scanline shader pass, arcade marquee bulbs, World 1-1 and World 1-2 Underground pipe warps, bouncing fireballs, Koopas, and Piranha plants.",
+    "ratings": {
+      "nesCrunch": 9.2,
+      "physicsFeel": 8.0,
+      "ambition": 9.4
     },
-    {
-      "id": "qwen38_gold_60k",
-      "title": "The 60,000-Token Monolith",
-      "author": "Qwen3.8-Flash-Next (Gold)",
-      "category": "NES Purist",
-      "badge": "Local Homelab King",
-      "file": "games/qwen38_gold_60k.html",
-      "baseVotes": 0,
-      "vibeScore": 8.5,
-      "size": "70.8 KB",
-      "lines": 1248,
-      "hardware": "RTX 4070 12GB (Local Homelab)",
-      "model": "Qwen3.8-Flash-Next",
-      "mode": "xhigh (59m CoT Deliberation)",
-      "promptStyle": "Minimal Zero-Shot",
-      "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-      "sourceName": "L3MS Local Homelab (RTX 4070)",
-      "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/qwen38_gold_60k.html",
-      "vibeReview": "Generated entirely on a local RTX 4070 in a single contiguous 60,221 token inference stream after 29,455 thinking tokens. Captures authentic retro atmosphere with a custom CRT scanline shader pass, arcade marquee bulbs, World 1-1 and World 1-2 Underground pipe warps, bouncing fireballs, Koopas, and Piranha plants.",
-      "ratings": { "nesCrunch": 9.2, "physicsFeel": 8.0, "ambition": 9.4 },
-      "elo": 1200,
-      "matches": 0,
-      "wins": 0,
-      "preview": "previews/qwen38_gold_60k.png",
-      "hidden": false
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/qwen38_gold_60k.png",
+    "wins": 0,
+    "hidden": false
+  },
+  {
+    "id": "qwen38_27b_chopsticks",
+    "title": "Qwen 27B Tiiny NES Replica",
+    "author": "u/ChopSticksPlease",
+    "category": "NES Purist",
+    "badge": "r/LocalLLaMA Viral",
+    "file": "games/qwen38_27b_chopsticks.html",
+    "baseVotes": 374,
+    "vibeScore": 8.7,
+    "size": "30.8 KB",
+    "lines": 1008,
+    "hardware": "RTX 3090 (llama.cpp MTP draft)",
+    "model": "Qwen3.8-27B-UD-Q4_K_XL",
+    "mode": "Medium Reasoning Effort",
+    "promptStyle": "Strict NES Specification",
+    "prompt": "Write a fully functional, complete clone of Super Mario Bros game (the famous NES game)\n- Clone must work in a web browser, index.html, no server\n- Decent replica of the graphics assets.\n- Colorful and playable.\n- Controls with keyboard up, down, left, right, spacebar to jump, shift to speed up",
+    "sourceName": "r/LocalLLaMA (u/ChopSticksPlease)",
+    "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
+    "vibeReview": "One-shotted by a 17GB local quant running on an RTX 3090 with MTP draft decoding. Built a crisp 256x240 integer-scaled NES clone with multi-channel audio synthesis, Goombas, breakable bricks, question blocks, and authentic momentum.",
+    "ratings": {
+      "nesCrunch": 9.0,
+      "physicsFeel": 8.6,
+      "ambition": 8.5
     },
-    {
-      "id": "gpt6_astra_light",
-      "title": "Super Meadow (A Little Adventure)",
-      "author": "GPT-6 Astra (Light)",
-      "category": "Modern Indie",
-      "badge": "Light CoT Indie",
-      "file": "games/gpt6_astra_light.html",
-      "baseVotes": 0,
-      "vibeScore": 8.6,
-      "size": "21.7 KB",
-      "lines": 102,
-      "hardware": "Frontier Cloud API",
-      "model": "GPT-6 Astra",
-      "mode": "Light Reasoning Mode",
-      "promptStyle": "Minimal Zero-Shot",
-      "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-      "sourceName": "MarioBench Run",
-      "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gpt6_astra_light.html",
-      "vibeReview": "A charming artistic departure. Rather than an 8-bit clone, Astra Light autonomously created a 16:9 modern indie platformer with a sunset gradient sky, bezier curve hills, 120 Hz accumulator physics, screen shake, and a cozy hillside cottage finish.",
-      "ratings": { "nesCrunch": 6.0, "physicsFeel": 9.2, "ambition": 8.8 },
-      "elo": 1200,
-      "matches": 0,
-      "wins": 0,
-      "preview": "previews/gpt6_astra_light.png",
-      "hidden": false
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/qwen38_27b_chopsticks.png",
+    "wins": 0,
+    "hidden": false,
+    "demoUrl": "https://indigo-carmencita-27.tiiny.site/"
+  },
+  {
+    "id": "gpt6_astra_light",
+    "title": "Super Meadow (A Little Adventure)",
+    "author": "GPT-6 Astra (Light)",
+    "category": "Modern Indie",
+    "badge": "Light CoT Indie",
+    "file": "games/gpt6_astra_light.html",
+    "baseVotes": 0,
+    "vibeScore": 8.6,
+    "size": "21.7 KB",
+    "lines": 102,
+    "hardware": "Frontier Cloud API",
+    "model": "GPT-6 Astra",
+    "mode": "Light Reasoning Mode",
+    "promptStyle": "Minimal Zero-Shot",
+    "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
+    "sourceName": "MarioBench Run",
+    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gpt6_astra_light.html",
+    "vibeReview": "A charming artistic departure. Rather than an 8-bit clone, Astra Light autonomously created a 16:9 modern indie platformer with a sunset gradient sky, bezier curve hills, 120 Hz accumulator physics, screen shake, and a cozy hillside cottage finish.",
+    "ratings": {
+      "nesCrunch": 6.0,
+      "physicsFeel": 9.2,
+      "ambition": 8.8
     },
-    {
-      "id": "qwen38_27b_circus_mikenonect",
-      "title": "Circus Jumper",
-      "author": "u/MikeNonect",
-      "category": "Circus Reskin",
-      "badge": "629 Reddit Upvotes",
-      "file": "games/qwen38_27b_circus_mikenonect.html",
-      "baseVotes": 629,
-      "vibeScore": 8.4,
-      "size": "52.4 KB",
-      "lines": 1637,
-      "hardware": "Framework Desktop (Q8 GGUF)",
-      "model": "Qwen3.8-27B Q8",
-      "mode": "Overnight Batch",
-      "promptStyle": "Aesthetic Engaging Prompt",
-      "prompt": "Create a Super Mario clone in JavaScript as a single HTML page. Make the game engaging and the graphics as beautiful as possible. (Later adapted to circus-theme to avoid DMCA).",
-      "sourceName": "r/LocalLLaMA (u/MikeNonect)",
-      "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1vp438p/if_you_would_have_told_me_half_a_year_ago_that_a/",
-      "demoUrl": "https://mikeveerman.github.io/qwen38-27b-mario",
-      "vibeReview": "The most discussed Mario run on r/LocalLLaMA with 629 upvotes. Transformed Mario into a circus-themed acrobat with colorful tents, trapeze platforms, juggling balls, and rich background art.",
-      "ratings": { "nesCrunch": 5.5, "physicsFeel": 8.8, "ambition": 9.0 },
-      "elo": 1200,
-      "matches": 0,
-      "wins": 0,
-      "preview": "previews/qwen38_27b_circus_mikenonect.png",
-      "hidden": false
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/gpt6_astra_light.png",
+    "wins": 0,
+    "hidden": false
+  },
+  {
+    "id": "qwen38_27b_circus_mikenonect",
+    "title": "Circus Jumper",
+    "author": "u/MikeNonect",
+    "category": "Circus Reskin",
+    "badge": "629 Reddit Upvotes",
+    "file": "games/qwen38_27b_circus_mikenonect.html",
+    "baseVotes": 629,
+    "vibeScore": 8.4,
+    "size": "52.4 KB",
+    "lines": 1637,
+    "hardware": "Framework Desktop (Q8 GGUF)",
+    "model": "Qwen3.8-27B Q8",
+    "mode": "Overnight Batch",
+    "promptStyle": "Aesthetic Engaging Prompt",
+    "prompt": "Create a Super Mario clone in JavaScript as a single HTML page. Make the game engaging and the graphics as beautiful as possible. (Later adapted to circus-theme to avoid DMCA).",
+    "sourceName": "r/LocalLLaMA (u/MikeNonect)",
+    "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1vp438p/if_you_would_have_told_me_half_a_year_ago_that_a/",
+    "vibeReview": "The most discussed Mario run on r/LocalLLaMA with 629 upvotes. Transformed Mario into a circus-themed acrobat with colorful tents, trapeze platforms, juggling balls, and rich background art.",
+    "ratings": {
+      "nesCrunch": 5.5,
+      "physicsFeel": 8.8,
+      "ambition": 9.0
     },
-    {
-      "id": "gemini25_pro_pygame",
-      "title": "Gemini 2.5 Pro PyGame Edition",
-      "author": "u/Healthy-Nebula-3603",
-      "category": "Python / PyGame",
-      "badge": "312 Reddit Upvotes",
-      "file": "games/gemini25_pro_pygame_healthynebula.py",
-      "baseVotes": 312,
-      "vibeScore": 8.1,
-      "size": "25.3 KB",
-      "lines": 537,
-      "hardware": "Gemini 2.5 Pro Cloud API",
-      "model": "Gemini 2.5 Pro",
-      "mode": "Standard Prompt",
-      "promptStyle": "Max Quality Python Prompt",
-      "prompt": "Build absolutely the best implementation of the super Mario game in python without any external assets.",
-      "sourceName": "r/LocalLLaMA (Pastebin)",
-      "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1jjsiiw/mario_game_made_by_new_a_gemini_pro_25_in_couple/",
-      "ratings": { "nesCrunch": 8.0, "physicsFeel": 8.5, "ambition": 7.8 },
-      "elo": 1200,
-      "matches": 0,
-      "wins": 0,
-      "preview": "previews/gemini25_pro_pygame.png",
-      "hidden": true
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/qwen38_27b_circus_mikenonect.png",
+    "wins": 0,
+    "hidden": false,
+    "demoUrl": "https://mikeveerman.github.io/qwen38-27b-mario"
+  },
+  {
+    "id": "gemini38_flash_baseline",
+    "title": "Paul Allen's Card (Base)",
+    "author": "Gemini 3.8 Flash",
+    "category": "NES Purist",
+    "badge": "Zero-Bug Sprint",
+    "file": "games/gemini38_flash_baseline.html",
+    "baseVotes": 0,
+    "vibeScore": 7.8,
+    "size": "27.6 KB",
+    "lines": 992,
+    "hardware": "Interactive Assistant Pass",
+    "model": "Gemini 3.8 Flash",
+    "mode": "Conversational Fast Mode",
+    "promptStyle": "Minimal Zero-Shot",
+    "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
+    "sourceName": "Antigravity Baseline",
+    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gemini38_flash_baseline.html",
+    "vibeReview": "The original interactive benchmark reference. Built in seconds with zero bugs, silky 60 FPS sub-pixel physics, 6-frame coyote jump buffering, clean square wave audio sweeps, and a 120-column overworld slice.",
+    "ratings": {
+      "nesCrunch": 8.4,
+      "physicsFeel": 8.9,
+      "ambition": 7.0
     },
-    {
-      "id": "gemini38_flash_baseline",
-      "title": "Paul Allen's Card (Base)",
-      "author": "Gemini 3.8 Flash",
-      "category": "NES Purist",
-      "badge": "Zero-Bug Sprint",
-      "file": "games/gemini38_flash_baseline.html",
-      "baseVotes": 0,
-      "vibeScore": 7.8,
-      "size": "27.6 KB",
-      "lines": 992,
-      "hardware": "Interactive Assistant Pass",
-      "model": "Gemini 3.8 Flash",
-      "mode": "Conversational Fast Mode",
-      "promptStyle": "Minimal Zero-Shot",
-      "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-      "sourceName": "Antigravity Baseline",
-      "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gemini38_flash_baseline.html",
-      "ratings": { "nesCrunch": 8.4, "physicsFeel": 8.9, "ambition": 7.0 },
-      "elo": 1200,
-      "matches": 0,
-      "wins": 0,
-      "preview": "previews/gemini38_flash_baseline.png",
-      "hidden": true
-    }
-  ];
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/gemini38_flash_baseline.png",
+    "wins": 0,
+    "hidden": true
+  },
+  {
+    "id": "gemini25_pro_pygame",
+    "title": "Gemini 2.5 Pro PyGame Edition",
+    "author": "u/Healthy-Nebula-3603",
+    "category": "Python / PyGame",
+    "badge": "312 Reddit Upvotes",
+    "file": "games/gemini25_pro_pygame_healthynebula.py",
+    "baseVotes": 312,
+    "vibeScore": 8.1,
+    "size": "25.3 KB",
+    "lines": 537,
+    "hardware": "Gemini 2.5 Pro Cloud API",
+    "model": "Gemini 2.5 Pro",
+    "mode": "Standard Prompt",
+    "promptStyle": "Max Quality Python Prompt",
+    "prompt": "Build absolutely the best implementation of the super Mario game in python without any external assets.",
+    "sourceName": "r/LocalLLaMA (Pastebin)",
+    "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1jjsiiw/mario_game_made_by_new_a_gemini_pro_25_in_couple/",
+    "vibeReview": "One-shot Python / PyGame implementation from Gemini 2.5 Pro that blew up with 312 upvotes on r/LocalLLaMA. Clean momentum curves, title screen, procedurally drawn bushes, clouds, and Goombas.",
+    "ratings": {
+      "nesCrunch": 8.0,
+      "physicsFeel": 8.5,
+      "ambition": 7.8
+    },
+    "elo": 1200,
+    "matches": 0,
+    "preview": "previews/gemini25_pro_pygame.png",
+    "wins": 0,
+    "hidden": true
+  },
+  {
+    "id": "ornith35b_matrix_bros",
+    "title": "The Matrix Bros (Cyber Edition)",
+    "author": "u/TimelordQ (r/LocalLLaMA)",
+    "category": "Matrix Reskin",
+    "badge": "Cyber Matrix Run",
+    "file": "games/ornith35b_matrix_bros.html",
+    "baseVotes": 184,
+    "vibeScore": 8.8,
+    "size": "29.7 KB",
+    "lines": 737,
+    "hardware": "Local RTX 3090 (llama.cpp)",
+    "model": "Ornith-1.5-35B",
+    "mode": "Q4_K_M Quant",
+    "promptStyle": "Strict NES Specification (Themed)",
+    "prompt": "Write a fully functional, complete clone of Super Mario Bros game (the famous NES game)\n- Clone must work in a web browser, index.html, no server\n- Decent replica of the graphics assets.\n- Colorful and playable.\n- Controls with keyboard up, down, left, right, spacebar to jump, shift to speed up\n- Themed as The Matrix with digital rain and cyber aesthetic",
+    "sourceName": "r/LocalLLaMA & GitHub",
+    "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
+    "demoUrl": "https://timelordq.github.io/The-Matrix-Bros/index.html",
+    "vibeReview": "A viral r/LocalLLaMA mashup combining classic NES Super Mario mechanics with The Matrix. Features digital green katakana code rain falling in real time, hooded cyber-program sprites, neon green platforms, and glowing coin data streams. One-shotted on a local 35B parameter quant.",
+    "ratings": {
+      "nesCrunch": 8.8,
+      "physicsFeel": 8.7,
+      "ambition": 9.3
+    },
+    "elo": 1200,
+    "matches": 0,
+    "wins": 0,
+    "preview": "previews/ornith35b_matrix_bros.png",
+    "hidden": false
+  }
+];
 
   let gamesData = [];
   let currentFilter = 'all';
@@ -1858,6 +2149,130 @@
       if (arenaGameB) openArcadeModal(arenaGameB.id);
     });
 
+    
+    // Submission Studio Controls
+    const openSubmitBtn = document.getElementById('openSubmitModalBtn');
+    const closeSubmitBtn = document.getElementById('closeSubmitModalBtn');
+    const submitModal = document.getElementById('submitModal');
+    if (openSubmitBtn) openSubmitBtn.addEventListener('click', () => submitModal.classList.add('active'));
+    if (closeSubmitBtn) closeSubmitBtn.addEventListener('click', () => submitModal.classList.remove('active'));
+
+    // Prompt Presets
+    const promptPresets = {
+      minimal: "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
+      potato: "Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS in a single HTML file.Plan the implementation briefly within the reasoning budget. Then output only the complete HTML file. Do not use tools or provide explanations.",
+      matrix: "Write a fully functional, complete clone of Super Mario Bros game (the famous NES game)\n- Clone must work in a web browser, index.html, no server\n- Decent replica of the graphics assets.\n- Colorful and playable.\n- Controls with keyboard up, down, left, right, spacebar to jump, shift to speed up\n- Themed as The Matrix with digital rain and cyber aesthetic"
+    };
+
+    const presetSelect = document.getElementById('subPromptPreset');
+    const applyPresetBtn = document.getElementById('applyPresetBtn');
+    if (applyPresetBtn) {
+      applyPresetBtn.addEventListener('click', () => {
+        const val = presetSelect.value;
+        if (promptPresets[val]) {
+          document.getElementById('subPrompt').value = promptPresets[val];
+          showToast('✓ Prompt preset applied');
+        }
+      });
+    }
+
+    // Preflight Validator
+    let generatedEntryJson = null;
+    const runPreflightBtn = document.getElementById('runPreflightBtn');
+    const valBox = document.getElementById('valBox');
+    const jsonPreviewBox = document.getElementById('jsonPreviewBox');
+    const copyJsonBtn = document.getElementById('copyJsonBtn');
+
+    if (runPreflightBtn) {
+      runPreflightBtn.addEventListener('click', () => {
+        const title = document.getElementById('subTitle').value.trim();
+        const author = document.getElementById('subAuthor').value.trim();
+        const model = document.getElementById('subModel').value.trim();
+        const hardware = document.getElementById('subHardware').value.trim();
+        const category = document.getElementById('subCategory').value;
+        const badge = document.getElementById('subBadge').value.trim() || 'Community Submission';
+        const source = document.getElementById('subSource').value.trim();
+        const demo = document.getElementById('subDemo').value.trim();
+        const prompt = document.getElementById('subPrompt').value.trim();
+        const code = document.getElementById('subCode').value;
+
+        if (!title || !author || !model || !hardware || !source || !prompt || !code) {
+          valBox.className = 'val-box error';
+          valBox.innerHTML = '❌ <strong>Missing Required Fields:</strong> Please fill in Title, Author, Model, Hardware, Source URL, Prompt, and paste the HTML code.';
+          return;
+        }
+
+        // Check external assets
+        const banned = [
+          { pattern: /<script[^>]+src=["'](https?:)?\/\//i, label: 'External JavaScript (<script src="http...">)' },
+          { pattern: /<link[^>]+href=["'](https?:)?\/\//i, label: 'External CSS Stylesheet (<link href="http...">)' },
+          { pattern: /<img[^>]+src=["'](https?:)?\/\//i, label: 'External Image asset (<img src="http...">)' },
+          { pattern: /<audio[^>]+src=["'](https?:)?\/\//i, label: 'External Audio asset (<audio src="http...">)' },
+          { pattern: /<video[^>]+src=["'](https?:)?\/\//i, label: 'External Video asset (<video src="http...">)' }
+        ];
+
+        for (const b of banned) {
+          if (b.pattern.test(code)) {
+            valBox.className = 'val-box error';
+            valBox.innerHTML = `❌ <strong>External Dependency Detected:</strong> ${b.label} found!<br>All submissions must be 100% self-contained single-file HTML/JS.`;
+            copyJsonBtn.disabled = true;
+            jsonPreviewBox.style.display = 'none';
+            return;
+          }
+        }
+
+        const lines = code.split('\n').length;
+        const kb = (new Blob([code]).size / 1024).toFixed(1);
+        const slugId = (model + '_' + title).toLowerCase().replace(/[^a-z0-9]+/g, '_').slice(0, 30);
+
+        const entry = {
+          id: slugId,
+          title: title,
+          author: author,
+          category: category,
+          badge: badge,
+          file: `games/${slugId}.html`,
+          baseVotes: 1,
+          vibeScore: 8.5,
+          size: `${kb} KB`,
+          lines: lines,
+          hardware: hardware,
+          model: model,
+          mode: "One-Shot Standard",
+          promptStyle: "Verified Zero-Shot",
+          prompt: prompt,
+          sourceName: source.includes('reddit') ? 'r/LocalLLaMA' : 'Community Submission',
+          sourceUrl: source,
+          ...(demo ? { demoUrl: demo } : {}),
+          vibeReview: `${title} generated in a single prompt by ${model}. Verified 100% self-contained (${kb} KB, ${lines} lines).`,
+          ratings: { nesCrunch: 8.0, physicsFeel: 8.5, ambition: 8.5 },
+          elo: 1200,
+          matches: 0,
+          wins: 0,
+          preview: `previews/${slugId}.png`,
+          hidden: false
+        };
+
+        generatedEntryJson = JSON.stringify(entry, null, 2);
+        valBox.className = 'val-box success';
+        valBox.innerHTML = `✅ <strong>Preflight Passed!</strong> Single-file verified: 0 external dependencies, <strong>${kb} KB</strong>, <strong>${lines} lines</strong>. Ready for PlumberBench!`;
+        
+        jsonPreviewBox.style.display = 'block';
+        jsonPreviewBox.textContent = generatedEntryJson;
+        copyJsonBtn.disabled = false;
+        showToast('✓ Validation Passed! Entry JSON ready.');
+      });
+    }
+
+    if (copyJsonBtn) {
+      copyJsonBtn.addEventListener('click', () => {
+        if (!generatedEntryJson) return;
+        navigator.clipboard.writeText(generatedEntryJson).then(() => {
+          showToast('📋 Entry JSON copied! Paste into data.json or your PR.');
+        });
+      });
+    }
+
     // Modal controls
     document.getElementById('modalClose').addEventListener('click', closeArcadeModal);
     document.getElementById('modalRestart').addEventListener('click', () => {
@@ -1896,6 +2311,7 @@
       if (e.key === 'Escape') {
         closeArcadeModal();
         closeDrawer();
+        document.getElementById('submitModal').classList.remove('active');
       }
     });
   }

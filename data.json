@@ -271,5 +271,36 @@
     "preview": "previews/gemini25_pro_pygame.png",
     "wins": 0,
     "hidden": true
+  },
+  {
+    "id": "ornith35b_matrix_bros",
+    "title": "The Matrix Bros (Cyber Edition)",
+    "author": "u/TimelordQ (r/LocalLLaMA)",
+    "category": "Matrix Reskin",
+    "badge": "Cyber Matrix Run",
+    "file": "games/ornith35b_matrix_bros.html",
+    "baseVotes": 184,
+    "vibeScore": 8.8,
+    "size": "29.7 KB",
+    "lines": 737,
+    "hardware": "Local RTX 3090 (llama.cpp)",
+    "model": "Ornith-1.5-35B",
+    "mode": "Q4_K_M Quant",
+    "promptStyle": "Strict NES Specification (Themed)",
+    "prompt": "Write a fully functional, complete clone of Super Mario Bros game (the famous NES game)\n- Clone must work in a web browser, index.html, no server\n- Decent replica of the graphics assets.\n- Colorful and playable.\n- Controls with keyboard up, down, left, right, spacebar to jump, shift to speed up\n- Themed as The Matrix with digital rain and cyber aesthetic",
+    "sourceName": "r/LocalLLaMA & GitHub",
+    "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
+    "demoUrl": "https://timelordq.github.io/The-Matrix-Bros/index.html",
+    "vibeReview": "A viral r/LocalLLaMA mashup combining classic NES Super Mario mechanics with The Matrix. Features digital green katakana code rain falling in real time, hooded cyber-program sprites, neon green platforms, and glowing coin data streams. One-shotted on a local 35B parameter quant.",
+    "ratings": {
+      "nesCrunch": 8.8,
+      "physicsFeel": 8.7,
+      "ambition": 9.3
+    },
+    "elo": 1200,
+    "matches": 0,
+    "wins": 0,
+    "preview": "previews/ornith35b_matrix_bros.png",
+    "hidden": false
   }
 ]

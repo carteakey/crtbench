@@ -54,56 +54,41 @@ Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS i
 
 ---
 
-## 📦 How to Submit a New Game
+## 📦 Three Ways to Submit
 
-1. **Fork the Repository**:
+### Option 1: In-Browser Submission Studio (Recommended)
+1. Open the [PlumberBench Web App](https://kartikeychauhan.github.io/plumberbench/) or run locally via `python3 -m http.server 8000`.
+2. Click **`➕ Submit Run`** in the top navigation bar.
+3. Fill in your model, hardware, prompt, and paste your single-file HTML code.
+4. Click **`🛡️ Run Preflight Validation`** — the studio checks for external dependencies, computes code size/lines, and formats the entry.
+5. Click **`📋 Copy data.json Entry`** and open a pull request!
+
+---
+
+### Option 2: Automated CLI Submission Tool
+Use the bundled Python submission script to automatically copy files, take a headless preview screenshot, and validate:
+```bash
+python3 scripts/submit.py \
+  --file path/to/your_mario.html \
+  --id my_model_mario \
+  --title "Super Mushroom Quest" \
+  --author "u/YourHandle" \
+  --model "MyModel-70B-Instruct" \
+  --hardware "Local RTX 4090 24GB" \
+  --source "https://reddit.com/r/LocalLLaMA/..." \
+  --prompt "Write a complete, playable Super Mario clone in a single file..."
+```
+
+---
+
+### Option 3: Manual Pull Request
+1. Fork the repository and create a branch (`git checkout -b submit/my-model-mario`).
+2. Add your raw game file to `games/<id>.html`.
+3. Take a preview screenshot and save it to `previews/<id>.png` (recommended 960x600).
+4. Add your entry to `data.json` matching the schema above.
+5. Run the validator:
    ```bash
-   git clone https://github.com/kartikeychauhan/plumberbench.git
-   cd plumberbench
-   git checkout -b submit/my-model-mario
+   python3 scripts/validate.py
    ```
+6. Commit, push, and open a Pull Request! All PRs are automatically tested via GitHub Actions CI (`.github/workflows/validate-submission.yml`).
 
-2. **Add Your Raw Game File**:
-   Save your raw, unedited model output into `games/<id>.html` (or `games/<id>.py`).
-
-3. **Add Entry to `data.json`**:
-   Add an object to `data.json` following this schema:
-   ```json
-   {
-     "id": "unique_model_id",
-     "title": "Display Title of the Game",
-     "author": "Your Name / Reddit Handle",
-     "category": "NES Purist | Modern Indie | Circus Reskin",
-     "badge": "Short 2-3 word highlight badge",
-     "file": "games/unique_model_id.html",
-     "baseVotes": 0,
-     "vibeScore": 8.5,
-     "size": "45.2 KB",
-     "lines": 1200,
-     "hardware": "Exact hardware specs",
-     "model": "Full model identifier",
-     "mode": "CoT budget / tokens / reasoning level",
-     "promptStyle": "Minimal Zero-Shot | Strict NES Spec | Deliberation Budget",
-     "prompt": "Exact user prompt fed into the model",
-     "sourceName": "Reddit thread / benchmark run / blog post",
-     "sourceUrl": "URL to original post or verification",
-     "demoUrl": "Optional live web deployment URL",
-     "vibeReview": "2-3 sentences evaluating gameplay feel, physics, audio, and visual quirks.",
-     "ratings": {
-       "nesCrunch": 8.5,
-       "physicsFeel": 8.5,
-       "ambition": 8.5
-     },
-     "elo": 1200,
-     "matches": 0,
-     "wins": 0,
-     "preview": "previews/unique_model_id.png",
-     "hidden": false
-   }
-   ```
-
-4. **Verify Locally**:
-   Run `python3 -m http.server 8000` and confirm your game launches cleanly in the arcade modal, the prompt drawer copies properly, and there are no console errors.
-
-5. **Open a Pull Request**:
-   Submit a PR with the title `feat: add <Model Name> Mario implementation`.

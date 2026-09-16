@@ -6,7 +6,7 @@
 [![Leaderboard](https://img.shields.io/badge/PlumberBench-ELO_Leaderboard-e52521?style=for-the-badge&logo=nintendo)](https://github.com/kartikeychauhan/plumberbench)
 [![One Shot](https://img.shields.io/badge/Format-Strict_One--Shot-f8c300?style=for-the-badge)](SUBMISSIONS.md)
 [![Blind Arena](https://img.shields.io/badge/Vibe_Arena-Blind_Duel_ELO-58a6ff?style=for-the-badge)](index.html)
-[![Active Roster](https://img.shields.io/badge/Active_Entries-7_Contenders-2ea043?style=for-the-badge)](games/)
+[![Active Roster](https://img.shields.io/badge/Active_Entries-8_Contenders-2ea043?style=for-the-badge)](games/)
 
 ---
 
@@ -23,19 +23,20 @@ Building an authentic 2D platformer from a single prompt is the ultimate gauntle
 
 ---
 
-## ⚡ Active Web Leaderboard (7 Contenders)
+## ⚡ Active Web Leaderboard (8 Contenders)
 
 All active contenders are strict **single-prompt, single-file HTML/JS/CSS games** with zero dependencies. ELO ratings initialize at baseline **1200** and evolve dynamically through user votes in the **Blind Vibe Arena**.
 
 | Rank | Contender | Model | Origin / Hardware | Base ELO | Vibe | Radar (Crunch / Phys / Amb) | Official Source Links |
-| :---: | :--- | :--- | :--- | :---: | :---: | :---: | :--- |
+| :---: | :--- | :--- | :--- | :--- | :---: | :---: | :--- |
 | 🥇 | [Super Mario: Three Worlds](games/gpt6_astra_high.html) | **GPT-6 Astra** *(High CoT)* | Frontier Cloud API | **1200** | 9.4 | 7.5 / 9.5 / 9.8 | [Run Artifact](games/gpt6_astra_high.html) |
 | 🥈 | [Super Mario Bros: 2.6k Deluxe](games/gemini38_flash_full.html) | **Gemini 3.8 Flash** *(Full CoT)* | Antigravity Pro Engine | **1200** | 9.1 | 9.5 / 9.6 / 9.2 | [Run Artifact](games/gemini38_flash_full.html) |
 | 🥉 | [Super Pixel Bros (Course 1-1)](games/qwen38_flash_3070_potato.html) | **Qwen3.8-Flash-Next** *(UD-Q3_K_XL)* | RTX 3070 8GB Potato (cc8.pl) | **1200** | 8.9 | 9.2 / 8.9 / 8.8 | [Reddit Thread](https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/) &bull; [Author's Live Demo](https://www.cc8.pl/mario-q38-flash.html) |
-| 4 | [Qwen 27B Tiiny NES Replica](games/qwen38_27b_chopsticks.html) | **Qwen3.8-27B** *(UD-Q4_K_XL)* | RTX 3090 (u/ChopSticksPlease) | **1200** | 8.7 | 9.0 / 8.6 / 8.5 | [Reddit Thread](https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/) &bull; [Tiiny Host Demo](https://indigo-carmencita-27.tiiny.site/) |
-| 5 | [The 60,000-Token Monolith](games/qwen38_gold_60k.html) | **Qwen3.8-Flash-Next** *(Gold Master)* | RTX 4070 12GB (Local Homelab) | **1200** | 8.5 | 9.2 / 8.0 / 9.4 | [L3MS Run](games/qwen38_gold_60k.html) |
-| 6 | [Super Meadow: A Little Adventure](games/gpt6_astra_light.html) | **GPT-6 Astra** *(Light CoT)* | Frontier Cloud API | **1200** | 8.6 | 6.0 / 9.2 / 8.8 | [Run Artifact](games/gpt6_astra_light.html) |
-| 7 | [Circus Jumper](games/qwen38_27b_circus_mikenonect.html) | **Qwen3.8-27B** *(Q8 GGUF)* | Framework Desktop (u/MikeNonect) | **1200** | 8.4 | 5.5 / 8.8 / 9.0 | [Reddit Thread (629 upvotes)](https://www.reddit.com/r/LocalLLaMA/comments/1vp438p/if_you_would_have_told_me_half_a_year_ago_that_a/) &bull; [GitHub Demo](https://mikeveerman.github.io/qwen38-27b-mario) |
+| 4 | [The Matrix Bros (Cyber Edition)](games/ornith35b_matrix_bros.html) | **Ornith-1.5-35B** *(Q4_K_M)* | Local RTX 3090 (u/TimelordQ) | **1200** | 8.8 | 8.8 / 8.7 / 9.3 | [Reddit Thread](https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/) &bull; [GitHub Demo](https://timelordq.github.io/The-Matrix-Bros/index.html) |
+| 5 | [Qwen 27B Tiiny NES Replica](games/qwen38_27b_chopsticks.html) | **Qwen3.8-27B** *(UD-Q4_K_XL)* | RTX 3090 (u/ChopSticksPlease) | **1200** | 8.7 | 9.0 / 8.6 / 8.5 | [Reddit Thread](https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/) &bull; [Tiiny Host Demo](https://indigo-carmencita-27.tiiny.site/) |
+| 6 | [The 60,000-Token Monolith](games/qwen38_gold_60k.html) | **Qwen3.8-Flash-Next** *(Gold Master)* | RTX 4070 12GB (Local Homelab) | **1200** | 8.5 | 9.2 / 8.0 / 9.4 | [L3MS Run](games/qwen38_gold_60k.html) |
+| 7 | [Super Meadow: A Little Adventure](games/gpt6_astra_light.html) | **GPT-6 Astra** *(Light CoT)* | Frontier Cloud API | **1200** | 8.6 | 6.0 / 9.2 / 8.8 | [Run Artifact](games/gpt6_astra_light.html) |
+| 8 | [Circus Jumper](games/qwen38_27b_circus_mikenonect.html) | **Qwen3.8-27B** *(Q8 GGUF)* | Framework Desktop (u/MikeNonect) | **1200** | 8.4 | 5.5 / 8.8 / 9.0 | [Reddit Thread (629 upvotes)](https://www.reddit.com/r/LocalLLaMA/comments/1vp438p/if_you_would_have_told_me_half_a_year_ago_that_a/) &bull; [GitHub Demo](https://mikeveerman.github.io/qwen38-27b-mario) |
 
 ---
 
@@ -46,10 +47,10 @@ All active contenders are strict **single-prompt, single-file HTML/JS/CSS games*
 | ![Astra High](previews/gpt6_astra_high.png) | ![Gemini Full](previews/gemini38_flash_full.png) | ![Qwen Potato](previews/qwen38_flash_3070_potato.png) |
 | **Three Worlds Edition** | **2.6k Deluxe NES Physics** | **RTX 3070 8GB Potato** |
 
-| [Qwen 27B Tiiny (ChopSticks)](games/qwen38_27b_chopsticks.html) | [The 60k Monolith (Qwen Gold)](games/qwen38_gold_60k.html) | [Super Meadow (Astra Light)](games/gpt6_astra_light.html) |
+| [The Matrix Bros (Ornith 35B)](games/ornith35b_matrix_bros.html) | [Qwen 27B Tiiny (ChopSticks)](games/qwen38_27b_chopsticks.html) | [The 60k Monolith (Qwen Gold)](games/qwen38_gold_60k.html) |
 | :---: | :---: | :---: |
-| ![ChopSticks](previews/qwen38_27b_chopsticks.png) | ![Qwen Gold](previews/qwen38_gold_60k.png) | ![Astra Light](previews/gpt6_astra_light.png) |
-| **ChopSticks NES Replica** | **CRT Shaders & Pipes** | **16:9 Indie Platformer** |
+| ![Matrix Bros](previews/ornith35b_matrix_bros.png) | ![ChopSticks](previews/qwen38_27b_chopsticks.png) | ![Qwen Gold](previews/qwen38_gold_60k.png) |
+| **Cyber Katakana Rain** | **ChopSticks NES Replica** | **CRT Shaders & Pipes** |
 
 ---
 
@@ -94,10 +95,13 @@ Open **`http://localhost:8000`** in your browser.
 
 ---
 
-## 🤝 Submissions & Contributions
+## 🤝 Submissions & Workflow
+We provide three streamlined ways to submit new runs:
+1. **In-Browser Submission Studio**: Click `➕ Submit Run` in the top header of [`index.html`](index.html) to run preflight validation, verify zero dependencies, compute metrics, and export schema entries.
+2. **Automated CLI Submission**: Run `python3 scripts/submit.py --file path/to/mario.html ...` to auto-capture preview screenshots and append entries in one command.
+3. **Automated CI Validation**: Every Pull Request is verified automatically via GitHub Actions CI (`scripts/validate.py`).
 
-Got a model that one-shotted Mario? We want to see it!  
-Please read **[`SUBMISSIONS.md`](SUBMISSIONS.md)** for submission rules, benchmark prompts, JSON schema, and PR guidelines.
+See **[`SUBMISSIONS.md`](SUBMISSIONS.md)** for full prompt standards, hardware disclosure guidelines, and schema specifications.
 
 ---
 
