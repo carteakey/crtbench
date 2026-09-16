@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlumberBench — The One-Shot Mario LLM Benchmark</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090c10;
+      --card-bg: #12171f;
+      --card-border: #252e3d;
+      --header-bg: #161d27;
+      --accent: #58a6ff;
+      --mario-red: #e52521;
+      --gold: #f8c300;
+      --green: #2ea043;
+      --pipe-green: #00aa00;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Marquee Bar */
+    .marquee-bar {
+      background: #000;
+      color: var(--gold);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      padding: 10px 16px;
+      border-bottom: 2px solid #222;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      letter-spacing: 1px;
+    }
+    .marquee-tag {
+      color: #fff;
+      background: var(--mario-red);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 8px;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 40px 24px 28px;
+      background: radial-gradient(ellipse at 50% 0%, #1c2838 0%, var(--bg) 75%);
+      text-align: center;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .hero-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(24px, 4vw, 42px);
+      color: #fff;
+      text-shadow: 4px 4px 0 var(--mario-red), 8px 8px 0 #000;
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
+    .hero-title span {
+      color: var(--gold);
+    }
+    .hero-manifesto {
+      font-size: 17px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .hero-manifesto span {
+      background: rgba(229, 37, 33, 0.2);
+      color: #ff7b72;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(229, 37, 33, 0.4);
+    }
+    .hero-subtitle {
+      max-width: 680px;
+      margin: 0 auto;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* Controls Bar */
+    .controls-wrap {
+      max-width: 1280px;
+      margin: 24px auto 0;
+      padding: 0 20px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .filter-btn:hover {
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .filter-btn.active {
+      background: #21262d;
+      color: #fff;
+      border-color: var(--gold);
+      box-shadow: 0 0 10px rgba(248, 195, 0, 0.2);
+    }
+    .sort-select {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* Wall of Mario Grid */
+    .gallery-container {
+      max-width: 1280px;
+      margin: 20px auto 60px;
+      padding: 0 20px;
+      width: 100%;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 24px;
+    }
+
+    /* Arcade Card */
+    .arcade-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+    .arcade-card:hover {
+      transform: translateY(-4px);
+      border-color: #3b4759;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+    }
+
+    /* Card Top Header */
+    .card-top {
+      padding: 16px 18px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .card-title-group {
+      flex: 1;
+    }
+    .card-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-family: 'Press Start 2P', monospace;
+      padding: 3px 6px;
+      border-radius: 3px;
+      margin-bottom: 6px;
+      background: #1f6feb;
+      color: #fff;
+    }
+    .badge-gold { background: #9e6a03; color: #fff; }
+    .badge-viral { background: #8250df; color: #fff; }
+    .badge-purist { background: #238636; color: #fff; }
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .card-model {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Upvote Button */
+    .upvote-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #1c222c;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      color: var(--text);
+      transition: all 0.15s ease;
+      user-select: none;
+      min-width: 54px;
+    }
+    .upvote-btn:hover {
+      background: #252d3a;
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .upvote-btn.voted {
+      background: rgba(248, 195, 0, 0.15);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .upvote-arrow {
+      font-size: 14px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .upvote-count {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    /* Card Body */
+    .card-body {
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+    .meta-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .meta-tag {
+      font-size: 11px;
+      font-family: monospace;
+      padding: 3px 7px;
+      border-radius: 4px;
+      background: #18202b;
+      border: 1px solid rgba(255,255,255,0.06);
+      color: var(--text-muted);
+    }
+    .meta-tag strong {
+      color: #fff;
+    }
+
+    .card-review {
+      font-size: 13px;
+      color: #b1bac4;
+      line-height: 1.5;
+      margin-bottom: 16px;
+      flex-grow: 1;
+    }
+
+    /* Vibe Radar Bars */
+    .vibe-bars {
+      background: #0d1117;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+    }
+    .vibe-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      margin-bottom: 6px;
+    }
+    .vibe-row:last-child { margin-bottom: 0; }
+    .vibe-label {
+      color: var(--text-muted);
+      width: 110px;
+    }
+    .vibe-track {
+      flex: 1;
+      height: 6px;
+      background: #21262d;
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 0 10px;
+    }
+    .vibe-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #1f6feb, #f8c300);
+      border-radius: 3px;
+    }
+    .vibe-num {
+      font-family: monospace;
+      font-weight: bold;
+      color: #fff;
+      width: 28px;
+      text-align: right;
+    }
+
+    /* Card Footer Buttons */
+    .card-footer {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+    }
+    .btn-play {
+      flex: 2;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.15s ease;
+      text-decoration: none;
+    }
+    .btn-play:hover {
+      background: #2ea043;
+    }
+    .btn-action {
+      flex: 1;
+      background: #21262d;
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 10px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+    .btn-action:hover {
+      background: #30363d;
+      color: #fff;
+    }
+
+    /* Modal Player */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .arcade-cabinet {
+      background: #12171f;
+      border: 2px solid #30363d;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 980px;
+      height: 90vh;
+      max-height: 720px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.9), 0 0 40px rgba(229,37,33,0.2);
+    }
+    .cabinet-header {
+      background: #18202b;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .cabinet-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      color: var(--gold);
+    }
+    .cabinet-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .cab-btn {
+      background: #252d3a;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .cab-btn:hover { background: #323d4f; }
+    .cab-btn.close {
+      background: var(--mario-red);
+      border-color: #b01916;
+    }
+    .iframe-wrap {
+      flex: 1;
+      width: 100%;
+      background: #000;
+      position: relative;
+    }
+    .iframe-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* Prompt & Comment Drawer */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 1050;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .drawer-overlay.active { opacity: 1; pointer-events: auto; }
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -520px;
+      width: min(520px, 95vw);
+      height: 100vh;
+      background: #12171f;
+      border-left: 1px solid var(--card-border);
+      z-index: 1100;
+      transition: right 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .drawer.active { right: 0; }
+    .drawer h2 { font-size: 20px; margin-bottom: 6px; color: #fff; }
+    .drawer p.sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+    .prompt-box {
+      background: #090c10;
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      padding: 14px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #e6edf3;
+      white-space: pre-wrap;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      user-select: all;
+    }
+    .copy-btn {
+      background: #238636;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      margin-bottom: 24px;
+    }
+
+    /* Comment Form in Drawer */
+    .comment-list {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .comment-item {
+      background: #18202b;
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 13px;
+    }
+    .comment-author {
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .comment-time { font-size: 11px; color: var(--text-muted); font-weight: normal; }
+    .comment-input-wrap {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .comment-textarea {
+      background: #090c10;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      border-radius: 6px;
+      padding: 10px;
+      font-family: inherit;
+      font-size: 13px;
+      min-height: 80px;
+      resize: vertical;
+      outline: none;
+    }
+    .submit-comment-btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      align-self: flex-start;
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #238636;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 13px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 2000;
+    }
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Marquee -->
+<div class="marquee-bar">
+  <div>✦ PLUMBERBENCH 2026 ✦ THE ZERO-SHOT MARIO LLM ARENA</div>
+  <div><span class="marquee-tag">ONE-SHOT ONLY</span> <span class="marquee-tag" style="background:#238636;">VIBES EVALUATION</span></div>
+</div>
+
+<!-- Hero Section -->
+<header class="hero">
+  <h1 class="hero-title">PLUMBER<span>BENCH</span></h1>
+  <div class="hero-manifesto">
+    CRITERIA: <span>ONE-SHOT PROMPT</span> &nbsp;&bull;&nbsp; SCORING: <span>PURE VIBES</span>
+  </div>
+  <p class="hero-subtitle">
+    Can an LLM sit in deep deliberation and one-shot an authentic, playable Super Mario clone with physics, tilemaps, and chiptune audio? Benchmarked, cataloged, and playable in your browser.
+  </p>
+</header>
+
+<!-- Controls Bar -->
+<div class="controls-wrap">
+  <div class="filter-group">
+    <button class="filter-btn active" data-filter="all">All Entries (8)</button>
+    <button class="filter-btn" data-filter="NES Purist">NES Purists</button>
+    <button class="filter-btn" data-filter="Modern Indie">Modern Indie</button>
+    <button class="filter-btn" data-filter="local">Local Models (Qwen)</button>
+    <button class="filter-btn" data-filter="frontier">Frontier Cloud</button>
+  </div>
+  <div>
+    <select id="sortSelect" class="sort-select">
+      <option value="votes">Sort by: Community Upvotes</option>
+      <option value="vibe">Sort by: Vibe Score</option>
+      <option value="size">Sort by: Code Volume</option>
+    </select>
+  </div>
+</div>
+
+<!-- Gallery Container -->
+<main class="gallery-container">
+  <div class="grid" id="gameGrid">
+    <!-- Populated by JavaScript from data.json -->
+  </div>
+</main>
+
+<!-- Arcade Cabinet Modal Player -->
+<div class="modal-overlay" id="arcadeModal">
+  <div class="arcade-cabinet">
+    <div class="cabinet-header">
+      <div class="cabinet-title" id="modalGameTitle">SUPER MARIO ARCADE</div>
+      <div class="cabinet-controls">
+        <button class="cab-btn" id="modalPopout">↗ New Tab</button>
+        <button class="cab-btn" id="modalRestart">🔄 Restart</button>
+        <button class="cab-btn close" id="modalClose">✕ Exit</button>
+      </div>
+    </div>
+    <div class="iframe-wrap">
+      <iframe id="arcadeFrame" src="about:blank"></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- Prompt & Comments Drawer -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="sideDrawer">
+  <h2 id="drawerTitle">Prompt & Metadata</h2>
+  <p class="sub" id="drawerSub">Model details, exact generation prompt, and community reviews.</p>
+
+  <h3 style="font-size:14px; margin-bottom:8px; color:var(--gold);">Exact One-Shot Prompt</h3>
+  <div class="prompt-box" id="drawerPromptText">Loading prompt...</div>
+  <button class="copy-btn" id="drawerCopyBtn">📋 Copy Prompt to Clipboard</button>
+
+  <h3 style="font-size:14px; margin-bottom:8px; color:#fff;">Vibe Review & Mechanics</h3>
+  <div style="font-size:13px; color:#c9d1d9; line-height:1.6; margin-bottom:20px;" id="drawerVibeReview"></div>
+
+  <h3 style="font-size:14px; margin-bottom:8px; color:#fff;">Community Feedback (<span id="drawerCommentCount">0</span>)</h3>
+  <div class="comment-list" id="drawerCommentList"></div>
+
+  <div class="comment-input-wrap">
+    <textarea class="comment-textarea" id="newCommentText" placeholder="Leave a review or feedback on this implementation's vibes..."></textarea>
+    <button class="submit-comment-btn" id="submitCommentBtn">Post Comment</button>
+  </div>
+</div>
+
+<div id="toast">Prompt copied to clipboard!</div>
+
+<script>
+(() => {
+  'use strict';
+
+  let gamesData = [];
+  let currentFilter = 'all';
+  let currentSort = 'votes';
+  let activeGameId = null;
+
+  // Anti-cheat LocalStorage Vote Store
+  const VOTE_STORAGE_KEY = 'pb_user_votes';
+  const VOTE_COUNTS_KEY = 'pb_vibe_counts_v1';
+  const COMMENTS_STORAGE_KEY = 'pb_comments_v1';
+
+  function getUserVotes() {
+    try {
+      return JSON.parse(localStorage.getItem(VOTE_STORAGE_KEY)) || {};
+    } catch(e) { return {}; }
+  }
+
+  function setUserVotes(votes) {
+    localStorage.setItem(VOTE_STORAGE_KEY, JSON.stringify(votes));
+  }
+
+  function getVoteDeltas() {
+    try {
+      return JSON.parse(localStorage.getItem(VOTE_COUNTS_KEY)) || {};
+    } catch(e) { return {}; }
+  }
+
+  function setVoteDelta(id, delta) {
+    const deltas = getVoteDeltas();
+    deltas[id] = (deltas[id] || 0) + delta;
+    localStorage.setItem(VOTE_COUNTS_KEY, JSON.stringify(deltas));
+  }
+
+  function getStoredComments() {
+    try {
+      return JSON.parse(localStorage.getItem(COMMENTS_STORAGE_KEY)) || {};
+    } catch(e) { return {}; }
+  }
+
+  function saveComment(gameId, text) {
+    const comments = getStoredComments();
+    if (!comments[gameId]) comments[gameId] = [];
+    comments[gameId].unshift({
+      author: 'Community Reviewer',
+      time: 'Just now',
+      text: text
+    });
+    localStorage.setItem(COMMENTS_STORAGE_KEY, JSON.stringify(comments));
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // Embedded fallback for file:// offline browsing
+  const EMBEDDED_GAMES_DATA = [
+  {
+    "id": "gpt6_astra_high",
+    "title": "Super Mario: Three Worlds Edition",
+    "author": "GPT-6 Astra (Frontier High)",
+    "category": "Modern Indie",
+    "badge": "Leaderboard #1",
+    "file": "games/gpt6_astra_high.html",
+    "baseVotes": 482,
+    "vibeScore": 9.4,
+    "size": "37.5 KB",
+    "lines": 204,
+    "hardware": "Frontier Cloud API",
+    "model": "GPT-6 Astra",
+    "mode": "High Reasoning Mode",
+    "promptStyle": "Minimal Zero-Shot",
+    "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
+    "sourceName": "MarioBench Benchmark Run",
+    "sourceUrl": "../runs/astra_HIGH/mario.html",
+    "vibeReview": "Spectacular scope across 3 unique worlds (Mushroom Meadow, Sunset Steppes, Starlight Summit). Features harmonic moving platforms that Mario physically rides, kickable turtle shells with ricochet physics, and ceiling clearance detection on mushroom growth. Plays slightly more like a modern indie platformer than an authentic crunchy 1985 NES cartridge, but technically flawless.",
+    "ratings": {
+      "nesCrunch": 7.5,
+      "physicsFeel": 9.5,
+      "ambition": 9.8
+    }
+  },
+  {
+    "id": "gemini38_flash_full",
+    "title": "Super Mario Bros: 2.6k Deluxe",
+    "author": "Gemini 3.8 Flash",
+    "category": "NES Purist",
+    "badge": "Top Physics & Audio",
+    "file": "games/gemini38_flash_full.html",
+    "baseVotes": 415,
+    "vibeScore": 9.1,
+    "size": "74.8 KB",
+    "lines": 2628,
+    "hardware": "Antigravity Pro Engine",
+    "model": "Gemini 3.8 Flash",
+    "mode": "Full CoT Deliberation",
+    "promptStyle": "Minimal Zero-Shot",
+    "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
+    "sourceName": "MarioBench Benchmark Run",
+    "sourceUrl": "../runs/subagent_pro/mario.html",
+    "vibeReview": "Unmatched audio crunch and physical momentum. Implements a Web Audio synthesizer using an 800 Hz bandpass white-noise filter for authentic NES snare drums, directional skidding with procedural dust puffs, 14-frame variable jump height, and kickable Koopa shells that wipe out enemy chains. Mario's face sprite is somewhat derpy, but the gameplay feel is pure arcade gold.",
+    "ratings": {
+      "nesCrunch": 9.5,
+      "physicsFeel": 9.6,
+      "ambition": 9.2
+    }
+  },
+  {
+    "id": "qwen38_flash_3070_potato",
+    "title": "Super Pixel Bros (Course 1-1)",
+    "author": "cc8.pl (r/LocalLLaMA)",
+    "category": "NES Purist",
+    "badge": "8GB 3070 Potato Run",
+    "file": "games/qwen38_flash_3070_potato.html",
+    "baseVotes": 528,
+    "vibeScore": 8.9,
+    "size": "67.5 KB",
+    "lines": 1277,
+    "hardware": "RTX 3070 8GB + 80GB DDR4",
+    "model": "Qwen3.8-Flash-Next-UD-Q3_K_XL",
+    "mode": "xhigh (10k CoT budget, 40k ctx)",
+    "promptStyle": "Single One-Shot System Prompt",
+    "prompt": "Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS in a single HTML file.Plan the implementation briefly within the reasoning budget. Then output only the complete HTML file. Do not use tools or provide explanations.",
+    "sourceName": "r/LocalLLaMA Comment & Live Demo",
+    "sourceUrl": "https://www.cc8.pl/mario-q38-flash.html",
+    "vibeReview": "Built on an 8GB RTX 3070 (a potato in modern local LLM terms) using UD-Q3_K_XL quant with 40k context and a 10k reasoning limit at ~11-12 t/s. Delivers a retro wrapper with live HUD stats, bandpass noise-filtered NES percussion, jump sweeps, custom pixel sprites, Goombas, and responsive physics.",
+    "ratings": {
+      "nesCrunch": 9.2,
+      "physicsFeel": 8.9,
+      "ambition": 8.8
+    }
+  },
+  {
+    "id": "qwen38_gold_60k",
+    "title": "The 60,000-Token Monolith",
+    "author": "Qwen3.8-Flash-Next (Gold)",
+    "category": "NES Purist",
+    "badge": "Local King",
+    "file": "games/qwen38_gold_60k.html",
+    "baseVotes": 598,
+    "vibeScore": 8.5,
+    "size": "70.8 KB",
+    "lines": 1248,
+    "hardware": "RTX 4070 12GB (Local Homelab)",
+    "model": "Qwen3.8-Flash-Next",
+    "mode": "xhigh (59m CoT Deliberation)",
+    "promptStyle": "Minimal Zero-Shot",
+    "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
+    "sourceName": "L3MS Homelab Experiments",
+    "sourceUrl": "../runs/mario_gold/mario.html",
+    "vibeReview": "Generated entirely on a local RTX 4070 in a single contiguous 60,221 token inference stream after 29,455 thinking tokens. Captures authentic retro atmosphere with a custom CRT scanline shader pass, arcade marquee bulbs, World 1-1 and World 1-2 Underground pipe warps, bouncing fireballs, Koopas, and Piranha plants.",
+    "ratings": {
+      "nesCrunch": 9.2,
+      "physicsFeel": 8.0,
+      "ambition": 9.4
+    }
+  },
+  {
+    "id": "qwen38_27b_chopsticks",
+    "title": "Qwen 27B Tiiny NES Replica",
+    "author": "u/ChopSticksPlease",
+    "category": "NES Purist",
+    "badge": "r/LocalLLaMA Viral",
+    "file": "games/qwen38_27b_chopsticks.html",
+    "baseVotes": 374,
+    "vibeScore": 8.7,
+    "size": "30.8 KB",
+    "lines": 1008,
+    "hardware": "RTX 3090 (llama.cpp MTP draft)",
+    "model": "Qwen3.8-27B-UD-Q4_K_XL",
+    "mode": "Medium Reasoning Effort",
+    "promptStyle": "Strict NES Specification",
+    "prompt": "Write a fully functional, complete clone of Super Mario Bros game (the famous NES game)\n- Clone must work in a web browser, index.html, no server\n- Decent replica of the graphics assets.\n- Colorful and playable.\n- Controls with keyboard up, down, left, right, spacebar to jump, shift to speed up",
+    "sourceName": "r/LocalLLaMA Thread",
+    "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
+    "vibeReview": "One-shotted by a 17GB local quant running on an RTX 3090 with MTP draft decoding. Built a crisp 256x240 integer-scaled NES clone with multi-channel audio synthesis, Goombas, breakable bricks, question blocks, and authentic momentum.",
+    "ratings": {
+      "nesCrunch": 9.0,
+      "physicsFeel": 8.6,
+      "ambition": 8.5
+    }
+  },
+  {
+    "id": "gpt6_astra_light",
+    "title": "Super Meadow (A Little Adventure)",
+    "author": "GPT-6 Astra (Light)",
+    "category": "Modern Indie",
+    "badge": "Creative Pivot",
+    "file": "games/gpt6_astra_light.html",
+    "baseVotes": 389,
+    "vibeScore": 8.6,
+    "size": "21.7 KB",
+    "lines": 102,
+    "hardware": "Frontier Cloud API",
+    "model": "GPT-6 Astra",
+    "mode": "Light Reasoning Mode",
+    "promptStyle": "Minimal Zero-Shot",
+    "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
+    "sourceName": "MarioBench Benchmark Run",
+    "sourceUrl": "../runs/astra_light/mario.html",
+    "vibeReview": "A charming artistic departure. Rather than an 8-bit clone, Astra Light autonomously created a 16:9 modern indie platformer with a sunset gradient sky, bezier curve hills, 120 Hz accumulator physics, screen shake, and a cozy hillside cottage finish.",
+    "ratings": {
+      "nesCrunch": 6.0,
+      "physicsFeel": 9.2,
+      "ambition": 8.8
+    }
+  },
+  {
+    "id": "qwen38_27b_circus_mikenonect",
+    "title": "Circus Jumper",
+    "author": "u/MikeNonect",
+    "category": "Circus Reskin",
+    "badge": "629 Reddit Upvotes",
+    "file": "games/qwen38_27b_circus_mikenonect.html",
+    "baseVotes": 629,
+    "vibeScore": 8.4,
+    "size": "52.4 KB",
+    "lines": 1637,
+    "hardware": "Framework Desktop (Q8 GGUF)",
+    "model": "Qwen3.8-27B Q8",
+    "mode": "Overnight Batch",
+    "promptStyle": "Aesthetic Engaging Prompt",
+    "prompt": "Create a Super Mario clone in JavaScript as a single HTML page. Make the game engaging and the graphics as beautiful as possible. (Later adapted to circus-theme to avoid DMCA).",
+    "sourceName": "r/LocalLLaMA Viral Thread",
+    "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1vp438p/if_you_would_have_told_me_half_a_year_ago_that_a/",
+    "vibeReview": "The most discussed Mario run on r/LocalLLaMA with 629 upvotes. Transformed Mario into a circus-themed acrobat with colorful tents, trapeze platforms, juggling balls, and rich background art.",
+    "ratings": {
+      "nesCrunch": 5.5,
+      "physicsFeel": 8.8,
+      "ambition": 9.0
+    }
+  },
+  {
+    "id": "gemini38_flash_baseline",
+    "title": "Paul Allen's Card (Base)",
+    "author": "Gemini 3.8 Flash",
+    "category": "NES Purist",
+    "badge": "Zero-Bug Sprint",
+    "file": "games/gemini38_flash_baseline.html",
+    "baseVotes": 294,
+    "vibeScore": 7.8,
+    "size": "27.6 KB",
+    "lines": 992,
+    "hardware": "Interactive Assistant Pass",
+    "model": "Gemini 3.8 Flash",
+    "mode": "Conversational Fast Mode",
+    "promptStyle": "Minimal Zero-Shot",
+    "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
+    "sourceName": "Antigravity Reference Baseline",
+    "sourceUrl": "../runs/paul_allen/mario.html",
+    "vibeReview": "The original interactive benchmark reference. Built in seconds with zero bugs, silky 60 FPS sub-pixel physics, 6-frame coyote jump buffering, clean square wave audio sweeps, and a 120-column overworld slice.",
+    "ratings": {
+      "nesCrunch": 8.4,
+      "physicsFeel": 8.9,
+      "ambition": 7.0
+    }
+  },
+  {
+    "id": "gemini25_pro_pygame",
+    "title": "Gemini 2.5 Pro PyGame Edition",
+    "author": "u/Healthy-Nebula-3603",
+    "category": "Python / PyGame",
+    "badge": "312 Reddit Upvotes",
+    "file": "games/gemini25_pro_pygame_healthynebula.py",
+    "baseVotes": 312,
+    "vibeScore": 8.1,
+    "size": "25.3 KB",
+    "lines": 537,
+    "hardware": "Gemini 2.5 Pro Cloud API",
+    "model": "Gemini 2.5 Pro",
+    "mode": "Standard Prompt",
+    "promptStyle": "Max Quality Python Prompt",
+    "prompt": "Build absolutely the best implementation of the super Mario game in python without any external assets.",
+    "sourceName": "r/LocalLLaMA Pastebin Thread",
+    "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1jjsiiw/mario_game_made_by_new_a_gemini_pro_25_in_couple/",
+    "vibeReview": "One-shot Python / PyGame implementation from Gemini 2.5 Pro that blew up with 312 upvotes on r/LocalLLaMA. Clean momentum curves, title screen, procedurally drawn bushes, clouds, and Goombas.",
+    "ratings": {
+      "nesCrunch": 8.0,
+      "physicsFeel": 8.5,
+      "ambition": 7.8
+    }
+  }
+];
+
+  // Load and Render Games
+  async function init() {
+    try {
+      const res = await fetch('data.json');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      gamesData = await res.json();
+    } catch (e) {
+      console.warn('Using embedded dataset fallback:', e);
+      gamesData = EMBEDDED_GAMES_DATA;
+    }
+    renderGrid();
+    setupEventListeners();
+  }
+
+  function getEffectiveVotes(game) {
+    const deltas = getVoteDeltas();
+    return game.baseVotes + (deltas[game.id] || 0);
+  }
+
+  function renderGrid() {
+    const grid = document.getElementById('gameGrid');
+    grid.innerHTML = '';
+
+    const userVotes = getUserVotes();
+
+    let filtered = gamesData.filter(g => {
+      if (currentFilter === 'all') return true;
+      if (currentFilter === 'local') return g.hardware.toLowerCase().includes('rtx') || g.hardware.toLowerCase().includes('desktop');
+      if (currentFilter === 'frontier') return g.hardware.toLowerCase().includes('cloud') || g.hardware.toLowerCase().includes('pro');
+      return g.category === currentFilter;
+    });
+
+    filtered.sort((a, b) => {
+      if (currentSort === 'votes') return getEffectiveVotes(b) - getEffectiveVotes(a);
+      if (currentSort === 'vibe') return b.vibeScore - a.vibeScore;
+      if (currentSort === 'size') return parseInt(b.lines) - parseInt(a.lines);
+      return 0;
+    });
+
+    filtered.forEach(game => {
+      const card = document.createElement('div');
+      card.className = 'arcade-card';
+
+      const isVoted = !!userVotes[game.id];
+      const votes = getEffectiveVotes(game);
+
+      let badgeClass = 'card-badge';
+      if (game.badge.includes('#1')) badgeClass += ' badge-gold';
+      else if (game.badge.includes('Reddit') || game.badge.includes('Viral')) badgeClass += ' badge-viral';
+      else if (game.category === 'NES Purist') badgeClass += ' badge-purist';
+
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="card-title-group">
+            <span class="${badgeClass}">${game.badge}</span>
+            <div class="card-title">${game.title}</div>
+            <div class="card-model">${game.author} &bull; ${game.category}</div>
+          </div>
+          <button class="upvote-btn ${isVoted ? 'voted' : ''}" data-id="${game.id}">
+            <span class="upvote-arrow">▲</span>
+            <span class="upvote-count">${votes}</span>
+          </button>
+        </div>
+
+        <div class="card-body">
+          <div class="meta-tags">
+            <span class="meta-tag">VIBE: <strong>${game.vibeScore} ★</strong></span>
+            <span class="meta-tag">CODE: <strong>${game.size}</strong> (${game.lines} lns)</span>
+            <span class="meta-tag">HW: <strong>${game.hardware.split(' ')[0]}</strong></span>
+          </div>
+
+          <p class="card-review">${game.vibeReview}</p>
+
+          <div class="vibe-bars">
+            <div class="vibe-row">
+              <span class="vibe-label">NES Crunch</span>
+              <div class="vibe-track"><div class="vibe-fill" style="width: ${game.ratings.nesCrunch * 10}%;"></div></div>
+              <span class="vibe-num">${game.ratings.nesCrunch}</span>
+            </div>
+            <div class="vibe-row">
+              <span class="vibe-label">Physics Feel</span>
+              <div class="vibe-track"><div class="vibe-fill" style="width: ${game.ratings.physicsFeel * 10}%;"></div></div>
+              <span class="vibe-num">${game.ratings.physicsFeel}</span>
+            </div>
+            <div class="vibe-row">
+              <span class="vibe-label">Ambition</span>
+              <div class="vibe-track"><div class="vibe-fill" style="width: ${game.ratings.ambition * 10}%;"></div></div>
+              <span class="vibe-num">${game.ratings.ambition}</span>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            ${game.file.endsWith('.py')
+              ? `<button class="btn-play" style="background:#4b5563;" data-action="python" data-id="${game.id}">🐍 Python Code</button>`
+              : `<button class="btn-play" data-action="play" data-id="${game.id}">▶ PLAY NOW</button>`
+            }
+            <button class="btn-action" data-action="inspect" data-id="${game.id}">📜 Prompt</button>
+          </div>
+        </div>
+      `;
+
+      grid.appendChild(card);
+    });
+  }
+
+  function setupEventListeners() {
+    // Filter clicks
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderGrid();
+      });
+    });
+
+    // Sort changes
+    document.getElementById('sortSelect').addEventListener('change', (e) => {
+      currentSort = e.target.value;
+      renderGrid();
+    });
+
+    // Card interactions (Delegated)
+    document.getElementById('gameGrid').addEventListener('click', (e) => {
+      const upvoteBtn = e.target.closest('.upvote-btn');
+      if (upvoteBtn) {
+        handleUpvote(upvoteBtn.dataset.id);
+        return;
+      }
+
+      const playBtn = e.target.closest('[data-action="play"]');
+      if (playBtn) {
+        openArcadeModal(playBtn.dataset.id);
+        return;
+      }
+
+      const pythonBtn = e.target.closest('[data-action="python"]');
+      if (pythonBtn) {
+        openDrawer(pythonBtn.dataset.id);
+        return;
+      }
+
+      const inspectBtn = e.target.closest('[data-action="inspect"]');
+      if (inspectBtn) {
+        openDrawer(inspectBtn.dataset.id);
+        return;
+      }
+    });
+
+    // Modal controls
+    document.getElementById('modalClose').addEventListener('click', closeArcadeModal);
+    document.getElementById('modalRestart').addEventListener('click', () => {
+      const frame = document.getElementById('arcadeFrame');
+      frame.src = frame.src;
+    });
+    document.getElementById('modalPopout').addEventListener('click', () => {
+      if (activeGameId) {
+        const game = gamesData.find(g => g.id === activeGameId);
+        if (game) window.open(game.file, '_blank');
+      }
+    });
+
+    // Drawer controls
+    document.getElementById('drawerOverlay').addEventListener('click', closeDrawer);
+    document.getElementById('drawerCopyBtn').addEventListener('click', () => {
+      const promptText = document.getElementById('drawerPromptText').textContent;
+      navigator.clipboard.writeText(promptText).then(() => {
+        showToast('✓ Prompt copied to clipboard!');
+      });
+    });
+
+    // Comment submission
+    document.getElementById('submitCommentBtn').addEventListener('click', () => {
+      const input = document.getElementById('newCommentText');
+      const text = input.value.trim();
+      if (!text || !activeGameId) return;
+      saveComment(activeGameId, text);
+      input.value = '';
+      showToast('Comment submitted!');
+      loadDrawerComments(activeGameId);
+    });
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeArcadeModal();
+        closeDrawer();
+      }
+    });
+  }
+
+  // Anti-Cheat Upvoting
+  function handleUpvote(gameId) {
+    const userVotes = getUserVotes();
+    const isVoted = !!userVotes[gameId];
+
+    if (isVoted) {
+      delete userVotes[gameId];
+      setVoteDelta(gameId, -1);
+      showToast('Vote removed');
+    } else {
+      userVotes[gameId] = true;
+      setVoteDelta(gameId, 1);
+      showToast('▲ Upvoted! Vibe points logged.');
+    }
+
+    setUserVotes(userVotes);
+    renderGrid();
+  }
+
+  // Arcade Modal Player
+  function openArcadeModal(gameId) {
+    const game = gamesData.find(g => g.id === gameId);
+    if (!game) return;
+
+    activeGameId = gameId;
+    document.getElementById('modalGameTitle').textContent = `${game.title} — ${game.author}`;
+    const frame = document.getElementById('arcadeFrame');
+    frame.src = game.file;
+    document.getElementById('arcadeModal').classList.add('active');
+
+    // Auto-focus frame
+    setTimeout(() => {
+      try { frame.contentWindow.focus(); } catch(e){}
+    }, 300);
+  }
+
+  function closeArcadeModal() {
+    document.getElementById('arcadeModal').classList.remove('active');
+    document.getElementById('arcadeFrame').src = 'about:blank';
+    activeGameId = null;
+  }
+
+  // Prompt & Feedback Drawer
+  function openDrawer(gameId) {
+    const game = gamesData.find(g => g.id === gameId);
+    if (!game) return;
+
+    activeGameId = gameId;
+    document.getElementById('drawerTitle').textContent = game.title;
+    document.getElementById('drawerSub').innerHTML = `${game.model} &bull; ${game.mode} &bull; ${game.hardware} &bull; <a href="${game.sourceUrl}" target="_blank" style="color:var(--accent);">Source Link ↗</a>`;
+    document.getElementById('drawerPromptText').textContent = game.prompt;
+    document.getElementById('drawerVibeReview').textContent = game.vibeReview;
+
+    loadDrawerComments(gameId);
+
+    document.getElementById('drawerOverlay').classList.add('active');
+    document.getElementById('sideDrawer').classList.add('active');
+  }
+
+  function closeDrawer() {
+    document.getElementById('drawerOverlay').classList.remove('active');
+    document.getElementById('sideDrawer').classList.remove('active');
+  }
+
+  function loadDrawerComments(gameId) {
+    const list = document.getElementById('drawerCommentList');
+    list.innerHTML = '';
+
+    const stored = getStoredComments()[gameId] || [];
+    const defaultComments = [
+      { author: 'MarioPurist_85', time: 'Yesterday', text: 'The physics on this are remarkably close to the original 1985 ROM, especially the acceleration curve.' },
+      { author: 'GameDevLab', time: '2 days ago', text: 'Crazy that this was generated completely one-shot with zero external assets.' }
+    ];
+
+    const all = [...stored, ...defaultComments];
+    document.getElementById('drawerCommentCount').textContent = all.length;
+
+    all.forEach(c => {
+      const item = document.createElement('div');
+      item.className = 'comment-item';
+      item.innerHTML = `
+        <div class="comment-author">
+          <span>${c.author}</span>
+          <span class="comment-time">${c.time}</span>
+        </div>
+        <div style="color:#c9d1d9; line-height:1.4;">${c.text}</div>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  // Start app
+  init();
+})();
+</script>
+
+</body>
+</html>

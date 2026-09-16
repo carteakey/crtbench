@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Super Mario Bros. — Paul Allen Edition</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #111;
+      color: #eee;
+      font-family: 'Press Start 2P', monospace, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    #game-container {
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      border: 4px solid #282828;
+      border-radius: 4px;
+      background: #5c94fc;
+    }
+    canvas {
+      display: block;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+    .badge {
+      position: absolute;
+      bottom: 8px;
+      right: 12px;
+      font-size: 9px;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 1px;
+      pointer-events: none;
+      text-shadow: 1px 1px 0 #000;
+    }
+    .instructions {
+      margin-top: 14px;
+      font-size: 11px;
+      color: #aaa;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .instructions span {
+      color: #ffcc00;
+      background: #222;
+      padding: 2px 6px;
+      border-radius: 3px;
+      border: 1px solid #444;
+    }
+  </style>
+</head>
+<body>
+
+<div id="game-container">
+  <canvas id="canvas" width="512" height="480"></canvas>
+  <div class="badge">PAUL ALLEN EDITION • BONE WHITE SILK WATERMARK</div>
+</div>
+
+<div class="instructions">
+  <span>A</span> / <span>D</span> or <span>←</span> / <span>→</span> : Move &nbsp;|&nbsp;
+  <span>W</span> / <span>SPACE</span> : Jump (Hold for high jump) &nbsp;|&nbsp;
+  <span>SHIFT</span> : Run Sprint &nbsp;|&nbsp;
+  <span>R</span> : Reset
+</div>
+
+<script>
+// ============================================================================
+// 1. SOUND SYNTHESIZER (WEB AUDIO API - ZERO ASSETS)
+// ============================================================================
+class SoundFX {
+  constructor() {
+    this.ctx = null;
+  }
+  init() {
+    if (!this.ctx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) this.ctx = new AudioContext();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+  playJump() {
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(150, now);
+    osc.frequency.exponentialRampToValueAtTime(600, now + 0.15);
+    gain.gain.setValueAtTime(0.12, now);
+    gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.15);
+  }
+  playCoin() {
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(987.77, now); // B5
+    osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.35);
+  }
+  playStomp() {
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(200, now);
+    osc.frequency.exponentialRampToValueAtTime(40, now + 0.12);
+    gain.gain.setValueAtTime(0.25, now);
+    gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.12);
+  }
+  playBump() {
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(80, now);
+    osc.frequency.linearRampToValueAtTime(40, now + 0.08);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.08);
+  }
+  playDie() {
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'triangle';
+    const notes = [440, 392, 349, 293, 220];
+    notes.forEach((freq, idx) => {
+      osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+    });
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.linearRampToValueAtTime(0.01, now + 0.6);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.6);
+  }
+  playWin() {
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'square';
+    const fanfare = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99];
+    fanfare.forEach((f, i) => {
+      osc.frequency.setValueAtTime(f, now + i * 0.08);
+    });
+    gain.gain.setValueAtTime(0.18, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.8);
+  }
+}
+const sfx = new SoundFX();
+
+// ============================================================================
+// 2. CONSTANTS & TILEMAP SETUP
+// ============================================================================
+const TILE = 16;
+const SCALE = 2; // Screen is 512x480 -> 256x240 native scaled by 2
+const SCREEN_W = 256;
+const SCREEN_H = 240;
+
+const TILES = {
+  EMPTY: 0,
+  GROUND: 1,
+  BRICK: 2,
+  QUESTION: 3,
+  SPENT: 4,
+  PIPE_TL: 5,
+  PIPE_TR: 6,
+  PIPE_BL: 7,
+  PIPE_BR: 8,
+  FLAG_POLE: 9,
+  FLAG_TOP: 10,
+  BLOCK_SOLID: 11
+};
+
+// 120 columns wide, 15 rows tall
+const MAP_COLS = 125;
+const MAP_ROWS = 15;
+
+const rawMap = Array(MAP_ROWS).fill(0).map(() => Array(MAP_COLS).fill(0));
+
+// Fill ground
+for (let c = 0; c < MAP_COLS; c++) {
+  // Pits at columns 48..50 and 86..88
+  if ((c >= 48 && c <= 50) || (c >= 86 && c <= 88)) continue;
+  rawMap[13][c] = TILES.GROUND;
+  rawMap[14][c] = TILES.GROUND;
+}
+
+// Helper to set pipes
+function addPipe(col, height) {
+  const baseRow = 13;
+  const topRow = baseRow - height;
+  rawMap[topRow][col] = TILES.PIPE_TL;
+  rawMap[topRow][col + 1] = TILES.PIPE_TR;
+  for (let r = topRow + 1; r < baseRow; r++) {
+    rawMap[r][col] = TILES.PIPE_BL;
+    rawMap[r][col + 1] = TILES.PIPE_BR;
+  }
+}
+
+// Place pipes
+addPipe(20, 2);
+addPipe(30, 3);
+addPipe(40, 4);
+addPipe(68, 2);
+
+// Blocks and Question marks
+rawMap[9][14] = TILES.QUESTION;
+rawMap[9][18] = TILES.BRICK;
+rawMap[9][19] = TILES.QUESTION;
+rawMap[9][20] = TILES.BRICK;
+rawMap[9][21] = TILES.QUESTION;
+rawMap[9][22] = TILES.BRICK;
+rawMap[5][20] = TILES.QUESTION;
+
+// High platform at col 54..62
+for (let c = 54; c <= 62; c++) {
+  rawMap[9][c] = (c === 57 || c === 59) ? TILES.QUESTION : TILES.BRICK;
+}
+
+// End pyramid stairs
+for (let step = 0; step < 7; step++) {
+  for (let r = 12 - step; r <= 12; r++) {
+    rawMap[r][94 + step] = TILES.BLOCK_SOLID;
+  }
+}
+
+// Flagpole at col 106
+rawMap[2][106] = TILES.FLAG_TOP;
+for (let r = 3; r <= 12; r++) {
+  rawMap[r][106] = TILES.FLAG_POLE;
+}
+rawMap[12][106] = TILES.BLOCK_SOLID;
+
+// Castle blocks at 112..118
+for (let r = 9; r <= 12; r++) {
+  for (let c = 112; c <= 118; c++) {
+    rawMap[r][c] = TILES.BRICK;
+  }
+}
+rawMap[11][115] = TILES.EMPTY; // door
+rawMap[12][115] = TILES.EMPTY;
+
+// ============================================================================
+// 3. GAME STATE & ENTITIES
+// ============================================================================
+let score = 0;
+let coins = 0;
+let lives = 3;
+let gameOver = false;
+let victory = false;
+
+const keys = {
+  left: false,
+  right: false,
+  up: false,
+  down: false,
+  jump: false,
+  run: false
+};
+
+window.addEventListener('keydown', e => {
+  sfx.init();
+  if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
+  if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
+  if (e.code === 'ArrowUp' || e.code === 'KeyW' || e.code === 'Space') {
+    if (!keys.jump) keys.justJumped = true;
+    keys.jump = true;
+  }
+  if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') keys.run = true;
+  if (e.code === 'KeyR') resetGame(true);
+});
+
+window.addEventListener('keyup', e => {
+  if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
+  if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
+  if (e.code === 'ArrowUp' || e.code === 'KeyW' || e.code === 'Space') {
+    keys.jump = false;
+    keys.justJumped = false;
+  }
+  if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') keys.run = false;
+});
+
+// Particles & Animated Bumping Blocks
+let bouncingBlocks = [];
+let coinsFX = [];
+let floatScores = [];
+
+// ============================================================================
+// 4. MARIO PLAYER LOGIC
+// ============================================================================
+class Mario {
+  constructor() {
+    this.reset(40, 180);
+  }
+  reset(x, y) {
+    this.x = x;
+    this.y = y;
+    this.w = 12;
+    this.h = 16;
+    this.vx = 0;
+    this.vy = 0;
+    this.facing = 1; // 1 = right, -1 = left
+    this.grounded = false;
+    this.jumpTimer = 0;
+    this.dead = false;
+    this.deathTimer = 0;
+    this.animTimer = 0;
+    this.coyoteTime = 0;
+    this.invulnerable = 0;
+    this.flagSliding = false;
+  }
+  update() {
+    if (this.dead) {
+      this.deathTimer++;
+      if (this.deathTimer > 25) {
+        this.y += this.vy;
+        this.vy += 0.45;
+      }
+      if (this.deathTimer > 120) {
+        lives--;
+        if (lives <= 0) {
+          gameOver = true;
+        } else {
+          this.reset(40, 180);
+        }
+      }
+      return;
+    }
+
+    if (this.flagSliding) {
+      if (this.y < 12 * TILE) {
+        this.y += 2;
+      } else {
+        this.x += 1.2;
+        this.facing = 1;
+        if (this.x > 115 * TILE) {
+          victory = true;
+        }
+      }
+      return;
+    }
+
+    if (this.invulnerable > 0) this.invulnerable--;
+
+    // Horizontal acceleration & friction
+    const maxSpeed = keys.run ? 3.4 : 2.2;
+    const accel = keys.run ? 0.18 : 0.12;
+    const friction = 0.85;
+
+    if (keys.left) {
+      this.vx -= accel;
+      this.facing = -1;
+    } else if (keys.right) {
+      this.vx += accel;
+      this.facing = 1;
+    } else {
+      this.vx *= friction;
+      if (Math.abs(this.vx) < 0.05) this.vx = 0;
+    }
+
+    // Clamp horizontal speed
+    if (this.vx > maxSpeed) this.vx = maxSpeed;
+    if (this.vx < -maxSpeed) this.vx = -maxSpeed;
+
+    // Coyote time for responsive jumps
+    if (this.grounded) {
+      this.coyoteTime = 6;
+    } else if (this.coyoteTime > 0) {
+      this.coyoteTime--;
+    }
+
+    // Variable jump handling
+    if (keys.justJumped && this.coyoteTime > 0) {
+      this.vy = -6.2;
+      this.jumpTimer = 14;
+      this.grounded = false;
+      this.coyoteTime = 0;
+      keys.justJumped = false;
+      sfx.playJump();
+    }
+
+    if (keys.jump && this.jumpTimer > 0) {
+      this.vy -= 0.35; // sustained jump boost
+      this.jumpTimer--;
+    } else {
+      this.jumpTimer = 0;
+    }
+
+    // Gravity
+    this.vy += 0.42;
+    if (this.vy > 7.5) this.vy = 7.5; // terminal velocity
+
+    // Move X & Resolve Collision
+    this.x += this.vx;
+    this.resolveCollisionX();
+
+    // Move Y & Resolve Collision
+    this.grounded = false;
+    this.y += this.vy;
+    this.resolveCollisionY();
+
+    // Pit death check
+    if (this.y > SCREEN_H + 30) {
+      this.kill();
+    }
+
+    // Animation timer
+    if (Math.abs(this.vx) > 0.1 && this.grounded) {
+      this.animTimer += Math.abs(this.vx) * 0.25;
+    } else {
+      this.animTimer = 0;
+    }
+  }
+
+  resolveCollisionX() {
+    const leftTile = Math.floor((this.x - this.w / 2) / TILE);
+    const rightTile = Math.floor((this.x + this.w / 2 - 0.1) / TILE);
+    const topTile = Math.floor((this.y - this.h) / TILE);
+    const bottomTile = Math.floor((this.y - 0.1) / TILE);
+
+    for (let r = topTile; r <= bottomTile; r++) {
+      for (let c = leftTile; c <= rightTile; c++) {
+        if (this.isSolid(r, c)) {
+          if (c === 106 && r <= 12) {
+            // Flagpole touched!
+            this.flagSliding = true;
+            this.vx = 0;
+            this.vy = 0;
+            this.x = 106 * TILE - 2;
+            sfx.playWin();
+            score += 1000;
+            return;
+          }
+          if (this.vx > 0) {
+            this.x = c * TILE - this.w / 2;
+            this.vx = 0;
+          } else if (this.vx < 0) {
+            this.x = (c + 1) * TILE + this.w / 2;
+            this.vx = 0;
+          }
+        }
+      }
+    }
+  }
+
+  resolveCollisionY() {
+    const leftTile = Math.floor((this.x - this.w / 2 + 1) / TILE);
+    const rightTile = Math.floor((this.x + this.w / 2 - 1.1) / TILE);
+    const topTile = Math.floor((this.y - this.h) / TILE);
+    const bottomTile = Math.floor(this.y / TILE);
+
+    // Falling / landing
+    if (this.vy >= 0) {
+      for (let c = leftTile; c <= rightTile; c++) {
+        if (this.isSolid(bottomTile, c)) {
+          this.y = bottomTile * TILE;
+          this.vy = 0;
+          this.grounded = true;
+          break;
+        }
+      }
+    } 
+    // Jumping / hitting head
+    else if (this.vy < 0) {
+      for (let c = leftTile; c <= rightTile; c++) {
+        if (this.isSolid(topTile, c)) {
+          this.y = (topTile + 1) * TILE + this.h;
+          this.vy = 0;
+          this.jumpTimer = 0;
+          this.hitBlock(topTile, c);
+          break;
+        }
+      }
+    }
+  }
+
+  hitBlock(r, c) {
+    const tileType = rawMap[r][c];
+    if (tileType === TILES.QUESTION) {
+      rawMap[r][c] = TILES.SPENT;
+      bouncingBlocks.push({ r, c, offset: 0, dir: -1 });
+      coinsFX.push({ x: c * TILE + 4, y: r * TILE, vy: -5, life: 30 });
+      floatScores.push({ text: '+200', x: c * TILE, y: r * TILE - 4, life: 40 });
+      coins++;
+      score += 200;
+      sfx.playCoin();
+    } else if (tileType === TILES.BRICK) {
+      bouncingBlocks.push({ r, c, offset: 0, dir: -1 });
+      sfx.playBump();
+    }
+  }
+
+  isSolid(r, c) {
+    if (r < 0 || r >= MAP_ROWS || c < 0 || c >= MAP_COLS) return false;
+    const t = rawMap[r][c];
+    return t !== TILES.EMPTY;
+  }
+
+  kill() {
+    if (this.dead) return;
+    this.dead = true;
+    this.deathTimer = 0;
+    this.vy = -6.5;
+    this.vx = 0;
+    sfx.playDie();
+  }
+}
+
+// ============================================================================
+// 5. GOOMBA ENEMY LOGIC
+// ============================================================================
+class Goomba {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.w = 14;
+    this.h = 14;
+    this.vx = -0.55;
+    this.vy = 0;
+    this.squished = false;
+    this.squishTimer = 0;
+    this.dead = false;
+    this.animTimer = 0;
+  }
+  update() {
+    if (this.dead) return;
+    if (this.squished) {
+      this.squishTimer++;
+      if (this.squishTimer > 35) this.dead = true;
+      return;
+    }
+
+    this.vy += 0.35;
+    if (this.vy > 6) this.vy = 6;
+
+    this.x += this.vx;
+    // Check horizontal wall collision
+    const col = Math.floor((this.vx > 0 ? this.x + this.w / 2 : this.x - this.w / 2) / TILE);
+    const row = Math.floor((this.y - 4) / TILE);
+    if (col >= 0 && col < MAP_COLS && row >= 0 && row < MAP_ROWS && rawMap[row][col] !== TILES.EMPTY) {
+      this.vx = -this.vx;
+    }
+
+    this.y += this.vy;
+    // Floor collision
+    const bRow = Math.floor(this.y / TILE);
+    const bCol = Math.floor(this.x / TILE);
+    if (bRow < MAP_ROWS && rawMap[bRow][bCol] !== TILES.EMPTY) {
+      this.y = bRow * TILE;
+      this.vy = 0;
+    }
+
+    this.animTimer += 0.1;
+  }
+}
+
+let mario = new Mario();
+let goombas = [
+  new Goomba(22 * TILE, 13 * TILE),
+  new Goomba(34 * TILE, 13 * TILE),
+  new Goomba(52 * TILE, 13 * TILE),
+  new Goomba(72 * TILE, 13 * TILE),
+  new Goomba(76 * TILE, 13 * TILE)
+];
+
+function resetGame(full = false) {
+  if (full) {
+    lives = 3;
+    score = 0;
+    coins = 0;
+    gameOver = false;
+    victory = false;
+  }
+  mario.reset(40, 180);
+  goombas = [
+    new Goomba(22 * TILE, 13 * TILE),
+    new Goomba(34 * TILE, 13 * TILE),
+    new Goomba(52 * TILE, 13 * TILE),
+    new Goomba(72 * TILE, 13 * TILE),
+    new Goomba(76 * TILE, 13 * TILE)
+  ];
+}
+
+// ============================================================================
+// 6. PROCEDURAL PIXEL-ART RENDERER
+// ============================================================================
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+ctx.scale(SCALE, SCALE);
+
+let cameraX = 0;
+
+function drawPixelRect(x, y, w, h, color) {
+  ctx.fillStyle = color;
+  ctx.fillRect(Math.floor(x), Math.floor(y), w, h);
+}
+
+function drawBackground() {
+  // Classic NES Blue Sky
+  ctx.fillStyle = '#5c94fc';
+  ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
+
+  // Parallax clouds & bushes
+  for (let c = 0; c < MAP_COLS; c += 16) {
+    const cloudX = c * TILE - cameraX * 0.5;
+    if (cloudX > -64 && cloudX < SCREEN_W + 64) {
+      drawCloud(cloudX, 40);
+    }
+    const bushX = c * TILE - cameraX;
+    if (bushX > -64 && bushX < SCREEN_W + 64) {
+      drawBush(bushX, 13 * TILE - 12);
+    }
+  }
+}
+
+function drawCloud(x, y) {
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(x + 16, y + 8, 12, 0, Math.PI * 2);
+  ctx.arc(x + 28, y + 4, 14, 0, Math.PI * 2);
+  ctx.arc(x + 40, y + 8, 12, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawBush(x, y) {
+  ctx.fillStyle = '#00a800';
+  ctx.beginPath();
+  ctx.arc(x + 10, y + 8, 8, 0, Math.PI * 2);
+  ctx.arc(x + 20, y + 4, 10, 0, Math.PI * 2);
+  ctx.arc(x + 30, y + 8, 8, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawTile(type, x, y) {
+  if (type === TILES.GROUND) {
+    drawPixelRect(x, y, 16, 16, '#c84c0c');
+    drawPixelRect(x, y, 16, 2, '#fc9838');
+    drawPixelRect(x + 2, y + 2, 2, 2, '#000000');
+    drawPixelRect(x + 10, y + 8, 2, 2, '#000000');
+  } else if (type === TILES.BRICK) {
+    drawPixelRect(x, y, 16, 16, '#b84418');
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(x, y + 7, 16, 1);
+    ctx.fillRect(x + 7, y, 1, 7);
+    ctx.fillRect(x + 3, y + 8, 1, 8);
+    ctx.fillRect(x + 11, y + 8, 1, 8);
+    // highlight
+    drawPixelRect(x, y, 16, 1, '#fca044');
+  } else if (type === TILES.QUESTION) {
+    drawPixelRect(x, y, 16, 16, '#fc9838');
+    drawPixelRect(x + 1, y + 1, 14, 14, '#f87800');
+    // Corner bolts
+    drawPixelRect(x + 2, y + 2, 1, 1, '#000');
+    drawPixelRect(x + 13, y + 2, 1, 1, '#000');
+    drawPixelRect(x + 2, y + 13, 1, 1, '#000');
+    drawPixelRect(x + 13, y + 13, 1, 1, '#000');
+    // '?' symbol
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(x + 5, y + 4, 6, 2);
+    ctx.fillRect(x + 9, y + 6, 2, 3);
+    ctx.fillRect(x + 7, y + 8, 2, 2);
+    ctx.fillRect(x + 7, y + 11, 2, 2);
+  } else if (type === TILES.SPENT) {
+    drawPixelRect(x, y, 16, 16, '#8b5a2b');
+    drawPixelRect(x + 1, y + 1, 14, 14, '#6b4226');
+    drawPixelRect(x + 2, y + 2, 1, 1, '#000');
+    drawPixelRect(x + 13, y + 2, 1, 1, '#000');
+    drawPixelRect(x + 2, y + 13, 1, 1, '#000');
+    drawPixelRect(x + 13, y + 13, 1, 1, '#000');
+  } else if (type === TILES.PIPE_TL) {
+    drawPixelRect(x, y, 16, 16, '#00a800');
+    drawPixelRect(x, y, 3, 16, '#80d010'); // highlight
+    drawPixelRect(x + 14, y, 2, 16, '#005000'); // shadow
+    drawPixelRect(x, y, 16, 2, '#005000');
+  } else if (type === TILES.PIPE_TR) {
+    drawPixelRect(x, y, 16, 16, '#00a800');
+    drawPixelRect(x + 13, y, 3, 16, '#005000');
+    drawPixelRect(x, y, 16, 2, '#005000');
+  } else if (type === TILES.PIPE_BL) {
+    drawPixelRect(x + 2, y, 14, 16, '#00a800');
+    drawPixelRect(x + 2, y, 3, 16, '#80d010');
+  } else if (type === TILES.PIPE_BR) {
+    drawPixelRect(x, y, 14, 16, '#00a800');
+    drawPixelRect(x + 11, y, 3, 16, '#005000');
+  } else if (type === TILES.BLOCK_SOLID) {
+    drawPixelRect(x, y, 16, 16, '#c84c0c');
+    drawPixelRect(x, y, 16, 1, '#fc9838');
+    drawPixelRect(x, y, 1, 16, '#fc9838');
+    drawPixelRect(x, y + 15, 16, 1, '#000000');
+    drawPixelRect(x + 15, y, 1, 16, '#000000');
+  } else if (type === TILES.FLAG_TOP) {
+    drawPixelRect(x + 6, y + 6, 4, 10, '#00a800');
+    ctx.fillStyle = '#fc9838';
+    ctx.beginPath();
+    ctx.arc(x + 8, y + 6, 4, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (type === TILES.FLAG_POLE) {
+    drawPixelRect(x + 7, y, 2, 16, '#00a800');
+  }
+}
+
+function drawMarioSprite(m, sx, sy) {
+  ctx.save();
+  ctx.translate(Math.floor(sx), Math.floor(sy));
+  if (m.facing === -1) {
+    ctx.scale(-1, 1);
+  }
+
+  // Blinking if invulnerable
+  if (m.invulnerable > 0 && Math.floor(m.invulnerable / 4) % 2 === 0) {
+    ctx.restore();
+    return;
+  }
+
+  const red = '#d82800';
+  const blue = '#0068ff';
+  const skin = '#fc9838';
+  const brown = '#887000';
+
+  if (m.dead) {
+    // Dead Mario sprite
+    drawPixelRect(-6, -16, 12, 16, red);
+    drawPixelRect(-4, -14, 8, 4, skin);
+    drawPixelRect(-5, -6, 10, 6, blue);
+    ctx.restore();
+    return;
+  }
+
+  const isWalking = Math.abs(m.vx) > 0.1 && m.grounded;
+  const walkFrame = isWalking ? Math.floor(m.animTimer) % 3 : 0;
+  const isJumping = !m.grounded;
+
+  // Cap & Head
+  drawPixelRect(-3, -16, 8, 3, red);
+  drawPixelRect(-5, -13, 10, 4, skin);
+  drawPixelRect(1, -13, 2, 2, brown); // eye
+  drawPixelRect(1, -11, 4, 2, brown); // mustache
+  drawPixelRect(-5, -11, 2, 4, brown); // hair
+
+  // Overalls & Shirt
+  drawPixelRect(-4, -9, 8, 5, red);
+  drawPixelRect(-3, -7, 6, 4, blue);
+
+  // Legs & Shoes based on state
+  if (isJumping) {
+    drawPixelRect(-6, -3, 5, 3, blue);
+    drawPixelRect(1, -5, 5, 3, blue);
+    drawPixelRect(-7, 0, 4, 3, brown);
+    drawPixelRect(3, -2, 4, 3, brown);
+  } else if (walkFrame === 1) {
+    drawPixelRect(-5, -3, 4, 3, blue);
+    drawPixelRect(1, -3, 4, 3, blue);
+    drawPixelRect(-6, 0, 5, 3, brown);
+    drawPixelRect(1, 0, 5, 3, brown);
+  } else if (walkFrame === 2) {
+    drawPixelRect(-3, -3, 6, 3, blue);
+    drawPixelRect(-4, 0, 8, 3, brown);
+  } else {
+    drawPixelRect(-4, -3, 8, 3, blue);
+    drawPixelRect(-5, 0, 5, 3, brown);
+    drawPixelRect(1, 0, 5, 3, brown);
+  }
+
+  ctx.restore();
+}
+
+function drawGoomba(g, sx, sy) {
+  ctx.save();
+  ctx.translate(Math.floor(sx), Math.floor(sy));
+
+  const brown = '#b84418';
+  const black = '#000000';
+  const skin = '#fc9838';
+
+  if (g.squished) {
+    // Flat squished Goomba
+    drawPixelRect(-7, -4, 14, 4, brown);
+    drawPixelRect(-4, -4, 8, 2, black);
+  } else {
+    // Mushroom Cap
+    drawPixelRect(-6, -14, 12, 8, brown);
+    drawPixelRect(-7, -12, 14, 4, brown);
+    // Face
+    drawPixelRect(-5, -6, 10, 4, skin);
+    // Eyes
+    drawPixelRect(-3, -6, 2, 3, black);
+    drawPixelRect(1, -6, 2, 3, black);
+    // Feet alternating animation
+    const step = Math.floor(g.animTimer) % 2;
+    if (step === 0) {
+      drawPixelRect(-6, -2, 4, 2, black);
+      drawPixelRect(1, -1, 4, 2, black);
+    } else {
+      drawPixelRect(-5, -1, 4, 2, black);
+      drawPixelRect(2, -2, 4, 2, black);
+    }
+  }
+
+  ctx.restore();
+}
+
+function drawHUD() {
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '8px monospace';
+  ctx.fillText('MARIO', 20, 16);
+  ctx.fillText(String(score).padStart(6, '0'), 20, 26);
+
+  ctx.fillText('COINS', 90, 16);
+  ctx.fillText(`$x${String(coins).padStart(2, '0')}`, 90, 26);
+
+  ctx.fillText('WORLD', 160, 16);
+  ctx.fillText('1-1', 168, 26);
+
+  ctx.fillText('LIVES', 215, 16);
+  ctx.fillText(`x ${lives}`, 222, 26);
+
+  if (gameOver) {
+    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
+    ctx.fillStyle = '#ff2222';
+    ctx.font = '12px monospace';
+    ctx.fillText('GAME OVER', 90, 120);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '8px monospace';
+    ctx.fillText('PRESS R TO RESTART', 65, 140);
+  }
+
+  if (victory) {
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
+    ctx.fillStyle = '#ffcc00';
+    ctx.font = '12px monospace';
+    ctx.fillText('WORLD CLEARED!', 75, 110);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '8px monospace';
+    ctx.fillText('PERFECTION. THE TASTEFUL THICKNESS.', 15, 130);
+    ctx.fillText('PRESS R TO PLAY AGAIN', 60, 150);
+  }
+}
+
+// ============================================================================
+// 7. MAIN GAME LOOP
+// ============================================================================
+function loop() {
+  // Update entities
+  if (!gameOver && !victory) {
+    mario.update();
+
+    // Camera follow (scrolls right only, classic NES clamp)
+    const targetCamX = mario.x - SCREEN_W / 3;
+    if (targetCamX > cameraX) cameraX = targetCamX;
+    if (cameraX > (MAP_COLS * TILE) - SCREEN_W) cameraX = (MAP_COLS * TILE) - SCREEN_W;
+
+    // Goombas update & player interaction
+    for (let g of goombas) {
+      g.update();
+      if (!g.dead && !g.squished && !mario.dead && !mario.flagSliding) {
+        // AABB check
+        const dx = Math.abs(mario.x - g.x);
+        const dy = Math.abs((mario.y - mario.h / 2) - (g.y - g.h / 2));
+        if (dx < (mario.w / 2 + g.w / 2 - 2) && dy < (mario.h / 2 + g.h / 2)) {
+          // Mario is coming down on Goomba
+          if (mario.vy > 0 && mario.y - mario.vy <= g.y - g.h / 2 + 4) {
+            g.squished = true;
+            mario.vy = -4.8;
+            sfx.playStomp();
+            score += 100;
+            floatScores.push({ text: '+100', x: g.x - 8, y: g.y - 12, life: 30 });
+          } else if (mario.invulnerable === 0) {
+            mario.kill();
+          }
+        }
+      }
+    }
+
+    // Update bouncing blocks
+    for (let i = bouncingBlocks.length - 1; i >= 0; i--) {
+      const b = bouncingBlocks[i];
+      b.offset += b.dir * 1.5;
+      if (b.offset < -5) b.dir = 1;
+      if (b.offset >= 0) {
+        b.offset = 0;
+        bouncingBlocks.splice(i, 1);
+      }
+    }
+
+    // Update floating coins
+    for (let i = coinsFX.length - 1; i >= 0; i--) {
+      const c = coinsFX[i];
+      c.y += c.vy;
+      c.vy += 0.35;
+      c.life--;
+      if (c.life <= 0) coinsFX.splice(i, 1);
+    }
+
+    // Update floating score text
+    for (let i = floatScores.length - 1; i >= 0; i--) {
+      const s = floatScores[i];
+      s.y -= 0.5;
+      s.life--;
+      if (s.life <= 0) floatScores.splice(i, 1);
+    }
+  }
+
+  // DRAW PASS
+  drawBackground();
+
+  // Draw tilemap visible in camera
+  const startCol = Math.max(0, Math.floor(cameraX / TILE));
+  const endCol = Math.min(MAP_COLS - 1, Math.ceil((cameraX + SCREEN_W) / TILE));
+
+  for (let r = 0; r < MAP_ROWS; r++) {
+    for (let c = startCol; c <= endCol; c++) {
+      const t = rawMap[r][c];
+      if (t !== TILES.EMPTY) {
+        let yOffset = 0;
+        const bump = bouncingBlocks.find(b => b.r === r && b.c === c);
+        if (bump) yOffset = bump.offset;
+        drawTile(t, c * TILE - cameraX, r * TILE + yOffset);
+      }
+    }
+  }
+
+  // Draw Goombas
+  for (let g of goombas) {
+    if (!g.dead) {
+      drawGoomba(g, g.x - cameraX, g.y);
+    }
+  }
+
+  // Draw Mario
+  drawMarioSprite(mario, mario.x - cameraX, mario.y);
+
+  // Draw floating coins
+  for (let c of coinsFX) {
+    ctx.fillStyle = '#fc9838';
+    ctx.fillRect(Math.floor(c.x - cameraX), Math.floor(c.y), 8, 12);
+  }
+
+  // Draw floating score text
+  for (let s of floatScores) {
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '7px monospace';
+    ctx.fillText(s.text, Math.floor(s.x - cameraX), Math.floor(s.y));
+  }
+
+  // HUD & UI
+  drawHUD();
+
+  requestAnimationFrame(loop);
+}
+
+// Start
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
