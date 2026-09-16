@@ -22,7 +22,12 @@
       "nesCrunch": 7.5,
       "physicsFeel": 9.5,
       "ambition": 9.8
-    }
+    },
+    "elo": 1342,
+    "eloTier": "Grandmaster",
+    "winRate": "85%",
+    "matches": 40,
+    "preview": "previews/gpt6_astra_high.png"
   },
   {
     "id": "gemini38_flash_full",
@@ -47,7 +52,12 @@
       "nesCrunch": 9.5,
       "physicsFeel": 9.6,
       "ambition": 9.2
-    }
+    },
+    "elo": 1298,
+    "eloTier": "Master",
+    "winRate": "79%",
+    "matches": 38,
+    "preview": "previews/gemini38_flash_full.png"
   },
   {
     "id": "qwen38_flash_3070_potato",
@@ -72,7 +82,12 @@
       "nesCrunch": 9.2,
       "physicsFeel": 8.9,
       "ambition": 8.8
-    }
+    },
+    "elo": 1264,
+    "eloTier": "Master",
+    "winRate": "74%",
+    "matches": 35,
+    "preview": "previews/qwen38_flash_3070_potato.png"
   },
   {
     "id": "qwen38_gold_60k",
@@ -97,7 +112,12 @@
       "nesCrunch": 9.2,
       "physicsFeel": 8.0,
       "ambition": 9.4
-    }
+    },
+    "elo": 1205,
+    "eloTier": "Diamond",
+    "winRate": "65%",
+    "matches": 31,
+    "preview": "previews/qwen38_gold_60k.png"
   },
   {
     "id": "qwen38_27b_chopsticks",
@@ -122,7 +142,12 @@
       "nesCrunch": 9.0,
       "physicsFeel": 8.6,
       "ambition": 8.5
-    }
+    },
+    "elo": 1230,
+    "eloTier": "Diamond",
+    "winRate": "69%",
+    "matches": 32,
+    "preview": "previews/qwen38_27b_chopsticks.png"
   },
   {
     "id": "gpt6_astra_light",
@@ -147,7 +172,12 @@
       "nesCrunch": 6.0,
       "physicsFeel": 9.2,
       "ambition": 8.8
-    }
+    },
+    "elo": 1182,
+    "eloTier": "Platinum",
+    "winRate": "60%",
+    "matches": 30,
+    "preview": "previews/gpt6_astra_light.png"
   },
   {
     "id": "qwen38_27b_circus_mikenonect",
@@ -172,7 +202,12 @@
       "nesCrunch": 5.5,
       "physicsFeel": 8.8,
       "ambition": 9.0
-    }
+    },
+    "elo": 1155,
+    "eloTier": "Platinum",
+    "winRate": "55%",
+    "matches": 29,
+    "preview": "previews/qwen38_27b_circus_mikenonect.png"
   },
   {
     "id": "gemini38_flash_baseline",
@@ -197,7 +232,12 @@
       "nesCrunch": 8.4,
       "physicsFeel": 8.9,
       "ambition": 7.0
-    }
+    },
+    "elo": 1096,
+    "eloTier": "Silver",
+    "winRate": "43%",
+    "matches": 26,
+    "preview": "previews/gemini38_flash_baseline.png"
   },
   {
     "id": "gemini25_pro_pygame",
@@ -222,6 +262,11 @@
       "nesCrunch": 8.0,
       "physicsFeel": 8.5,
       "ambition": 7.8
-    }
+    },
+    "elo": 1128,
+    "eloTier": "Gold",
+    "winRate": "49%",
+    "matches": 27,
+    "preview": "previews/gemini25_pro_pygame.png"
   }
 ]
