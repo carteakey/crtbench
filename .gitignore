@@ -1,0 +1,17 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Internal benchmark research & private decision records
+docs/internal/
+*.internal.md
+
+# Headless browser temp profiles
+/tmp/prof-*
+
+# OS metadata
+.DS_Store
+Thumbs.db
