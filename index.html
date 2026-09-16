@@ -1396,18 +1396,18 @@
         </div>
         <div class="field-group">
           <label class="field-label" for="subHarness">Inference Harness *</label>
-          <input class="field-input" id="subHarness" placeholder="e.g. llama.cpp Master, vLLM, Frontier API">
+          <input class="field-input" id="subHarness" placeholder="e.g. Antigravity, llama.cpp, vLLM, Frontier API">
         </div>
       </div>
 
       <div class="form-grid-2">
         <div class="field-group">
           <label class="field-label" for="subEffort">Thinking / Reasoning Effort *</label>
-          <input class="field-input" id="subEffort" placeholder="e.g. Full CoT Deliberation, 10k Budget, Zero-Shot">
+          <input class="field-input" id="subEffort" placeholder="e.g. Full CoT Deliberation, 10k CoT Budget, Standard One-Shot">
         </div>
         <div class="field-group">
-          <label class="field-label" for="subHardware">Hardware Platform *</label>
-          <input class="field-input" id="subHardware" placeholder="e.g. Local RTX 4090 24GB or Cloud API">
+          <label class="field-label" for="subHardware">Hardware Compute Tier *</label>
+          <input class="field-input" id="subHardware" placeholder="e.g. RTX 4090 24GB or Frontier Cloud API">
         </div>
       </div>
 
@@ -1574,7 +1574,7 @@
     "vibeScore": 9.1,
     "size": "74.8 KB",
     "lines": 2628,
-    "hardware": "Antigravity Pro Engine",
+    "hardware": "Frontier Cloud API",
     "model": "Gemini 3.8 Flash",
     "mode": "Full CoT Deliberation",
     "promptStyle": "Minimal Zero-Shot",
@@ -1592,7 +1592,7 @@
     "preview": "previews/gemini38_flash_full.png",
     "wins": 0,
     "hidden": false,
-    "harness": "Antigravity CLI",
+    "harness": "Antigravity",
     "thinkingEffort": "Full CoT Deliberation",
     "genre": "platformer",
     "isOpenSource": false,
@@ -1609,8 +1609,8 @@
     "vibeScore": 8.9,
     "size": "67.5 KB",
     "lines": 1277,
-    "hardware": "RTX 3070 8GB + 80GB DDR4",
-    "model": "Qwen3.8-Flash-Next-UD-Q3_K_XL",
+    "hardware": "RTX 3070 8GB",
+    "model": "Qwen3.8-Flash-Next",
     "mode": "xhigh (10k CoT budget, 40k ctx)",
     "promptStyle": "Single One-Shot System Prompt",
     "prompt": "Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS in a single HTML file.Plan the implementation briefly within the reasoning budget. Then output only the complete HTML file. Do not use tools or provide explanations.",
@@ -1628,8 +1628,8 @@
     "wins": 0,
     "hidden": false,
     "demoUrl": "https://www.cc8.pl/mario-q38-flash.html",
-    "harness": "llama.cpp (cc8.pl)",
-    "thinkingEffort": "10k CoT Budget (xhigh)",
+    "harness": "llama.cpp",
+    "thinkingEffort": "10k CoT Budget",
     "genre": "platformer",
     "isOpenSource": true,
     "license": "open"
@@ -1645,7 +1645,7 @@
     "vibeScore": 8.5,
     "size": "70.8 KB",
     "lines": 1248,
-    "hardware": "RTX 4070 12GB (Local Homelab)",
+    "hardware": "RTX 4070 12GB",
     "model": "Qwen3.8-Flash-Next",
     "mode": "xhigh (59m CoT Deliberation)",
     "promptStyle": "Minimal Zero-Shot",
@@ -1663,8 +1663,8 @@
     "preview": "previews/qwen38_gold_60k.png",
     "wins": 0,
     "hidden": false,
-    "harness": "llama.cpp Master (L3MS)",
-    "thinkingEffort": "60k CoT Deliberation (59m)",
+    "harness": "llama.cpp",
+    "thinkingEffort": "60k CoT Deliberation",
     "genre": "platformer",
     "isOpenSource": true,
     "license": "open"
@@ -1680,8 +1680,8 @@
     "vibeScore": 8.7,
     "size": "30.8 KB",
     "lines": 1008,
-    "hardware": "RTX 3090 (llama.cpp MTP draft)",
-    "model": "Qwen3.8-27B-UD-Q4_K_XL",
+    "hardware": "RTX 3090 24GB",
+    "model": "Qwen3.8-27B",
     "mode": "Medium Reasoning Effort",
     "promptStyle": "Strict NES Specification",
     "prompt": "Write a fully functional, complete clone of Super Mario Bros game (the famous NES game)\n- Clone must work in a web browser, index.html, no server\n- Decent replica of the graphics assets.\n- Colorful and playable.\n- Controls with keyboard up, down, left, right, spacebar to jump, shift to speed up",
@@ -1699,7 +1699,7 @@
     "wins": 0,
     "hidden": false,
     "demoUrl": "https://indigo-carmencita-27.tiiny.site/",
-    "harness": "llama.cpp (u/ChopSticksPlease)",
+    "harness": "llama.cpp",
     "thinkingEffort": "Standard One-Shot",
     "genre": "platformer",
     "isOpenSource": true,
@@ -1751,8 +1751,8 @@
     "vibeScore": 8.4,
     "size": "52.4 KB",
     "lines": 1637,
-    "hardware": "Framework Desktop (Q8 GGUF)",
-    "model": "Qwen3.8-27B Q8",
+    "hardware": "Framework Desktop",
+    "model": "Qwen3.8-27B",
     "mode": "Overnight Batch",
     "promptStyle": "Aesthetic Engaging Prompt",
     "prompt": "Create a Super Mario clone in JavaScript as a single HTML page. Make the game engaging and the graphics as beautiful as possible. (Later adapted to circus-theme to avoid DMCA).",
@@ -1770,7 +1770,7 @@
     "wins": 0,
     "hidden": false,
     "demoUrl": "https://mikeveerman.github.io/qwen38-27b-mario",
-    "harness": "llama.cpp (u/MikeNonect)",
+    "harness": "llama.cpp",
     "thinkingEffort": "Overnight Batch (Q8)",
     "genre": "platformer",
     "isOpenSource": true,
@@ -1787,7 +1787,7 @@
     "vibeScore": 7.8,
     "size": "27.6 KB",
     "lines": 992,
-    "hardware": "Interactive Assistant Pass",
+    "hardware": "Frontier Cloud API",
     "model": "Gemini 3.8 Flash",
     "mode": "Conversational Fast Mode",
     "promptStyle": "Minimal Zero-Shot",
@@ -1805,8 +1805,8 @@
     "preview": "previews/gemini38_flash_baseline.png",
     "wins": 0,
     "hidden": true,
-    "harness": "Antigravity Interactive",
-    "thinkingEffort": "Zero-Shot Fast Mode",
+    "harness": "Antigravity",
+    "thinkingEffort": "Standard One-Shot",
     "genre": "platformer",
     "isOpenSource": false,
     "license": "proprietary"
@@ -1822,7 +1822,7 @@
     "vibeScore": 8.1,
     "size": "25.3 KB",
     "lines": 537,
-    "hardware": "Gemini 2.5 Pro Cloud API",
+    "hardware": "Frontier Cloud API",
     "model": "Gemini 2.5 Pro",
     "mode": "Standard Prompt",
     "promptStyle": "Max Quality Python Prompt",
@@ -1840,7 +1840,7 @@
     "preview": "previews/gemini25_pro_pygame.png",
     "wins": 0,
     "hidden": true,
-    "harness": "Cloud API (u/Healthy-Nebula-3603)",
+    "harness": "Cloud API",
     "thinkingEffort": "Standard One-Shot",
     "genre": "platformer",
     "isOpenSource": false,
@@ -1857,7 +1857,7 @@
     "vibeScore": 8.8,
     "size": "29.7 KB",
     "lines": 737,
-    "hardware": "Local RTX 3090 (llama.cpp)",
+    "hardware": "RTX 3090 24GB",
     "model": "Ornith-1.5-35B",
     "mode": "Q4_K_M Quant",
     "promptStyle": "Strict NES Specification (Themed)",
@@ -1876,8 +1876,8 @@
     "wins": 0,
     "preview": "previews/ornith35b_matrix_bros.png",
     "hidden": false,
-    "harness": "llama.cpp (u/TimelordQ)",
-    "thinkingEffort": "Direct Zero-Shot",
+    "harness": "llama.cpp",
+    "thinkingEffort": "Standard One-Shot",
     "genre": "platformer",
     "isOpenSource": true,
     "license": "open"
@@ -1896,7 +1896,7 @@
     "lines": 763,
     "hardware": "Frontier Cloud API",
     "model": "Gemini 3.8 Pro",
-    "harness": "Antigravity Pro Engine",
+    "harness": "Antigravity",
     "thinkingEffort": "High CoT Deliberation",
     "mode": "High CoT Deliberation",
     "promptStyle": "DDA 3D FPS Specification",
@@ -1929,10 +1929,10 @@
     "vibeScore": 9.2,
     "size": "22.3 KB",
     "lines": 600,
-    "hardware": "RTX 3070 8GB + 80GB DDR4",
+    "hardware": "RTX 3070 8GB",
     "model": "Qwen3.8-Flash-Next",
-    "harness": "llama.cpp (master b78a39a2f)",
-    "thinkingEffort": "10k CoT Budget (xhigh)",
+    "harness": "llama.cpp",
+    "thinkingEffort": "10k CoT Budget",
     "mode": "10k CoT Budget (xhigh)",
     "promptStyle": "Single-Shot Zero Dependency Prompt",
     "prompt": "Create a fully playable 2.5D retro dungeon raycaster in a single HTML file with embedded CSS and JavaScript. Include 60 FPS DDA raycasting, procedural stone textures, WASD sliding collision, minimap FOV cone, first-person fire wand with recoil, Web Audio procedural sounds, depth-sorted skeleton enemies with chase AI, and retro health/mana HUD. Zero external dependencies.",
@@ -1966,7 +1966,7 @@
     "lines": 217,
     "hardware": "RTX 4090 24GB",
     "model": "Gemma 4 31B",
-    "harness": "llama.cpp (vibe-bench)",
+    "harness": "llama.cpp",
     "thinkingEffort": "High CoT Deliberation",
     "mode": "High CoT Deliberation",
     "promptStyle": "Single-Shot Zero Dependency Prompt",
@@ -2001,8 +2001,8 @@
     "lines": 157,
     "hardware": "RTX 3090 24GB",
     "model": "Qwen 3.6 27B",
-    "harness": "vLLM local",
-    "thinkingEffort": "Single Turn One-Shot",
+    "harness": "vLLM",
+    "thinkingEffort": "Standard One-Shot",
     "mode": "Single Turn One-Shot",
     "promptStyle": "Single-Shot Zero Dependency Prompt",
     "prompt": "Build a cyberpunk vector-neon arcade maze game in a single HTML file. Control a cyber-probe gathering energy nodes while evading 4 sentinel drones with active searchlight vision cones. Spacebar triggers an EMP burst when charged. Use procedural Web Audio synths and CRT glow post-processing. Zero external dependencies.",
@@ -2071,8 +2071,8 @@
     "lines": 579,
     "hardware": "RTX 3090 24GB",
     "model": "Qwen 3.6 27B",
-    "harness": "vLLM local",
-    "thinkingEffort": "Single Turn One-Shot",
+    "harness": "vLLM",
+    "thinkingEffort": "Standard One-Shot",
     "mode": "Single Turn One-Shot",
     "promptStyle": "Single-Shot Zero Dependency Prompt",
     "prompt": "Write a modern glassmorphism falling block puzzle game in a single HTML file. Include particle explosion effects on row clears, ghost piece landing indicator, lock delay, combo counter, and procedural ambient synth audio using Web Audio API. Zero external dependencies.",
@@ -2862,9 +2862,11 @@
         const genre = (document.getElementById('subGenre') ? document.getElementById('subGenre').value : '') || 'platformer';
         const license = (document.getElementById('subLicense') ? document.getElementById('subLicense').value : 'open');
         const isOpenSource = license === 'open';
-        const harness = (document.getElementById('subHarness') ? document.getElementById('subHarness').value.trim() : '') || 'llama.cpp';
-        const effort = (document.getElementById('subEffort') ? document.getElementById('subEffort').value.trim() : '') || 'Single Turn One-Shot';
-        const hardware = document.getElementById('subHardware').value.trim();
+        let harness = (document.getElementById('subHarness') ? document.getElementById('subHarness').value.trim() : '') || 'llama.cpp';
+        if (harness.toLowerCase().includes('antigravity')) harness = 'Antigravity';
+        let effort = (document.getElementById('subEffort') ? document.getElementById('subEffort').value.trim() : '') || 'Standard One-Shot';
+        let hardware = document.getElementById('subHardware').value.trim();
+        if (hardware.toLowerCase().includes('antigravity')) hardware = 'Frontier Cloud API';
         const category = isOpenSource ? 'Open Source / Weights' : 'Proprietary Cloud';
         const badge = document.getElementById('subBadge').value.trim() || 'Community Submission';
         const source = document.getElementById('subSource').value.trim();

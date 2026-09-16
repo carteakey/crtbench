@@ -72,6 +72,16 @@ def validate():
                 log(f"[{gid}] Missing required field: '{field}'", "FAIL")
                 errors += 1
 
+        # Metadata normalization rules
+        harness = str(item.get("harness", ""))
+        hardware = str(item.get("hardware", ""))
+        if "pro engine" in harness.lower() or "antigravity cli" in harness.lower():
+            log(f"[{gid}] Non-normalized harness '{harness}': please use canonical name 'Antigravity'.", "FAIL")
+            errors += 1
+        if "antigravity" in hardware.lower():
+            log(f"[{gid}] Agent harness 'Antigravity' found in hardware field ('{hardware}'). Hardware must specify compute tier (e.g. 'Frontier Cloud API' or 'RTX ...').", "FAIL")
+            errors += 1
+
         # 2. File validation
         game_rel_path = item.get("file", "")
         game_abs_path = os.path.join(REPO_ROOT, game_rel_path)

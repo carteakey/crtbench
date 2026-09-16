@@ -1,10 +1,10 @@
-# 🍄 PlumberBench Submission Guidelines
+# 📺 CRTBench Submission Guidelines
 
-Thank you for contributing to **PlumberBench**! This benchmark tracks the state-of-the-art in LLM procedural game generation and physical reasoning.
+Thank you for contributing to **CRTBench** (formerly PlumberBench)! This benchmark tracks the state-of-the-art in LLM procedural game generation, 2D physics feel, and 3D spatial projection.
 
 ---
 
-## 📜 Golden Rules of PlumberBench
+## 📜 Golden Rules of CRTBench
 
 To maintain benchmark integrity, all submissions must satisfy the following:
 
@@ -19,12 +19,25 @@ To maintain benchmark integrity, all submissions must satisfy the following:
    - Python entries must be a single self-contained `.py` script (e.g. Pygame).
    - **Zero External Network Dependencies**: No external images, audio `.mp3`/`.wav` files, sprite sheets, or CDN script imports (`<script src="...">`). All visual sprites and audio sounds must be procedurally generated.
 
-3. **Full Hardware & Inference Transparency**:
-   - You must disclose:
-     - **Model Name & Version / Quant** (e.g. `Qwen3.8-Flash-Next`, `UD-Q4_K_XL`, `FP16`)
-     - **Inference Harness / Runner** (e.g. `llama.cpp Master`, `vLLM`, `Frontier API`, `Antigravity CLI`)
-     - **Thinking / Reasoning Effort** (e.g. `60k CoT Deliberation`, `10k Budget`, `High Reasoning`, `Zero-Shot`)
-     - **Hardware / Platform** (e.g. `RTX 3070 8GB`, `RTX 4090 24GB`, `Frontier Cloud API`)
+3. **Normalized Metadata Taxonomy & Transparency**:
+   To keep CRTBench clean, searchable, and professional, submissions must adhere to the following normalization standards:
+   - **Inference Harness (`harness`)**: The software runner or agent framework orchestrating inference. Use canonical names only:
+     - `Antigravity` (for any runs generated within Antigravity — do *not* append suffixes like "Pro Engine" or "Interactive").
+     - `llama.cpp` (for local GGUF runs via llama-server / llama-cli).
+     - `vLLM` (for local vLLM serving).
+     - `Ollama` (for local Ollama runner).
+     - `Frontier API` (for direct vendor API calls to OpenAI, Anthropic, Google, etc.).
+   - **Hardware Compute (`hardware`)**: The physical accelerator or cloud execution tier:
+     - Local hardware format: `RTX <Model> <VRAM>` (e.g., `RTX 4090 24GB`, `RTX 3070 8GB`, `Framework Desktop`, `Apple Silicon M3 Max 128GB`).
+     - Cloud frontier format: `Frontier Cloud API`.
+     - *Important*: Agent or harness names (like `Antigravity`) belong in `harness`, NEVER in `hardware`.
+   - **Reasoning / Thinking Effort (`thinkingEffort`)**: Standardized deliberation taxonomy:
+     - `Standard One-Shot` (for non-reasoning or standard zero-shot prompts).
+     - `<N>k CoT Budget` (for models with explicit token deliberation caps, e.g. `10k CoT Budget`, `60k CoT Deliberation`).
+     - `High CoT Deliberation` / `Light Reasoning CoT` (for tiered reasoning levels).
+   - **Model License (`license` & `isOpenSource`)**:
+     - `open` (`isOpenSource: true`) for open-weights models runnable on consumer GPUs.
+     - `proprietary` (`isOpenSource: false`) for closed frontier API models.
 
 4. **Creative Title Policy (No Trademark Names in Title)**:
    - Do **not** include "Mario" or other trademarked names in your submission's title.
