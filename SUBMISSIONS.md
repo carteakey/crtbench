@@ -2,9 +2,6 @@
 
 Thank you for contributing to **PlumberBench**! This benchmark tracks the state-of-the-art in LLM procedural game generation and physical reasoning.
 
-> [!IMPORTANT]
-> **Legal Disclaimer & Notice of Non-Affiliation:** PlumberBench is an independent, non-commercial open-source research initiative. PlumberBench is **not affiliated with, endorsed by, authorized by, or sponsored by Nintendo Co., Ltd. or Nintendo of America Inc.** All characters, trademarks, and intellectual property remain the property of their respective holders.
-
 ---
 
 ## 📜 Golden Rules of PlumberBench
