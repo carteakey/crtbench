@@ -13,7 +13,25 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    body.no-scanlines .crt-scanlines { display: none !important; }
+    body.no-crt .global-crt-overlay,
+    body.no-crt .crt-scanlines {
+      display: none !important;
+    }
+    .global-crt-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 99999;
+      background: 
+        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.22) 50%),
+        radial-gradient(circle at center, rgba(16, 24, 39, 0) 60%, rgba(0, 0, 0, 0.42) 100%);
+      background-size: 100% 4px, 100% 100%;
+      opacity: 0.88;
+      transition: opacity 0.3s ease;
+    }
     :root {
       --bg: #090c10;
       --card-bg: #12171f;
@@ -187,15 +205,24 @@
 
     /* Containers */
     .view-section {
-      max-width: 1320px;
+      max-width: 1480px;
       margin: 20px auto 60px;
       padding: 0 20px;
       width: 100%;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 1240px) {
+      .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 520px) {
+      .grid { grid-template-columns: 1fr; }
     }
 
     /* Arcade Card */
@@ -217,11 +244,11 @@
 
     /* Card Top Header */
     .card-top {
-      padding: 14px 16px 10px;
+      padding: 10px 12px 8px;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 10px;
+      gap: 8px;
     }
     .card-title-group {
       flex: 1;
@@ -264,15 +291,21 @@
     .tier-contender { background: rgba(210, 153, 34, 0.2); border-color: #d29922; color: #d29922; }
 
     .card-title {
-      font-size: 16px;
+      font-size: 13px;
       font-weight: 700;
       color: #fff;
-      line-height: 1.3;
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 2px;
     }
     .card-model {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
-      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     /* Upvote Button */
@@ -308,7 +341,7 @@
     .card-screen-wrap {
       position: relative;
       width: 100%;
-      height: 190px;
+      height: 155px;
       background: #05080c;
       overflow: hidden;
       cursor: pointer;
@@ -392,7 +425,7 @@
 
     /* Card Body */
     .card-body {
-      padding: 14px 16px;
+      padding: 10px 12px 12px;
       display: flex;
       flex-direction: column;
       flex-grow: 1;
@@ -543,12 +576,37 @@
     }
     .arena-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
+      grid-template-columns: 1fr 70px 1fr;
+      align-items: center;
+      gap: 16px;
       margin-bottom: 20px;
     }
     @media (max-width: 840px) {
       .arena-grid { grid-template-columns: 1fr; }
+    }
+    .arena-vs {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .arena-vs-badge {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 13px;
+      color: #000;
+      background: var(--gold);
+      padding: 8px 10px;
+      border-radius: 50%;
+      border: 2px solid #ff7b72;
+      box-shadow: 0 0 12px rgba(248, 195, 0, 0.4);
+      display: inline-block;
+    }
+    .arena-vs-sub {
+      font-size: 8px;
+      color: var(--text-muted);
+      letter-spacing: 0.8px;
+      font-weight: 700;
     }
     .arena-cab {
       background: #090d13;
@@ -1084,6 +1142,7 @@
   </style>
 </head>
 <body>
+<div class="global-crt-overlay" id="globalCrtOverlay"></div>
 
 <!-- Top Marquee -->
 <div class="marquee-bar">
@@ -1104,7 +1163,8 @@
     CRITERIA: <span>ONE-SHOT PROMPT</span> &nbsp;&bull;&nbsp; SCORING: <span>PURE VIBES & DUAL ELO</span>
   </div>
   <p class="hero-subtitle">
-    Can an LLM sit in deep deliberation and one-shot an authentic, playable retro arcade or 3D raycaster game with physics, spatial projection, and chiptune audio? Evaluated via fair in-genre blind duels and ranked by community ELO.
+    <strong style="color:#fff; letter-spacing:0.4px;">One prompt. Zero libraries. Pure assembly of will.</strong><br>
+    Benchmarking whether frontier & local LLMs can synthesize authentic retro classics and 3D engines from memory — ranked through blind in-genre duels and community ELO.
   </p>
 
   <!-- View Switcher -->
@@ -1116,38 +1176,38 @@
   </div>
 </header>
 
-<!-- Controls Bar (Active on The Arcade Wall & Leaderboard) -->
-<div class="controls-wrap" id="wallControls">
-  <div style="display:flex; flex-direction:column; gap:10px; flex:1;">
-    <!-- Genre / Game Track Filter -->
-    <div class="filter-group" id="genreFilterGroup">
-      <button class="filter-btn active" data-genre="all">🎮 All Games (<span id="countGenreAll">14</span>)</button>
-      <button class="filter-btn" data-genre="platformer">🍄 Italian Plumber (<span id="countGenrePlatformer">8</span>)</button>
-      <button class="filter-btn" data-genre="raycaster">🔫 Doom / 3D Raycaster (<span id="countGenreRaycaster">2</span>)</button>
-      <button class="filter-btn" data-genre="maze">👻 Ghost Maze / Dot Chomper (<span id="countGenreMaze">2</span>)</button>
-      <button class="filter-btn" data-genre="puzzle">🧱 Falling Bricks (<span id="countGenrePuzzle">2</span>)</button>
-    </div>
-    <!-- Model License Filter (Open Source vs Proprietary) -->
-    <div class="filter-group" id="licenseFilterGroup">
-      <button class="filter-btn active" data-license="all">🌐 All Models (<span id="countLicenseAll">14</span>)</button>
-      <button class="filter-btn" data-license="open">🔓 Open Source / Weights (<span id="countLicenseOpen">10</span>)</button>
-      <button class="filter-btn" data-license="proprietary">🔒 Proprietary / Cloud (<span id="countLicenseProp">4</span>)</button>
-    </div>
-  </div>
-  <div style="align-self:flex-start;">
-    <select id="sortSelect" class="sort-select">
-      <option value="elo">Sort by: ELO Rating (Highest)</option>
-      <option value="vibe">Sort by: Vibe Score</option>
-      <option value="votes">Sort by: Community Upvotes</option>
-      <option value="size">Sort by: Code Volume</option>
-    </select>
-  </div>
-</div>
-
 <!-- Main Views -->
 <main class="view-section">
-  <!-- 1. Wall of Mario View -->
+  <!-- 1. The Arcade Wall View -->
   <div id="wallView">
+    <!-- Controls Bar for The Arcade Wall -->
+    <div class="controls-wrap" id="wallControls">
+      <div style="display:flex; flex-direction:column; gap:10px; flex:1;">
+        <!-- Genre / Game Track Filter -->
+        <div class="filter-group" id="genreFilterGroup">
+          <button class="filter-btn active" data-genre="all">🎮 All Games (<span id="countGenreAll">14</span>)</button>
+          <button class="filter-btn" data-genre="platformer">🍄 Italian Plumber (<span id="countGenrePlatformer">8</span>)</button>
+          <button class="filter-btn" data-genre="raycaster">🔫 Doom / 3D Raycaster (<span id="countGenreRaycaster">2</span>)</button>
+          <button class="filter-btn" data-genre="maze">👻 Ghost Maze / Dot Chomper (<span id="countGenreMaze">2</span>)</button>
+          <button class="filter-btn" data-genre="puzzle">🧱 Falling Bricks (<span id="countGenrePuzzle">2</span>)</button>
+        </div>
+        <!-- Model License Filter (Open Source vs Proprietary) -->
+        <div class="filter-group" id="licenseFilterGroup">
+          <button class="filter-btn active" data-license="all">🌐 All Models (<span id="countLicenseAll">14</span>)</button>
+          <button class="filter-btn" data-license="open">🔓 Open Source / Weights (<span id="countLicenseOpen">10</span>)</button>
+          <button class="filter-btn" data-license="proprietary">🔒 Proprietary / Cloud (<span id="countLicenseProp">4</span>)</button>
+        </div>
+      </div>
+      <div style="align-self:flex-start;">
+        <select id="sortSelect" class="sort-select">
+          <option value="elo">Sort by: ELO Rating (Highest)</option>
+          <option value="vibe">Sort by: Vibe Score</option>
+          <option value="votes">Sort by: Community Upvotes</option>
+          <option value="size">Sort by: Code Volume</option>
+        </select>
+      </div>
+    </div>
+
     <div class="grid" id="gameGrid">
       <!-- Cards rendered here by JS -->
     </div>
@@ -1188,7 +1248,7 @@
           </div>
           <div class="arena-body">
             <div id="cabADetails" style="margin-bottom:12px;">
-              <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity hidden. Play to test jumping physics, audio crunch, and NES momentum.</div>
+              <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity hidden. Play to test jumping physics, audio crunch, and mechanics.</div>
             </div>
             <button class="btn-arena-play" id="cabAPlayBtn">▶ TEST CHALLENGER A</button>
           </div>
@@ -1212,7 +1272,7 @@
           </div>
           <div class="arena-body">
             <div id="cabBDetails" style="margin-bottom:12px;">
-              <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity hidden. Play to test jumping physics, audio crunch, and NES momentum.</div>
+              <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity hidden. Play to test jumping physics, audio crunch, and mechanics.</div>
             </div>
             <button class="btn-arena-play" id="cabBPlayBtn">▶ TEST CHALLENGER B</button>
           </div>
@@ -1232,17 +1292,35 @@
 
   <!-- 3. Leaderboard Table View -->
   <div id="tableView" style="display:none;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px; border-bottom:1px solid #21262d; padding-bottom:12px;">
-      <div style="display:flex; gap:8px;">
-        <button class="filter-btn active" id="btnRosterView">🎮 Individual Game Roster</button>
-        <button class="filter-btn" id="btnPentathlonView">🏆 Omni-Arcade Model Pentathlon (Composite ELO)</button>
+    <!-- Controls Bar for Leaderboard -->
+    <div class="controls-wrap" id="tableControls" style="margin-bottom:16px;">
+      <div style="display:flex; flex-direction:column; gap:10px; flex:1;">
+        <!-- Genre / Game Track Filter -->
+        <div class="filter-group" id="tableGenreFilterGroup">
+          <button class="filter-btn active" data-table-genre="all">🎮 All Games (<span id="countTableGenreAll">14</span>)</button>
+          <button class="filter-btn" data-table-genre="platformer">🍄 Italian Plumber (<span id="countTableGenrePlatformer">8</span>)</button>
+          <button class="filter-btn" data-table-genre="raycaster">🔫 Doom / 3D Raycaster (<span id="countTableGenreRaycaster">2</span>)</button>
+          <button class="filter-btn" data-table-genre="maze">👻 Ghost Maze (<span id="countTableGenreMaze">2</span>)</button>
+          <button class="filter-btn" data-table-genre="puzzle">🧱 Falling Bricks (<span id="countTableGenrePuzzle">2</span>)</button>
+        </div>
+        <!-- Model License Filter (Open Source vs Proprietary) -->
+        <div class="filter-group" id="tableLicenseFilterGroup">
+          <button class="filter-btn active" data-table-license="all">🌐 All Models (<span id="countTableLicenseAll">14</span>)</button>
+          <button class="filter-btn" data-table-license="open">🔓 Open Source / Weights (<span id="countTableLicenseOpen">10</span>)</button>
+          <button class="filter-btn" data-table-license="proprietary">🔒 Proprietary / Cloud (<span id="countTableLicenseProp">4</span>)</button>
+        </div>
       </div>
-      <div style="font-size:12px; color:var(--text-muted);" id="tableHelpText">
-        Ranked by In-Genre Discipline ELO. In duels, contenders only face their own discipline.
+      <div style="align-self:flex-start;">
+        <select id="tableSortSelect" class="sort-select">
+          <option value="elo">Sort by: In-Genre ELO (Highest)</option>
+          <option value="vibe">Sort by: Vibe Score</option>
+          <option value="votes">Sort by: Community Upvotes</option>
+          <option value="size">Sort by: Code Volume</option>
+        </select>
       </div>
     </div>
 
-    <!-- Table 1: Individual Game Roster -->
+    <!-- Table: Individual Game Roster -->
     <div class="table-container" id="gameRosterTableContainer">
       <table class="elo-table">
         <thead>
@@ -1251,46 +1329,19 @@
             <th>Preview</th>
             <th>Contender</th>
             <th>Discipline</th>
-            <th>Model & Harness</th>
-            <th>Thinking Effort & Hardware</th>
+            <th>Model & License</th>
+            <th>Harness & Hardware</th>
+            <th>Thinking Effort</th>
             <th>In-Genre ELO</th>
             <th>Tier</th>
             <th>Matches</th>
-            <th>Vibe</th>
-            <th>Crunch</th>
-            <th>Physics</th>
-            <th>Ambition</th>
-            <th>Code</th>
+            <th>Code Size</th>
             <th>Source</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody id="tableBody">
           <!-- Table rows rendered here by JS -->
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Table 2: Model Pentathlon Composite Leaderboard -->
-    <div class="table-container" id="pentathlonTableContainer" style="display:none;">
-      <table class="elo-table">
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Model / AI System</th>
-            <th>Primary Harness & Hardware</th>
-            <th style="text-align:center;">🏃 Platformer</th>
-            <th style="text-align:center;">🔫 Raycaster</th>
-            <th style="text-align:center;">👻 Arcade Maze</th>
-            <th style="text-align:center;">🧱 Falling Blocks</th>
-            <th>Mastery Breadth</th>
-            <th>Composite Arcade ELO</th>
-            <th>Omni-Tier</th>
-            <th>Total Duels</th>
-          </tr>
-        </thead>
-        <tbody id="pentathlonBody">
-          <!-- Model composite rows rendered here by JS -->
         </tbody>
       </table>
     </div>
@@ -1338,8 +1389,9 @@
     <img id="drawerImg" src="" alt="Game Preview">
     <div class="crt-scanlines"></div>
   </div>
-  <h2 id="drawerTitle">Prompt & Metadata</h2>
-  <p class="sub" id="drawerSub">Model details, exact generation prompt, and verified source links.</p>
+  <h2 id="drawerTitle">Contender Specs & Prompt</h2>
+  <p class="sub" id="drawerSub">Model architecture, exact generation prompt, and verified source links.</p>
+  <button class="btn-play" id="drawerPlayBtn" style="width:100%; margin-bottom:14px; font-size:12px; padding:10px;">▶ PLAY IN CABINET</button>
 
   <!-- Source & Links Box -->
   <div class="source-box">
@@ -1445,18 +1497,7 @@
         </div>
       </div>
 
-      <div class="field-group">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <label class="field-label" for="subPromptPreset">Prompt Preset</label>
-          <span style="font-size:11px; color:var(--accent); cursor:pointer;" id="applyPresetBtn">Apply Selected Preset</span>
-        </div>
-        <select class="field-select" id="subPromptPreset">
-          <option value="custom">-- Custom Prompt --</option>
-          <option value="minimal">Minimal Zero-Shot ("Write a complete, playable Super Mario clone in a single file...")</option>
-          <option value="potato">cc8.pl Potato System Prompt ("Make a side-scrolling platformer game like Super Mario Bros...")</option>
-          <option value="matrix">TimelordQ Themed Spec ("Write a fully functional, complete clone of Super Mario Bros...")</option>
-        </select>
-      </div>
+      
 
       <div class="field-group">
         <label class="field-label" for="subPrompt">Exact Prompt Fed to Model *</label>
@@ -1524,6 +1565,17 @@
     if (document.getElementById('countLicenseAll')) document.getElementById('countLicenseAll').textContent = licenseCounts.all;
     if (document.getElementById('countLicenseOpen')) document.getElementById('countLicenseOpen').textContent = licenseCounts.open;
     if (document.getElementById('countLicenseProp')) document.getElementById('countLicenseProp').textContent = licenseCounts.proprietary;
+
+    // Leaderboard Table Filter Counts
+    if (document.getElementById('countTableGenreAll')) document.getElementById('countTableGenreAll').textContent = genreCounts.all;
+    if (document.getElementById('countTableGenrePlatformer')) document.getElementById('countTableGenrePlatformer').textContent = genreCounts.platformer;
+    if (document.getElementById('countTableGenreRaycaster')) document.getElementById('countTableGenreRaycaster').textContent = genreCounts.raycaster;
+    if (document.getElementById('countTableGenreMaze')) document.getElementById('countTableGenreMaze').textContent = genreCounts.maze;
+    if (document.getElementById('countTableGenrePuzzle')) document.getElementById('countTableGenrePuzzle').textContent = genreCounts.puzzle;
+
+    if (document.getElementById('countTableLicenseAll')) document.getElementById('countTableLicenseAll').textContent = licenseCounts.all;
+    if (document.getElementById('countTableLicenseOpen')) document.getElementById('countTableLicenseOpen').textContent = licenseCounts.open;
+    if (document.getElementById('countTableLicenseProp')) document.getElementById('countTableLicenseProp').textContent = licenseCounts.proprietary;
   }
 
   // Fallback offline dataset (7 active, 2 hidden)
@@ -1605,7 +1657,7 @@
     "category": "NES Purist",
     "badge": "8GB 3070 Potato Run",
     "file": "games/qwen38_flash_3070_potato.html",
-    "baseVotes": 58,
+    "baseVotes": 0,
     "vibeScore": 8.9,
     "size": "67.5 KB",
     "lines": 1277,
@@ -1676,7 +1728,7 @@
     "category": "NES Purist",
     "badge": "r/LocalLLaMA Viral",
     "file": "games/qwen38_27b_chopsticks.html",
-    "baseVotes": 374,
+    "baseVotes": 0,
     "vibeScore": 8.7,
     "size": "30.8 KB",
     "lines": 1008,
@@ -1747,7 +1799,7 @@
     "category": "Circus Reskin",
     "badge": "629 Reddit Upvotes",
     "file": "games/qwen38_27b_circus_mikenonect.html",
-    "baseVotes": 629,
+    "baseVotes": 0,
     "vibeScore": 8.4,
     "size": "52.4 KB",
     "lines": 1637,
@@ -1818,7 +1870,7 @@
     "category": "Python / PyGame",
     "badge": "312 Reddit Upvotes",
     "file": "games/gemini25_pro_pygame_healthynebula.py",
-    "baseVotes": 312,
+    "baseVotes": 0,
     "vibeScore": 8.1,
     "size": "25.3 KB",
     "lines": 537,
@@ -1853,7 +1905,7 @@
     "category": "Matrix Reskin",
     "badge": "Cyber Matrix Run",
     "file": "games/ornith35b_matrix_bros.html",
-    "baseVotes": 184,
+    "baseVotes": 0,
     "vibeScore": 8.8,
     "size": "29.7 KB",
     "lines": 737,
@@ -1890,7 +1942,7 @@
     "category": "Wolf3D Classic",
     "badge": "Inaugural 3D Raycaster",
     "file": "games/gemini38_pro_wolf_raycaster.html",
-    "baseVotes": 1,
+    "baseVotes": 0,
     "vibeScore": 9.2,
     "size": "25.6 KB",
     "lines": 763,
@@ -2095,9 +2147,12 @@
 ];
 
   let gamesData = [];
-  let currentLicense = 'all';
-  let currentGenre = 'all';
-  let currentSort = 'elo';
+  let wallGenre = 'all';
+  let wallLicense = 'all';
+  let wallSort = 'elo';
+  let tableGenre = 'all';
+  let tableLicense = 'all';
+  let tableSort = 'elo';
   let currentView = 'wall';
   let activeGameId = null;
 
@@ -2225,32 +2280,53 @@
     renderTable();
     setupEventListeners();
     setupArenaMatchup();
+
+    const hash = window.location.hash.replace('#', '');
+    if (['wall', 'arena', 'table'].includes(hash)) {
+      switchView(hash);
+    }
+  }
+
+  function switchView(view) {
+    currentView = view;
+    document.querySelectorAll('.view-nav-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.view === view);
+    });
+    document.getElementById('wallView').style.display = view === 'wall' ? 'block' : 'none';
+    document.getElementById('arenaView').style.display = view === 'arena' ? 'block' : 'none';
+    document.getElementById('tableView').style.display = view === 'table' ? 'block' : 'none';
+
+    if (view === 'table') {
+      renderTable();
+    } else if (view === 'wall') {
+      renderGrid();
+    }
   }
 
   function getActiveGames() {
     return gamesData.filter(g => !g.hidden);
   }
 
-  function getFilteredAndSorted() {
+  function getFilteredAndSorted(genre = 'all', license = 'all', sort = 'elo') {
     let active = getActiveGames();
     let filtered = active.filter(g => {
       // 1. Discipline / Game Track filter
-      if (currentGenre !== 'all' && (g.genre || 'platformer') !== currentGenre) return false;
+      if (genre !== 'all' && (g.genre || 'platformer') !== genre) return false;
 
       // 2. Model License filter (Open Source / Weights vs Proprietary / Cloud)
-      if (currentLicense !== 'all') {
+      if (license !== 'all') {
         const isOpen = g.isOpenSource === true || g.license === 'open';
-        if (currentLicense === 'open' && !isOpen) return false;
-        if (currentLicense === 'proprietary' && isOpen) return false;
+        if (license === 'open' && !isOpen) return false;
+        if (license === 'proprietary' && isOpen) return false;
       }
       return true;
     });
 
     filtered.sort((a, b) => {
-      if (currentSort === 'elo') return getEffectiveElo(b) - getEffectiveElo(a);
-      if (currentSort === 'vibe') return b.vibeScore - a.vibeScore;
-      if (currentSort === 'votes') return getEffectiveVotes(b) - getEffectiveVotes(a);
-      if (currentSort === 'size') return parseInt(b.lines) - parseInt(a.lines);
+      if (sort === 'elo') return getEffectiveElo(b) - getEffectiveElo(a);
+      if (sort === 'vibe') return b.vibeScore - a.vibeScore;
+      if (sort === 'votes') return getEffectiveVotes(b) - getEffectiveVotes(a);
+      if (sort === 'size') return parseInt(b.lines) - parseInt(a.lines);
       return 0;
     });
 
@@ -2259,9 +2335,10 @@
 
   function renderGrid() {
     const grid = document.getElementById('gameGrid');
+    if (!grid) return;
     grid.innerHTML = '';
     const userVotes = getUserVotes();
-    const sorted = getFilteredAndSorted();
+    const sorted = getFilteredAndSorted(wallGenre, wallLicense, wallSort);
 
     sorted.forEach((game, idx) => {
       const card = document.createElement('div');
@@ -2275,7 +2352,7 @@
 
       let badgeClass = 'card-badge';
       if (idx === 0) badgeClass += ' badge-gold';
-      else if (game.badge.includes('Reddit') || game.badge.includes('Viral')) badgeClass += ' badge-viral';
+      else if (game.badge && (game.badge.includes('Reddit') || game.badge.includes('Viral'))) badgeClass += ' badge-viral';
       else if (game.category === 'NES Purist') badgeClass += ' badge-purist';
 
       const isOpen = game.isOpenSource === true || game.license === 'open';
@@ -2294,7 +2371,7 @@
             </div>
             <div class="card-title">${game.title}</div>
             <div class="card-model"><strong>${game.model}</strong> &bull; <span style="color:var(--accent);">${game.harness}</span></div>
-            <div style="font-size:11px; color:#8b949e; margin-top:3px;">🧠 ${game.thinkingEffort} &bull; 💻 ${game.hardware}</div>
+            <div style="font-size:11px; color:#8b949e; margin-top:2px;">🧠 ${game.thinkingEffort} &bull; 💻 ${game.hardware}</div>
           </div>
           <button class="upvote-btn ${isVoted ? 'voted' : ''}" data-id="${game.id}">
             <span class="upvote-arrow">▲</span>
@@ -2314,34 +2391,14 @@
 
         <div class="card-body">
           <div class="meta-tags">
-            <span class="meta-tag">ELO: <strong>${effectiveElo}</strong> (${matches} matches)</span>
-            <span class="meta-tag">VIBE: <strong>${game.vibeScore} ★</strong></span>
-            <span class="meta-tag">CODE: <strong>${game.size}</strong></span>
+            <span class="meta-tag">⚡ <strong>${effectiveElo}</strong> ELO</span>
+            <span class="meta-tag">🥊 <strong>${matches}</strong> duels</span>
+            <span class="meta-tag">💾 <strong>${game.size}</strong></span>
           </div>
 
-          <p class="card-review">${game.vibeReview}</p>
-
-          <div class="vibe-bars">
-            <div class="vibe-row">
-              <span class="vibe-label">NES Crunch</span>
-              <div class="vibe-track"><div class="vibe-fill" style="width: ${game.ratings.nesCrunch * 10}%;"></div></div>
-              <span class="vibe-num">${game.ratings.nesCrunch}</span>
-            </div>
-            <div class="vibe-row">
-              <span class="vibe-label">Physics Feel</span>
-              <div class="vibe-track"><div class="vibe-fill" style="width: ${game.ratings.physicsFeel * 10}%;"></div></div>
-              <span class="vibe-num">${game.ratings.physicsFeel}</span>
-            </div>
-            <div class="vibe-row">
-              <span class="vibe-label">Ambition</span>
-              <div class="vibe-track"><div class="vibe-fill" style="width: ${game.ratings.ambition * 10}%;"></div></div>
-              <span class="vibe-num">${game.ratings.ambition}</span>
-            </div>
-          </div>
-
-          <div class="card-footer">
-            <button class="btn-play" data-action="play" data-id="${game.id}">▶ PLAY NOW</button>
-            <button class="btn-action" data-action="inspect" data-id="${game.id}">📜 Prompt</button>
+          <div class="card-footer" style="margin-top:10px;">
+            <button class="btn-play" data-action="play" data-id="${game.id}">▶ PLAY</button>
+            <button class="btn-action" data-action="inspect" data-id="${game.id}">📋 Details</button>
             <a class="btn-action" href="${game.sourceUrl}" target="_blank" rel="noopener noreferrer">🔗 Source</a>
           </div>
         </div>
@@ -2355,18 +2412,7 @@
     const tbody = document.getElementById('tableBody');
     if (!tbody) return;
     tbody.innerHTML = '';
-    const active = getActiveGames();
-    let filtered = active;
-    if (currentGenre !== 'all') {
-      filtered = active.filter(g => (g.genre || 'platformer') === currentGenre);
-    }
-    if (currentLicense !== 'all') {
-      filtered = filtered.filter(g => {
-        const isOpen = g.isOpenSource === true || g.license === 'open';
-        return currentLicense === 'open' ? isOpen : !isOpen;
-      });
-    }
-    const sorted = [...filtered].sort((a, b) => getEffectiveElo(b) - getEffectiveElo(a));
+    const sorted = getFilteredAndSorted(tableGenre, tableLicense, tableSort);
 
     sorted.forEach((game, idx) => {
       const effectiveElo = getEffectiveElo(game);
@@ -2396,11 +2442,13 @@
             <span style="color:var(--accent); font-family:monospace; font-size:12px; font-weight:600;">${game.model}</span>
             ${licensePill}
           </div>
-          <div style="font-size:11px; color:#c9d1d9; margin-top:2px;">⚙️ ${game.harness}</div>
+        </td>
+        <td>
+          <div style="font-size:11px; color:#c9d1d9;">⚙️ ${game.harness}</div>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">💻 ${game.hardware}</div>
         </td>
         <td>
           <div style="font-size:11px; color:var(--gold); font-weight:600;">🧠 ${game.thinkingEffort}</div>
-          <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">💻 ${game.hardware}</div>
         </td>
         <td style="font-family:'Press Start 2P', monospace; font-size:11px; color:var(--gold);">
           ⚡ ${effectiveElo}
@@ -2409,129 +2457,21 @@
           <span class="elo-pill ${tier.cls}">${tier.name}</span>
         </td>
         <td style="font-family:monospace;">${matches}</td>
-        <td style="font-weight:bold; color:var(--gold);">${game.vibeScore} ★</td>
-        <td style="font-family:monospace;">${game.ratings.nesCrunch}</td>
-        <td style="font-family:monospace;">${game.ratings.physicsFeel}</td>
-        <td style="font-family:monospace;">${game.ratings.ambition}</td>
         <td style="font-size:11px; color:var(--text-muted);">${game.size}</td>
         <td>
           <a class="source-btn-link" href="${game.sourceUrl}" target="_blank" rel="noopener noreferrer">Link ↗</a>
         </td>
         <td>
-          <button class="btn-action" data-action="play" data-id="${game.id}">Play</button>
-        </td>
-      `;
-      tbody.appendChild(row);
-    });
-  }
-
-  function renderPentathlonTable() {
-    const tbody = document.getElementById('pentathlonBody');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-    const active = getActiveGames();
-
-    // Group by model
-    const modelMap = {};
-    active.forEach(g => {
-      const mName = g.model;
-      if (!modelMap[mName]) {
-        modelMap[mName] = {
-          model: mName,
-          harness: g.harness,
-          hardware: g.hardware,
-          isOpen: g.isOpenSource === true || g.license === 'open',
-          disciplines: {},
-          totalMatches: 0,
-          vibeSum: 0,
-          gameCount: 0
-        };
-      }
-      const gen = g.genre || 'platformer';
-      const elo = getEffectiveElo(g);
-      const matches = getEffectiveMatches(g);
-      if (!modelMap[mName].disciplines[gen] || elo > modelMap[mName].disciplines[gen].elo) {
-        modelMap[mName].disciplines[gen] = { elo, game: g };
-      }
-      modelMap[mName].totalMatches += matches;
-      modelMap[mName].vibeSum += g.vibeScore;
-      modelMap[mName].gameCount += 1;
-    });
-
-    let modelList = Object.values(modelMap);
-    if (currentLicense !== 'all') {
-      modelList = modelList.filter(m => currentLicense === 'open' ? m.isOpen : !m.isOpen);
-    }
-    modelList.forEach(m => {
-      const discKeys = Object.keys(m.disciplines);
-      m.breadth = discKeys.length;
-      let sumElo = 0;
-      discKeys.forEach(k => { sumElo += m.disciplines[k].elo; });
-      m.compositeElo = Math.round(sumElo / m.breadth);
-      m.avgVibe = (m.vibeSum / m.gameCount).toFixed(1);
-    });
-
-    // Sort: highest breadth (descending) then by composite ELO (descending)
-    modelList.sort((a, b) => {
-      if (b.breadth !== a.breadth) return b.breadth - a.breadth;
-      return b.compositeElo - a.compositeElo;
-    });
-
-    modelList.forEach((m, idx) => {
-      const rankEmoji = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
-      let tierBadge = '<span class="elo-pill tier-challenger">🎯 Specialist</span>';
-      if (m.breadth >= 3) {
-        tierBadge = '<span class="elo-pill tier-master">👑 Omni Grandmaster</span>';
-      } else if (m.breadth === 2) {
-        tierBadge = '<span class="elo-pill tier-diamond">⚡ Dual-Track</span>';
-      }
-
-      const platCell = m.disciplines['platformer'] 
-        ? `<span style="color:var(--gold); font-weight:700; font-family:monospace;">⚡ ${m.disciplines['platformer'].elo}</span>` 
-        : '<span style="color:#484f58;">—</span>';
-      const rayCell = m.disciplines['raycaster'] 
-        ? `<span style="color:var(--gold); font-weight:700; font-family:monospace;">⚡ ${m.disciplines['raycaster'].elo}</span>` 
-        : '<span style="color:#484f58;">—</span>';
-      const mazeCell = m.disciplines['maze'] 
-        ? `<span style="color:var(--gold); font-weight:700; font-family:monospace;">⚡ ${m.disciplines['maze'].elo}</span>` 
-        : '<span style="color:#484f58;">—</span>';
-      const puzzleCell = m.disciplines['puzzle'] 
-        ? `<span style="color:var(--gold); font-weight:700; font-family:monospace;">⚡ ${m.disciplines['puzzle'].elo}</span>` 
-        : '<span style="color:#484f58;">—</span>';
-
-      const licensePill = m.isOpen
-        ? '<span class="card-badge" style="background:#238636; font-size:8px; padding:2px 5px; border:1px solid #2ea043;" title="Open Weights / Local">🔓 Open</span>'
-        : '<span class="card-badge" style="background:#1f6feb; font-size:8px; padding:2px 5px; border:1px solid #388bfd;" title="Proprietary / Cloud">🔒 Cloud</span>';
-
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td style="font-weight:700; font-size:14px;">${rankEmoji}</td>
-        <td>
-          <div style="display:flex; align-items:center; gap:6px;">
-            <span style="font-weight:700; color:var(--accent); font-family:monospace; font-size:13px;">${m.model}</span>
-            ${licensePill}
+          <div style="display:flex; gap:6px;">
+            <button class="btn-play" style="padding:4px 8px; font-size:11px;" data-action="play" data-id="${game.id}">▶ Play</button>
+            <button class="btn-action" style="padding:4px 8px; font-size:11px;" data-action="inspect" data-id="${game.id}">📋</button>
           </div>
         </td>
-        <td>
-          <div style="font-size:12px; color:#c9d1d9;">⚙️ ${m.harness}</div>
-          <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">💻 ${m.hardware}</div>
-        </td>
-        <td style="text-align:center;">${platCell}</td>
-        <td style="text-align:center;">${rayCell}</td>
-        <td style="text-align:center;">${mazeCell}</td>
-        <td style="text-align:center;">${puzzleCell}</td>
-        <td>
-          <span class="card-badge" style="background:#238636; font-size:10px;">${m.breadth} / 4 Disciplines</span>
-        </td>
-        <td style="font-family:'Press Start 2P', monospace; font-size:12px; color:var(--gold);">
-          ⚡ ${m.compositeElo}
-        </td>
-        <td>${tierBadge}</td>
-        <td style="font-family:monospace;">${m.totalMatches}</td>
       `;
       tbody.appendChild(row);
     });
   }
+
 
   // Setup Blind Elo Arena Duel (Fair In-Genre Matchmaking)
   function setupArenaMatchup() {
@@ -2677,90 +2617,94 @@
     updateFilterCounts();
     renderGrid();
     renderTable();
-    renderPentathlonTable();
   }
 
   function setupEventListeners() {
     // View Switcher Tabs
     document.querySelectorAll('.view-nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.view-nav-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
         const view = btn.dataset.view;
-        currentView = view;
-
-        document.getElementById('wallView').style.display = view === 'wall' ? 'block' : 'none';
-        document.getElementById('wallControls').style.display = view === 'wall' ? 'flex' : 'none';
-        document.getElementById('arenaView').style.display = view === 'arena' ? 'block' : 'none';
-        document.getElementById('tableView').style.display = view === 'table' ? 'block' : 'none';
-
-        if (view === 'table') {
-          renderTable();
-          renderPentathlonTable();
-        }
+        window.location.hash = view;
+        switchView(view);
       });
     });
 
-    // CRT Scanlines Toggle
+    // CRT Atmosphere Toggle
     const toggleScanlinesBtn = document.getElementById('toggleScanlinesBtn');
     if (toggleScanlinesBtn) {
+      const crtPref = localStorage.getItem('pb_crt_enabled');
+      if (crtPref === 'false') {
+        document.body.classList.add('no-crt');
+        toggleScanlinesBtn.textContent = '📺 CRT: OFF';
+        toggleScanlinesBtn.style.color = '#8b949e';
+        toggleScanlinesBtn.style.borderColor = '#30363d';
+      }
       toggleScanlinesBtn.addEventListener('click', () => {
-        const isOff = document.body.classList.toggle('no-scanlines');
+        const isOff = document.body.classList.toggle('no-crt');
+        localStorage.setItem('pb_crt_enabled', !isOff);
         toggleScanlinesBtn.textContent = isOff ? '📺 CRT: OFF' : '📺 CRT: ON';
         toggleScanlinesBtn.style.color = isOff ? '#8b949e' : '#58a6ff';
         toggleScanlinesBtn.style.borderColor = isOff ? '#30363d' : '#58a6ff';
       });
     }
 
-    // Table view mode toggles (Roster vs Pentathlon)
-    const btnRosterView = document.getElementById('btnRosterView');
-    const btnPentathlonView = document.getElementById('btnPentathlonView');
-    const gameRosterContainer = document.getElementById('gameRosterTableContainer');
-    const pentathlonContainer = document.getElementById('pentathlonTableContainer');
-    const tableHelpText = document.getElementById('tableHelpText');
-
-    if (btnRosterView && btnPentathlonView) {
-      btnRosterView.addEventListener('click', () => {
-        btnRosterView.classList.add('active');
-        btnPentathlonView.classList.remove('active');
-        gameRosterContainer.style.display = 'block';
-        pentathlonContainer.style.display = 'none';
-        if (tableHelpText) tableHelpText.textContent = 'Ranked by In-Genre Discipline ELO. In duels, contenders only face their own discipline.';
-        renderTable();
-      });
-
-      btnPentathlonView.addEventListener('click', () => {
-        btnPentathlonView.classList.add('active');
-        btnRosterView.classList.remove('active');
-        gameRosterContainer.style.display = 'none';
-        pentathlonContainer.style.display = 'block';
-        if (tableHelpText) tableHelpText.textContent = 'Omni-Arcade Standing: Cross-discipline average ELO across platformer, raycaster, maze, and puzzle tracks.';
-        renderPentathlonTable();
-      });
-    }
-
-    // Genre / Discipline Filter Clicks
+    // Arcade Wall: Genre Filter Clicks
     document.querySelectorAll('#genreFilterGroup .filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('#genreFilterGroup .filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        currentGenre = btn.dataset.genre;
+        wallGenre = btn.dataset.genre;
         renderGrid();
-        renderTable();
       });
     });
 
-    // Model License Filter Clicks (Open Source vs Proprietary)
+    // Arcade Wall: Model License Filter Clicks
     document.querySelectorAll('#licenseFilterGroup .filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('#licenseFilterGroup .filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        currentLicense = btn.dataset.license;
+        wallLicense = btn.dataset.license;
         renderGrid();
-        renderTable();
-        renderPentathlonTable();
       });
     });
+
+    // Arcade Wall: Sort changes
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+      sortSelect.addEventListener('change', (e) => {
+        wallSort = e.target.value;
+        renderGrid();
+      });
+    }
+
+    // Leaderboard Table: Genre Filter Clicks
+    document.querySelectorAll('#tableGenreFilterGroup .filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#tableGenreFilterGroup .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        tableGenre = btn.dataset.tableGenre;
+        renderTable();
+      });
+    });
+
+    // Leaderboard Table: Model License Filter Clicks
+    document.querySelectorAll('#tableLicenseFilterGroup .filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#tableLicenseFilterGroup .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        tableLicense = btn.dataset.tableLicense;
+        renderTable();
+      });
+    });
+
+    // Leaderboard Table: Sort changes
+    const tableSortSelect = document.getElementById('tableSortSelect');
+    if (tableSortSelect) {
+      tableSortSelect.addEventListener('change', (e) => {
+        tableSort = e.target.value;
+        renderTable();
+      });
+    }
 
     // Arena Discipline Filter Clicks
     document.querySelectorAll('#arenaGenreButtons .filter-btn').forEach(btn => {
@@ -2772,11 +2716,16 @@
       });
     });
 
-    // Sort changes
-    document.getElementById('sortSelect').addEventListener('change', (e) => {
-      currentSort = e.target.value;
-      renderGrid();
-    });
+    // Drawer Play in Cabinet Button
+    const drawerPlayBtn = document.getElementById('drawerPlayBtn');
+    if (drawerPlayBtn) {
+      drawerPlayBtn.addEventListener('click', () => {
+        if (activeGameId) {
+          closeDrawer();
+          openArcadeModal(activeGameId);
+        }
+      });
+    }
 
     // Card & Table interactions (Delegated)
     document.body.addEventListener('click', (e) => {
@@ -2820,32 +2769,12 @@
       if (arenaGameB) openArcadeModal(arenaGameB.id);
     });
 
-    
     // Submission Studio Controls
     const openSubmitBtn = document.getElementById('openSubmitModalBtn');
     const closeSubmitBtn = document.getElementById('closeSubmitModalBtn');
     const submitModal = document.getElementById('submitModal');
     if (openSubmitBtn) openSubmitBtn.addEventListener('click', () => submitModal.classList.add('active'));
     if (closeSubmitBtn) closeSubmitBtn.addEventListener('click', () => submitModal.classList.remove('active'));
-
-    // Prompt Presets
-    const promptPresets = {
-      minimal: "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-      potato: "Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS in a single HTML file.Plan the implementation briefly within the reasoning budget. Then output only the complete HTML file. Do not use tools or provide explanations.",
-      matrix: "Write a fully functional, complete clone of Super Mario Bros game (the famous NES game)\n- Clone must work in a web browser, index.html, no server\n- Decent replica of the graphics assets.\n- Colorful and playable.\n- Controls with keyboard up, down, left, right, spacebar to jump, shift to speed up\n- Themed as The Matrix with digital rain and cyber aesthetic"
-    };
-
-    const presetSelect = document.getElementById('subPromptPreset');
-    const applyPresetBtn = document.getElementById('applyPresetBtn');
-    if (applyPresetBtn) {
-      applyPresetBtn.addEventListener('click', () => {
-        const val = presetSelect.value;
-        if (promptPresets[val]) {
-          document.getElementById('subPrompt').value = promptPresets[val];
-          showToast('✓ Prompt preset applied');
-        }
-      });
-    }
 
     // Preflight Validator
     let generatedEntryJson = null;
