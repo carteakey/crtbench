@@ -34,9 +34,10 @@ def main():
     parser.add_argument("--license", choices=["open", "proprietary"], default="open", help="Model weights license: open | proprietary")
     parser.add_argument("--author", required=True, help="Author name or Reddit handle")
     parser.add_argument("--model", required=True, help="Model identifier (e.g. Qwen3.8-Flash-Next)")
-    parser.add_argument("--harness", default="llama.cpp", help="Harness / Inference Runner (e.g. Antigravity, llama.cpp, vLLM, Frontier API)")
-    parser.add_argument("--effort", default="Standard One-Shot", help="Thinking / Reasoning Effort (e.g. 10k CoT Budget, Full CoT Deliberation, Standard One-Shot)")
-    parser.add_argument("--hardware", required=True, help="Hardware platform or Cloud tier (e.g. RTX 4090 24GB, Frontier Cloud API)")
+    parser.add_argument("--harness", default="llama.cpp", choices=["Antigravity", "llama.cpp", "vLLM", "Ollama", "API"], help="Harness / Inference Runner: Antigravity | llama.cpp | vLLM | Ollama | API")
+    parser.add_argument("--effort", default="None", choices=["None", "Light", "Medium", "High", "Ultra"], help="Reasoning / Thinking Effort: None | Light | Medium | High | Ultra")
+    parser.add_argument("--hardware", default="", help="Hardware physical accelerator (e.g. RTX 4090 24GB). For proprietary cloud models, leave blank or specify 'API'")
+    parser.add_argument("--quant", default="", help="Quantization format for open source (e.g. Q4_K_M, AD-4.27bpw, FP8). For cloud models, leave blank or 'N/A'")
     parser.add_argument("--source", required=True, help="Source URL (Reddit post, GitHub repo, etc.)")
     parser.add_argument("--prompt", required=True, help="Exact prompt fed to the model")
     parser.add_argument("--category", default="NES Purist", help="Category: NES Purist | Modern Indie | Reskin | 3D Raycaster")
@@ -89,10 +90,16 @@ def main():
     harness = args.harness.strip()
     if "antigravity" in harness.lower():
         harness = "Antigravity"
+    elif "frontier" in harness.lower() or "cloud api" in harness.lower():
+        harness = "API"
 
-    hardware = args.hardware.strip()
-    if "antigravity" in hardware.lower():
-        hardware = "Frontier Cloud API"
+    is_open = args.license == "open"
+    if not is_open:
+        hardware = "API"
+        quant = "N/A"
+    else:
+        hardware = args.hardware.strip() or "Local GPU"
+        quant = args.quant.strip() or "Q4_K_M"
 
     # Build entry
     new_entry = {
@@ -100,7 +107,7 @@ def main():
         "title": args.title,
         "genre": args.genre,
         "license": args.license,
-        "isOpenSource": args.license == "open",
+        "isOpenSource": is_open,
         "author": args.author,
         "category": args.category,
         "badge": args.badge,
@@ -113,6 +120,7 @@ def main():
         "model": args.model,
         "harness": harness,
         "thinkingEffort": args.effort,
+        "quant": quant,
         "mode": args.effort,
         "promptStyle": "Custom Zero-Shot",
         "prompt": args.prompt,

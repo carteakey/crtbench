@@ -21,11 +21,14 @@ PREVIEWS_DIR = os.path.join(REPO_ROOT, "previews")
 
 REQUIRED_FIELDS = [
     "id", "title", "author", "category", "badge", "file",
-    "vibeScore", "size", "lines", "hardware", "model",
-    "promptStyle", "prompt", "sourceName", "sourceUrl",
-    "ratings", "elo", "matches", "preview", "hidden", "genre",
-    "license", "isOpenSource"
+    "vibeScore", "size", "lines", "hardware", "model", "harness",
+    "thinkingEffort", "quant", "promptStyle", "prompt", "sourceName",
+    "sourceUrl", "ratings", "elo", "matches", "preview", "hidden",
+    "genre", "license", "isOpenSource"
 ]
+
+CANONICAL_HARNESSES = {"Antigravity", "llama.cpp", "vLLM", "Ollama", "API"}
+CANONICAL_REASONING_TIERS = {"None", "Light", "Medium", "High", "Ultra"}
 
 FORBIDDEN_EXTERNAL_PATTERNS = [
     re.compile(r'<script\s+[^>]*src=["\'](http|\/\/)', re.IGNORECASE),
@@ -73,14 +76,47 @@ def validate():
                 errors += 1
 
         # Metadata normalization rules
-        harness = str(item.get("harness", ""))
-        hardware = str(item.get("hardware", ""))
-        if "pro engine" in harness.lower() or "antigravity cli" in harness.lower():
-            log(f"[{gid}] Non-normalized harness '{harness}': please use canonical name 'Antigravity'.", "FAIL")
+        harness = str(item.get("harness", "")).strip()
+        hardware = str(item.get("hardware", "")).strip()
+        effort = str(item.get("thinkingEffort", "")).strip()
+        quant = str(item.get("quant", "")).strip()
+        is_open = item.get("isOpenSource", False)
+
+        # 1. Harness validation
+        if "frontier" in harness.lower() or "cloud api" in harness.lower():
+            log(f"[{gid}] Harness '{harness}' must be canonical 'API' (no Cloud vs Frontier distinction).", "FAIL")
             errors += 1
-        if "antigravity" in hardware.lower():
-            log(f"[{gid}] Agent harness 'Antigravity' found in hardware field ('{hardware}'). Hardware must specify compute tier (e.g. 'Frontier Cloud API' or 'RTX ...').", "FAIL")
+        elif "pro engine" in harness.lower() or "antigravity cli" in harness.lower():
+            log(f"[{gid}] Harness '{harness}' must be canonical 'Antigravity'.", "FAIL")
             errors += 1
+        elif harness not in CANONICAL_HARNESSES:
+            log(f"[{gid}] Non-canonical harness '{harness}'. Must be one of: {sorted(list(CANONICAL_HARNESSES))}", "WARN")
+            warnings += 1
+
+        # 2. Hardware validation (API for cloud, physical spec for local)
+        if not is_open:
+            if hardware != "API":
+                log(f"[{gid}] Proprietary cloud model must specify hardware as 'API' (got '{hardware}').", "FAIL")
+                errors += 1
+        else:
+            if hardware == "API" or "cloud" in hardware.lower():
+                log(f"[{gid}] Open weights model must specify physical accelerator hardware (got '{hardware}').", "FAIL")
+                errors += 1
+
+        # 3. Reasoning / Thinking Effort validation (5 canonical tiers)
+        if effort not in CANONICAL_REASONING_TIERS:
+            log(f"[{gid}] Invalid reasoning effort '{effort}'. Must be one of 5 canonical tiers: {sorted(list(CANONICAL_REASONING_TIERS))}", "FAIL")
+            errors += 1
+
+        # 4. Quantization validation (Stored for open source)
+        if is_open:
+            if not quant or quant == "N/A":
+                log(f"[{gid}] Open weights model must specify quantization (e.g. Q4_K_M, AD-4.27bpw, FP8). Got '{quant}'.", "FAIL")
+                errors += 1
+        else:
+            if quant != "N/A":
+                log(f"[{gid}] Proprietary cloud model should have quant as 'N/A' (got '{quant}').", "FAIL")
+                errors += 1
 
         # 2. File validation
         game_rel_path = item.get("file", "")

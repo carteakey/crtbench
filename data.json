@@ -10,7 +10,7 @@
     "vibeScore": 9.4,
     "size": "37.5 KB",
     "lines": 204,
-    "hardware": "Frontier Cloud API",
+    "hardware": "API",
     "model": "GPT-6 Astra",
     "mode": "High Reasoning Mode",
     "promptStyle": "Minimal Zero-Shot",
@@ -28,11 +28,12 @@
     "preview": "previews/gpt6_astra_high.png",
     "wins": 0,
     "hidden": false,
-    "harness": "Frontier API",
-    "thinkingEffort": "High Reasoning CoT",
+    "harness": "API",
+    "thinkingEffort": "High",
     "genre": "platformer",
     "isOpenSource": false,
-    "license": "proprietary"
+    "license": "proprietary",
+    "quant": "N/A"
   },
   {
     "id": "gemini38_flash_full",
@@ -45,7 +46,7 @@
     "vibeScore": 9.1,
     "size": "74.8 KB",
     "lines": 2628,
-    "hardware": "Frontier Cloud API",
+    "hardware": "API",
     "model": "Gemini 3.8 Flash",
     "mode": "Full CoT Deliberation",
     "promptStyle": "Minimal Zero-Shot",
@@ -64,10 +65,11 @@
     "wins": 0,
     "hidden": false,
     "harness": "Antigravity",
-    "thinkingEffort": "Full CoT Deliberation",
+    "thinkingEffort": "Ultra",
     "genre": "platformer",
     "isOpenSource": false,
-    "license": "proprietary"
+    "license": "proprietary",
+    "quant": "N/A"
   },
   {
     "id": "qwen38_flash_3070_potato",
@@ -100,10 +102,11 @@
     "hidden": false,
     "demoUrl": "https://www.cc8.pl/mario-q38-flash.html",
     "harness": "llama.cpp",
-    "thinkingEffort": "10k CoT Budget",
+    "thinkingEffort": "Medium",
     "genre": "platformer",
     "isOpenSource": true,
-    "license": "open"
+    "license": "open",
+    "quant": "UD-Q3_K_XL"
   },
   {
     "id": "qwen38_gold_60k",
@@ -135,10 +138,11 @@
     "wins": 0,
     "hidden": false,
     "harness": "llama.cpp",
-    "thinkingEffort": "60k CoT Deliberation",
+    "thinkingEffort": "Ultra",
     "genre": "platformer",
     "isOpenSource": true,
-    "license": "open"
+    "license": "open",
+    "quant": "AD-4.27bpw"
   },
   {
     "id": "qwen38_27b_chopsticks",
@@ -171,10 +175,11 @@
     "hidden": false,
     "demoUrl": "https://indigo-carmencita-27.tiiny.site/",
     "harness": "llama.cpp",
-    "thinkingEffort": "Standard One-Shot",
+    "thinkingEffort": "None",
     "genre": "platformer",
     "isOpenSource": true,
-    "license": "open"
+    "license": "open",
+    "quant": "Q4_K_M"
   },
   {
     "id": "gpt6_astra_light",
@@ -187,7 +192,7 @@
     "vibeScore": 8.6,
     "size": "21.7 KB",
     "lines": 102,
-    "hardware": "Frontier Cloud API",
+    "hardware": "API",
     "model": "GPT-6 Astra",
     "mode": "Light Reasoning Mode",
     "promptStyle": "Minimal Zero-Shot",
@@ -205,11 +210,12 @@
     "preview": "previews/gpt6_astra_light.png",
     "wins": 0,
     "hidden": false,
-    "harness": "Frontier API",
-    "thinkingEffort": "Light Reasoning CoT",
+    "harness": "API",
+    "thinkingEffort": "Light",
     "genre": "platformer",
     "isOpenSource": false,
-    "license": "proprietary"
+    "license": "proprietary",
+    "quant": "N/A"
   },
   {
     "id": "qwen38_27b_circus_mikenonect",
@@ -242,10 +248,11 @@
     "hidden": false,
     "demoUrl": "https://mikeveerman.github.io/qwen38-27b-mario",
     "harness": "llama.cpp",
-    "thinkingEffort": "Overnight Batch (Q8)",
+    "thinkingEffort": "None",
     "genre": "platformer",
     "isOpenSource": true,
-    "license": "open"
+    "license": "open",
+    "quant": "Q8_0"
   },
   {
     "id": "gemini38_flash_baseline",
@@ -258,7 +265,7 @@
     "vibeScore": 7.8,
     "size": "27.6 KB",
     "lines": 992,
-    "hardware": "Frontier Cloud API",
+    "hardware": "API",
     "model": "Gemini 3.8 Flash",
     "mode": "Conversational Fast Mode",
     "promptStyle": "Minimal Zero-Shot",
@@ -277,10 +284,11 @@
     "wins": 0,
     "hidden": true,
     "harness": "Antigravity",
-    "thinkingEffort": "Standard One-Shot",
+    "thinkingEffort": "None",
     "genre": "platformer",
     "isOpenSource": false,
-    "license": "proprietary"
+    "license": "proprietary",
+    "quant": "N/A"
   },
   {
     "id": "gemini25_pro_pygame",
@@ -293,7 +301,7 @@
     "vibeScore": 8.1,
     "size": "25.3 KB",
     "lines": 537,
-    "hardware": "Frontier Cloud API",
+    "hardware": "API",
     "model": "Gemini 2.5 Pro",
     "mode": "Standard Prompt",
     "promptStyle": "Max Quality Python Prompt",
@@ -311,11 +319,12 @@
     "preview": "previews/gemini25_pro_pygame.png",
     "wins": 0,
     "hidden": true,
-    "harness": "Cloud API",
-    "thinkingEffort": "Standard One-Shot",
+    "harness": "API",
+    "thinkingEffort": "None",
     "genre": "platformer",
     "isOpenSource": false,
-    "license": "proprietary"
+    "license": "proprietary",
+    "quant": "N/A"
   },
   {
     "id": "ornith35b_matrix_bros",
@@ -348,10 +357,11 @@
     "preview": "previews/ornith35b_matrix_bros.png",
     "hidden": false,
     "harness": "llama.cpp",
-    "thinkingEffort": "Standard One-Shot",
+    "thinkingEffort": "None",
     "genre": "platformer",
     "isOpenSource": true,
-    "license": "open"
+    "license": "open",
+    "quant": "Q4_K_M"
   },
   {
     "id": "gemini38_pro_wolf_raycaster",
@@ -365,10 +375,10 @@
     "vibeScore": 9.2,
     "size": "25.6 KB",
     "lines": 763,
-    "hardware": "Frontier Cloud API",
+    "hardware": "API",
     "model": "Gemini 3.8 Pro",
     "harness": "Antigravity",
-    "thinkingEffort": "High CoT Deliberation",
+    "thinkingEffort": "High",
     "mode": "High CoT Deliberation",
     "promptStyle": "DDA 3D FPS Specification",
     "prompt": "Write a complete, fully playable 2.5D Raycaster FPS game (inspired by Wolfenstein 3D and Doom) in a single HTML file with embedded CSS and JavaScript. Zero external dependencies or libraries (no Three.js, pure Canvas 2D).\n\nMust include:\n1. A 60 FPS DDA (Digital Differential Analysis) raycaster engine with fish-eye distortion correction (cos angle multiplier).\n2. Procedurally generated wall textures (e.g. brick, stone, and tech panel patterns drawn via procedural canvas math).\n3. Player movement with WASD (forward, backward, strafe left/right) and Arrow keys / Mouse for turning, with wall collision sliding.\n4. Top-down minimap HUD in a corner showing walls and player FOV cone.\n5. First-person weapon view (pistol/shotgun) with recoil bobbing, muzzle flash, and hitscan shooting.\n6. Web Audio API procedural sound effects (gunshot, bullet hit, enemy groans, footsteps) without external audio files.\n7. Enemy sprites rendered with depth-sorted billboarding and simple line-of-sight chase & shoot AI.\n8. Retro HUD for Health, Ammo, Score, and Face / Status indicator.",
@@ -386,7 +396,8 @@
     "preview": "previews/gemini38_pro_wolf_raycaster.png",
     "hidden": false,
     "isOpenSource": false,
-    "license": "proprietary"
+    "license": "proprietary",
+    "quant": "N/A"
   },
   {
     "id": "qwen38_flash_retro_dungeon",
@@ -403,7 +414,7 @@
     "hardware": "RTX 3070 8GB",
     "model": "Qwen3.8-Flash-Next",
     "harness": "llama.cpp",
-    "thinkingEffort": "10k CoT Budget",
+    "thinkingEffort": "Medium",
     "mode": "10k CoT Budget (xhigh)",
     "promptStyle": "Single-Shot Zero Dependency Prompt",
     "prompt": "Create a fully playable 2.5D retro dungeon raycaster in a single HTML file with embedded CSS and JavaScript. Include 60 FPS DDA raycasting, procedural stone textures, WASD sliding collision, minimap FOV cone, first-person fire wand with recoil, Web Audio procedural sounds, depth-sorted skeleton enemies with chase AI, and retro health/mana HUD. Zero external dependencies.",
@@ -421,7 +432,8 @@
     "preview": "previews/qwen38_flash_retro_dungeon.png",
     "hidden": false,
     "isOpenSource": true,
-    "license": "open"
+    "license": "open",
+    "quant": "AD-4.27bpw"
   },
   {
     "id": "gemma4_31b_neon_pacmaze",
@@ -438,7 +450,7 @@
     "hardware": "RTX 4090 24GB",
     "model": "Gemma 4 31B",
     "harness": "llama.cpp",
-    "thinkingEffort": "High CoT Deliberation",
+    "thinkingEffort": "High",
     "mode": "High CoT Deliberation",
     "promptStyle": "Single-Shot Zero Dependency Prompt",
     "prompt": "Write a complete, playable classic arcade maze chase game in a single HTML file with embedded CSS/JS. Must include authentic tilemap maze with blue rounded-corner walls, pellet dots, power pills, fruit bonus, 4 distinct ghost AI states (Chase, Scatter, Frightened), corner-turning buffer, procedural Web Audio chomp/siren sound, HUD, and tunnel wrapping. Zero external dependencies.",
@@ -456,7 +468,8 @@
     "preview": "previews/gemma4_31b_neon_pacmaze.png",
     "hidden": false,
     "isOpenSource": true,
-    "license": "open"
+    "license": "open",
+    "quant": "Q4_K_M"
   },
   {
     "id": "qwen36_27b_cyber_maze",
@@ -473,7 +486,7 @@
     "hardware": "RTX 3090 24GB",
     "model": "Qwen 3.6 27B",
     "harness": "vLLM",
-    "thinkingEffort": "Standard One-Shot",
+    "thinkingEffort": "None",
     "mode": "Single Turn One-Shot",
     "promptStyle": "Single-Shot Zero Dependency Prompt",
     "prompt": "Build a cyberpunk vector-neon arcade maze game in a single HTML file. Control a cyber-probe gathering energy nodes while evading 4 sentinel drones with active searchlight vision cones. Spacebar triggers an EMP burst when charged. Use procedural Web Audio synths and CRT glow post-processing. Zero external dependencies.",
@@ -491,7 +504,8 @@
     "preview": "previews/qwen36_27b_cyber_maze.png",
     "hidden": false,
     "isOpenSource": true,
-    "license": "open"
+    "license": "open",
+    "quant": "Q4_K_M"
   },
   {
     "id": "glm47_flash_tetris_matrix",
@@ -508,7 +522,7 @@
     "hardware": "RTX 4070 Ti 12GB",
     "model": "GLM-4.7 Flash",
     "harness": "llama.cpp",
-    "thinkingEffort": "CoT Reasoning Deliberation",
+    "thinkingEffort": "Medium",
     "mode": "CoT Reasoning Deliberation",
     "promptStyle": "Single-Shot Zero Dependency Prompt",
     "prompt": "Create a fully functional, bug-free falling blocks game in a single HTML file with embedded CSS/JS. Must include 10x20 matrix, 7 standard tetromino shapes, SRS wall kicks, ghost piece landing preview, hold piece buffer (C key), line-clearing flash animation, scaling gravity speeds, and procedural Web Audio 8-bit chiptune theme. Zero external dependencies.",
@@ -526,7 +540,8 @@
     "preview": "previews/glm47_flash_tetris_matrix.png",
     "hidden": false,
     "isOpenSource": true,
-    "license": "open"
+    "license": "open",
+    "quant": "FP8"
   },
   {
     "id": "qwen36_polyomino_puzzle",
@@ -543,7 +558,7 @@
     "hardware": "RTX 3090 24GB",
     "model": "Qwen 3.6 27B",
     "harness": "vLLM",
-    "thinkingEffort": "Standard One-Shot",
+    "thinkingEffort": "None",
     "mode": "Single Turn One-Shot",
     "promptStyle": "Single-Shot Zero Dependency Prompt",
     "prompt": "Write a modern glassmorphism falling block puzzle game in a single HTML file. Include particle explosion effects on row clears, ghost piece landing indicator, lock delay, combo counter, and procedural ambient synth audio using Web Audio API. Zero external dependencies.",
@@ -561,6 +576,7 @@
     "preview": "previews/qwen36_polyomino_puzzle.png",
     "hidden": false,
     "isOpenSource": true,
-    "license": "open"
+    "license": "open",
+    "quant": "Q4_K_M"
   }
 ]

@@ -22,22 +22,27 @@ To maintain benchmark integrity, all submissions must satisfy the following:
 3. **Normalized Metadata Taxonomy & Transparency**:
    To keep CRTBench clean, searchable, and professional, submissions must adhere to the following normalization standards:
    - **Inference Harness (`harness`)**: The software runner or agent framework orchestrating inference. Use canonical names only:
-     - `Antigravity` (for any runs generated within Antigravity — do *not* append suffixes like "Pro Engine" or "Interactive").
+     - `Antigravity` (for runs generated via Antigravity).
      - `llama.cpp` (for local GGUF runs via llama-server / llama-cli).
      - `vLLM` (for local vLLM serving).
      - `Ollama` (for local Ollama runner).
-     - `Frontier API` (for direct vendor API calls to OpenAI, Anthropic, Google, etc.).
-   - **Hardware Compute (`hardware`)**: The physical accelerator or cloud execution tier:
-     - Local hardware format: `RTX <Model> <VRAM>` (e.g., `RTX 4090 24GB`, `RTX 3070 8GB`, `Framework Desktop`, `Apple Silicon M3 Max 128GB`).
-     - Cloud frontier format: `Frontier Cloud API`.
-     - *Important*: Agent or harness names (like `Antigravity`) belong in `harness`, NEVER in `hardware`.
-   - **Reasoning / Thinking Effort (`thinkingEffort`)**: Standardized deliberation taxonomy:
-     - `Standard One-Shot` (for non-reasoning or standard zero-shot prompts).
-     - `<N>k CoT Budget` (for models with explicit token deliberation caps, e.g. `10k CoT Budget`, `60k CoT Deliberation`).
-     - `High CoT Deliberation` / `Light Reasoning CoT` (for tiered reasoning levels).
+     - `API` (for direct API calls without an agent wrapper — no confusing "Cloud API" vs "Frontier API" distinction).
+   - **Hardware Compute (`hardware`)**:
+     - Cloud / proprietary models: strictly `API`.
+     - Local open weights models: free text describing physical hardware (e.g., `RTX 4090 24GB`, `RTX 4070 12GB`, `RTX 3070 8GB`, `RTX 3090 24GB`, `Framework Desktop`, `Apple M2 16GB`).
+     - *Important*: Harness/agent names (like `Antigravity`) belong in `harness`, NEVER in `hardware`.
+   - **Reasoning / Thinking Effort (`thinkingEffort`)**: Standardized strictly to 5 canonical discrete tiers:
+     - `None` (Zero-shot / 0 thinking tokens).
+     - `Light` (Low reasoning / ~1k–4k thinking tokens).
+     - `Medium` (Standard deliberation / ~8k–16k thinking tokens).
+     - `High` (Deep deliberation / ~24k–32k thinking tokens).
+     - `Ultra` (Extended deliberation / 48k–64k+ thinking tokens).
+   - **Quantization (`quant`)**:
+     - For open weights models: store the quantization format (e.g., `AD-4.27bpw`, `Q4_K_M`, `UD-Q3_K_XL`, `FP8`, `AWQ`, `Q8_0`).
+     - For proprietary / cloud models: `N/A`.
    - **Model License (`license` & `isOpenSource`)**:
-     - `open` (`isOpenSource: true`) for open-weights models runnable on consumer GPUs.
-     - `proprietary` (`isOpenSource: false`) for closed frontier API models.
+     - `open` (`isOpenSource: true`) for open-weights models runnable on consumer hardware.
+     - `proprietary` (`isOpenSource: false`) for closed API models.
 
 4. **Creative Title Policy (No Trademark Names in Title)**:
    - Do **not** include "Mario" or other trademarked names in your submission's title.
