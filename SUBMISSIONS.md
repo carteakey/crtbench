@@ -78,9 +78,9 @@ Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS i
 ## 📦 Three Ways to Submit
 
 ### Option 1: In-Browser Submission Studio (Recommended)
-1. Open the [PlumberBench Web App](https://kartikeychauhan.github.io/plumberbench/) or run locally via `python3 -m http.server 8000`.
+1. Open the [CRTBench Web App](https://kartikeychauhan.github.io/plumberbench/) or run locally via `python3 -m http.server 8000`.
 2. Click **`➕ Submit Run`** in the top navigation bar.
-3. Fill in your model, hardware, prompt, and paste your single-file HTML code.
+3. Fill in your model, quantization (for open weights), hardware, prompt, and paste your single-file HTML code.
 4. Click **`🛡️ Run Preflight Validation`** — the studio checks for external dependencies, computes code size/lines, and formats the entry.
 5. Click **`📋 Copy data.json Entry`** and open a pull request!
 
@@ -95,9 +95,11 @@ python3 scripts/submit.py \
   --title "Kingdom Jumper" \
   --author "u/YourHandle" \
   --model "MyModel-70B-Instruct" \
-  --harness "llama.cpp Master" \
-  --effort "60k CoT Deliberation" \
-  --hardware "Local RTX 4090 24GB" \
+  --license open \
+  --quant "Q4_K_M" \
+  --harness "llama.cpp" \
+  --effort "Ultra" \
+  --hardware "RTX 4090 24GB" \
   --source "https://reddit.com/r/LocalLLaMA/..." \
   --prompt "Write a complete, playable Super Mario clone in a single file..."
 ```

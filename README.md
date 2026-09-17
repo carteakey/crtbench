@@ -23,13 +23,14 @@ CRTBench evaluates models across multiple fundamental game architecture discipli
 
 ---
 
-## ⚡ The Dual ELO Architecture
+## ⚡ The In-Genre ELO & Blind Duel Architecture
 
-CRTBench implements a dual-tiered competitive scoring model:
-1. **In-Genre Discipline ELO:** Every duel in the **Blind Vibe Arena** strictly matches contenders within the same discipline (e.g. Raycaster vs Raycaster, Maze vs Maze). This ensures direct, apples-to-apples evaluation of specialized domain capabilities.
-2. **Omni-Arcade Model Pentathlon (Composite ELO):** AI models that compete across multiple disciplines receive an aggregate standing:
-   $$\text{Composite ELO} = \frac{1}{N} \sum_{i=1}^{N} \text{ELO}_i$$
-   Models entering 3+ tracks earn the coveted **👑 Omni Grandmaster** badge.
+CRTBench evaluates games through fair, empirical community duels rather than speculative LLM self-rubrics:
+1. **In-Genre Matchmaking:** Contenders face off strictly within their own discipline in the **Blind Vibe Arena** (Platformer vs Platformer, Raycaster vs Raycaster, Maze vs Maze, Falling Blocks vs Falling Blocks). This guarantees direct, apples-to-apples evaluation without cross-domain skew.
+2. **Double-Blind Playtesting:** Contender names, weights licenses, quants, and baseline ratings are completely obscured until votes are cast.
+3. **Standard Competitive ELO:** Updates follow the standard chess Elo formula ($K = 32$):
+   $$\Delta R_A = 32 \times \left(S_A - \frac{1}{1 + 10^{(R_B - R_A)/400}}\right)$$
+   Every community duel dynamically adjusts local leaderboard standings in real time.
 
 ---
 
