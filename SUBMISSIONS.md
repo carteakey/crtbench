@@ -78,7 +78,7 @@ Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS i
 ## 📦 Three Ways to Submit
 
 ### Option 1: In-Browser Submission Studio (Recommended)
-1. Open the [CRTBench Web App](https://kartikeychauhan.github.io/plumberbench/) or run locally via `python3 -m http.server 8000`.
+1. Open the [CRTBench Web App](https://carteakey.github.io/crtbench/) or run locally via `python3 -m http.server 8000`.
 2. Click **`➕ Submit Run`** in the top navigation bar.
 3. Fill in your model, quantization (for open weights), hardware, prompt, and paste your single-file HTML code.
 4. Click **`🛡️ Run Preflight Validation`** — the studio checks for external dependencies, computes code size/lines, and formats the entry.

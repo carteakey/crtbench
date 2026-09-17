@@ -16,7 +16,7 @@
     "promptStyle": "Minimal Zero-Shot",
     "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
     "sourceName": "MarioBench Run",
-    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gpt6_astra_high.html",
+    "sourceUrl": "https://github.com/carteakey/crtbench/blob/main/games/gpt6_astra_high.html",
     "vibeReview": "Spectacular scope across 3 unique worlds (Mushroom Meadow, Sunset Steppes, Starlight Summit). Features harmonic moving platforms that Mario physically rides, kickable turtle shells with ricochet physics, and ceiling clearance detection on mushroom growth. Plays slightly more like a modern indie platformer than an authentic crunchy 1985 NES cartridge, but technically flawless.",
     "ratings": {
       "nesCrunch": 7.5,
@@ -52,7 +52,7 @@
     "promptStyle": "Minimal Zero-Shot",
     "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
     "sourceName": "MarioBench Run",
-    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gemini38_flash_full.html",
+    "sourceUrl": "https://github.com/carteakey/crtbench/blob/main/games/gemini38_flash_full.html",
     "vibeReview": "Unmatched audio crunch and physical momentum. Implements a Web Audio synthesizer using an 800 Hz bandpass white-noise filter for authentic NES snare drums, directional skidding with procedural dust puffs, 14-frame variable jump height, and kickable Koopa shells that wipe out enemy chains. Mario's face sprite is somewhat derpy, but the gameplay feel is pure arcade gold.",
     "ratings": {
       "nesCrunch": 9.5,
@@ -125,7 +125,7 @@
     "promptStyle": "Minimal Zero-Shot",
     "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
     "sourceName": "L3MS Local Homelab (RTX 4070)",
-    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/qwen38_gold_60k.html",
+    "sourceUrl": "https://github.com/carteakey/crtbench/blob/main/games/qwen38_gold_60k.html",
     "vibeReview": "Generated entirely on a local RTX 4070 in a single contiguous 60,221 token inference stream after 29,455 thinking tokens. Captures authentic retro atmosphere with a custom CRT scanline shader pass, arcade marquee bulbs, World 1-1 and World 1-2 Underground pipe warps, bouncing fireballs, Koopas, and Piranha plants.",
     "ratings": {
       "nesCrunch": 9.2,
@@ -198,7 +198,7 @@
     "promptStyle": "Minimal Zero-Shot",
     "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
     "sourceName": "MarioBench Run",
-    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gpt6_astra_light.html",
+    "sourceUrl": "https://github.com/carteakey/crtbench/blob/main/games/gpt6_astra_light.html",
     "vibeReview": "A charming artistic departure. Rather than an 8-bit clone, Astra Light autonomously created a 16:9 modern indie platformer with a sunset gradient sky, bezier curve hills, 120 Hz accumulator physics, screen shake, and a cozy hillside cottage finish.",
     "ratings": {
       "nesCrunch": 6.0,
@@ -271,7 +271,7 @@
     "promptStyle": "Minimal Zero-Shot",
     "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
     "sourceName": "Antigravity Baseline",
-    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gemini38_flash_baseline.html",
+    "sourceUrl": "https://github.com/carteakey/crtbench/blob/main/games/gemini38_flash_baseline.html",
     "vibeReview": "The original interactive benchmark reference. Built in seconds with zero bugs, silky 60 FPS sub-pixel physics, 6-frame coyote jump buffering, clean square wave audio sweeps, and a 120-column overworld slice.",
     "ratings": {
       "nesCrunch": 8.4,
@@ -382,9 +382,9 @@
     "mode": "High CoT Deliberation",
     "promptStyle": "DDA 3D FPS Specification",
     "prompt": "Write a complete, fully playable 2.5D Raycaster FPS game (inspired by Wolfenstein 3D and Doom) in a single HTML file with embedded CSS and JavaScript. Zero external dependencies or libraries (no Three.js, pure Canvas 2D).\n\nMust include:\n1. A 60 FPS DDA (Digital Differential Analysis) raycaster engine with fish-eye distortion correction (cos angle multiplier).\n2. Procedurally generated wall textures (e.g. brick, stone, and tech panel patterns drawn via procedural canvas math).\n3. Player movement with WASD (forward, backward, strafe left/right) and Arrow keys / Mouse for turning, with wall collision sliding.\n4. Top-down minimap HUD in a corner showing walls and player FOV cone.\n5. First-person weapon view (pistol/shotgun) with recoil bobbing, muzzle flash, and hitscan shooting.\n6. Web Audio API procedural sound effects (gunshot, bullet hit, enemy groans, footsteps) without external audio files.\n7. Enemy sprites rendered with depth-sorted billboarding and simple line-of-sight chase & shoot AI.\n8. Retro HUD for Health, Ammo, Score, and Face / Status indicator.",
-    "sourceName": "PlumberBench 3D Track Run",
-    "sourceUrl": "https://github.com/kartikeychauhan/plumberbench/blob/main/games/gemini38_pro_wolf_raycaster.html",
-    "vibeReview": "Inaugural contender for PlumberBench 2.5D Raycaster discipline. Implements a complete DDA raycasting engine on pure 2D Canvas with procedural stone/tech textures, fish-eye distortion correction, depth-sorted billboard enemy sprites, corner minimap, muzzle flash recoil, and Web Audio synthesized gunshots.",
+    "sourceName": "CRTBench 3D Track Run",
+    "sourceUrl": "https://github.com/carteakey/crtbench/blob/main/games/gemini38_pro_wolf_raycaster.html",
+    "vibeReview": "Inaugural contender for CRTBench 2.5D Raycaster discipline. Implements a complete DDA raycasting engine on pure 2D Canvas with procedural stone/tech textures, fish-eye distortion correction, depth-sorted billboard enemy sprites, corner minimap, muzzle flash recoil, and Web Audio synthesized gunshots.",
     "ratings": {
       "nesCrunch": 9.0,
       "physicsFeel": 9.3,

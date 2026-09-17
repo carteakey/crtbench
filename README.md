@@ -3,7 +3,7 @@
 > **The One-Shot Retro Arcade & 3D Synthesis Benchmark for Large Language Models**  
 > *"Criteria: Strict One-Shot. Scoring: Pure Vibes & Blind Dual ELO Duels."*
 
-[![Leaderboard](https://img.shields.io/badge/CRTBench-Dual_ELO_Leaderboard-e52521?style=for-the-badge&logo=retroarch)](https://github.com/kartikeychauhan/plumberbench)
+[![Leaderboard](https://img.shields.io/badge/CRTBench-In_Genre_ELO_Leaderboard-e52521?style=for-the-badge&logo=retroarch)](https://github.com/carteakey/crtbench)
 [![One Shot](https://img.shields.io/badge/Format-Strict_One--Shot-f8c300?style=for-the-badge)](SUBMISSIONS.md)
 [![Blind Arena](https://img.shields.io/badge/Vibe_Arena-Blind_Duel_ELO-58a6ff?style=for-the-badge)](index.html)
 [![Active Roster](https://img.shields.io/badge/Active_Entries-14_Contenders-2ea043?style=for-the-badge)](games/)
@@ -101,8 +101,8 @@ The following implementations are preserved in the repository for historical and
  
 ```bash
 # Clone the repository
-git clone https://github.com/kartikeychauhan/plumberbench.git
-cd plumberbench
+git clone https://github.com/carteakey/crtbench.git
+cd crtbench
 
 # Launch local server
 python3 -m http.server 8000
