@@ -1,119 +1,61 @@
-# 📺 CRTBench Submission Guidelines
+# 📺 CRTBench Submission Guide
 
-Thank you for contributing to **CRTBench** (formerly PlumberBench)! This benchmark tracks the state-of-the-art in LLM procedural game generation, 2D physics feel, and 3D spatial projection.
+Bring a game, give it a good title, and tell us how it came to be. CRTBench is a community showcase as much as a benchmark, so prompts, models, harnesses, and hardware will vary. We keep the flavor; we try to keep the metadata honest.
 
----
+## 🕹️ What belongs in the active roster?
 
-## 📜 Golden Rules of CRTBench
+The active browser roster is for single-file games generated in one model response. There is no canonical prompt: include the exact prompt used for your run, including any system prompt or relevant reasoning instructions you can share. If you made edits after generation, say so. One-shot and hardware details are contributor-reported; CRTBench does not independently reproduce every run.
 
-To maintain benchmark integrity, all submissions must satisfy the following:
+Browser entries should be self-contained `.html` files with embedded style and game code. Generate art and sound in the file, or bundle them into it. External game images, audio files, sprite sheets, scripts, and runtime libraries are not allowed. **Google Fonts are okay**; a Google Fonts import does not make a game ineligible.
 
-1. **Strict One-Shot Generation**:
-   - The game must be produced in **exactly one inference turn** from the model.
-   - **Disqualified**: Multi-turn iterative conversations (*"Fix the jumping bug"*, *"Now add sound effects"*).
-   - **Disqualified**: Human modifications, formatting touch-ups, or bug fixes. The code committed must be byte-for-byte identical to the model's raw output.
-   - **Disqualified**: Agentic tool use during generation (e.g. searching Google, running unit tests, or using code interpreters).
+Keep the committed game artifact exactly as submitted when you are claiming an unedited model output. If a generated file needed fixes or cleanup, disclose that plainly rather than calling it raw output. Python and other interesting experiments may be preserved in the repository, but the active browser roster is for browser-playable entries.
 
-2. **Single-File Self-Contained Artifact**:
-   - Web entries must be a single `.html` file with embedded `<style>` and `<script>`.
-   - Python entries must be a single self-contained `.py` script (e.g. Pygame).
-   - **Zero External Network Dependencies**: No external images, audio `.mp3`/`.wav` files, sprite sheets, or CDN script imports (`<script src="...">`). All visual sprites and audio sounds must be procedurally generated.
+## 🧾 Metadata: useful, not precious
 
-3. **Normalized Metadata Taxonomy & Transparency**:
-   To keep CRTBench clean, searchable, and professional, submissions must adhere to the following normalization standards:
-   - **Inference Harness (`harness`)**: The software runner or agent framework orchestrating inference. Use canonical names only:
-     - `Antigravity` (for runs generated via Antigravity).
-     - `llama.cpp` (for local GGUF runs via llama-server / llama-cli).
-     - `vLLM` (for local vLLM serving).
-     - `Ollama` (for local Ollama runner).
-     - `API` (for direct API calls without an agent wrapper — no confusing "Cloud API" vs "Frontier API" distinction).
-   - **Hardware Compute (`hardware`)**:
-     - Cloud / proprietary models: strictly `API`.
-     - Local open weights models: free text describing physical hardware (e.g., `RTX 4090 24GB`, `RTX 4070 12GB`, `RTX 3070 8GB`, `RTX 3090 24GB`, `Framework Desktop`, `Apple M2 16GB`).
-     - *Important*: Harness/agent names (like `Antigravity`) belong in `harness`, NEVER in `hardware`.
-   - **Reasoning / Thinking Effort (`thinkingEffort`)**: Standardized strictly to 5 canonical discrete tiers:
-     - `None` (Zero-shot / 0 thinking tokens).
-     - `Light` (Low reasoning / ~1k–4k thinking tokens).
-     - `Medium` (Standard deliberation / ~8k–16k thinking tokens).
-     - `High` (Deep deliberation / ~24k–32k thinking tokens).
-     - `Ultra` (Extended deliberation / 48k–64k+ thinking tokens).
-   - **Quantization (`quant`)**:
-     - For open weights models: store the quantization format (e.g., `AD-4.27bpw`, `Q4_K_M`, `UD-Q3_K_XL`, `FP8`, `AWQ`, `Q8_0`).
-     - For proprietary / cloud models: `N/A`.
-   - **Model License (`license` & `isOpenSource`)**:
-     - `open` (`isOpenSource: true`) for open-weights models runnable on consumer hardware.
-     - `proprietary` (`isOpenSource: false`) for closed API models.
+Add one object to `data.json` and a file under `games/`. Keep field names and categories consistent so the cabinet stays searchable.
 
-4. **Creative Title Policy (No Trademark Names in Title)**:
-   - Do **not** include "Mario" or other trademarked names in your submission's title.
-   - Use creative, distinct titles (e.g. *Three Worlds Odyssey*, *Super Pixel Bros*, *The 2.6k Deluxe Platformer*, *The Matrix Bros*, *Circus Jumper*). The prompt itself may mention the benchmark prompt as-is.
+- **Title and author:** Give the game a memorable name and credit the author or submitter as they want to appear.
+- **Track (`genre`):** Use `platformer`, `raycaster`, `maze`, or `puzzle` for the current cabinets.
+- **Prompt:** Store the prompt actually used, not a standardized rewrite. Different prompts are expected.
+- **Model and access (`model`, `modelAccess`):** Record the model name and use `open_weights` or `proprietary`. “Open weights” describes model access; it does not establish an open-source license.
+- **Weights license (`weightsLicense`):** Give the exact license only when the model/version is known. Use `null` when it is unknown or not applicable; do not infer it from “open weights.”
+- **Artifact license (`artifactLicense`):** The game file's license is separate from the model weights license. Record a contributor-provided license or use `null` if it was not supplied. The repository's MIT license does not fill in missing per-artifact or model-license information.
+- **Harness (`harness`):** Use `Antigravity`, `llama.cpp`, `vLLM`, `Ollama`, or `API` when applicable. Harness is the software that ran the model.
+- **Hardware (`hardware`):** For API-hosted models, use `API`. For local inference, name the physical machine or accelerator (for example, `RTX 4090 24GB`, `RTX 3070 8GB`, or `Framework Desktop`).
+- **Reasoning effort (`thinkingEffort`):** Use `None`, `Light`, `Medium`, `High`, or `Ultra` when known. Preserve the actual setting as best you can; do not estimate a token budget from the tier name.
+- **Quantization (`quant`):** Record the format for open-weight runs (for example, `Q4_K_M`, `UD-Q3_K_XL`, `FP8`, or `AD-4.27bpw`); use `N/A` when not applicable.
+- **Source link (`sourceUrl` / `sourceName`):** Link the specific post, demo, or repository when available. If the only link is a general forum page or the committed artifact itself, label it that way. Links are contributor-supplied references, not independent verification.
+- **Size and integrity (`sizeBytes`, `size`, `lines`, `artifactSha256`, `promptSha256`):** `sizeBytes` is the exact file byte count; `size` is the display size in 1024-byte units; `lines` counts decoded text lines. `artifactSha256` hashes the raw file bytes, and `promptSha256` hashes the exact UTF-8 prompt string. Refresh them whenever the file or prompt changes.
+- **Benchmark status (`benchmarkStatus`, `benchmarkStatusReason`):** The submission helper starts entries as `eligible`. If an entry is kept for reference but excluded from the active roster, set `excluded` and give the reason; active entries remain eligible.
 
----
+The compatibility fields `license` (`open` or `proprietary`) and `isOpenSource` remain for the current site and validator. They are legacy access-category flags, not the legal license of model weights or game code. Use the explicit fields above for any actual license names.
 
-## 📝 Recommended Benchmark Prompts
+`vibeScoreType` labels the `vibeScore`: use `editorial` for a curator's note; use `community` only for a real shared community rating. The current `vibeScore`, `ratings`, and `vibeReview` values are editorial, not community votes. Each browser starts a game's local **Duel Elo** at 1200 and shows ranks immediately. Votes and Elo changes live in that browser's local storage; they are not aggregated across visitors. No minimum-match cutoff is used, so early ranks are just for fun. The site's MIT-licensed source and each game's license are separate questions.
 
-You can use any single prompt, but for direct comparability across models, we recommend one of these three standardized prompts:
+## 📦 Submit a run
 
-### 1. The Zero-Shot Minimal Standard
-```text
-Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.
-```
+### Option 1: Browser submission studio
 
-### 2. The Strict NES Specification (ChopSticks Style)
-```text
-Write a fully functional, complete clone of Super Mario Bros game (the famous NES game)
-- Clone must work in a web browser, index.html, no server
-- Decent replica of the graphics assets.
-- Colorful and playable.
-- Controls with keyboard up, down, left, right, spacebar to jump, shift to speed up
-```
+1. Open the [CRTBench web app](https://carteakey.github.io/crtbench/) or start it locally with `python3 -m http.server 8000`.
+2. Click **➕ Submit Run**.
+3. Enter the model, prompt, harness, hardware, and links you know; paste the one-file game.
+4. Run preflight to check the artifact and prepare a `data.json` entry.
+5. Open a pull request with the game, metadata, and (if available) a preview image.
 
-### 3. The Deliberation Budget Standard (Potato / cc8.pl Style)
-```text
-Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS in a single HTML file. Plan the implementation briefly within the reasoning budget. Then output only the complete HTML file. Do not use tools or provide explanations.
-```
+### Option 2: CLI helper
 
----
+The helper can copy a file, make a preview, and prepare metadata. Check the flags with:
 
-## 📦 Three Ways to Submit
-
-### Option 1: In-Browser Submission Studio (Recommended)
-1. Open the [CRTBench Web App](https://carteakey.github.io/crtbench/) or run locally via `python3 -m http.server 8000`.
-2. Click **`➕ Submit Run`** in the top navigation bar.
-3. Fill in your model, quantization (for open weights), hardware, prompt, and paste your single-file HTML code.
-4. Click **`🛡️ Run Preflight Validation`** — the studio checks for external dependencies, computes code size/lines, and formats the entry.
-5. Click **`📋 Copy data.json Entry`** and open a pull request!
-
----
-
-### Option 2: Automated CLI Submission Tool
-Use the bundled Python submission script to automatically copy files, take a headless preview screenshot, and validate:
 ```bash
-python3 scripts/submit.py \
-  --file path/to/your_game.html \
-  --id my_model_quest \
-  --title "Kingdom Jumper" \
-  --author "u/YourHandle" \
-  --model "MyModel-70B-Instruct" \
-  --license open \
-  --quant "Q4_K_M" \
-  --harness "llama.cpp" \
-  --effort "Ultra" \
-  --hardware "RTX 4090 24GB" \
-  --source "https://reddit.com/r/LocalLLaMA/..." \
-  --prompt "Write a complete, playable Super Mario clone in a single file..."
+python3 scripts/submit.py --help
 ```
 
----
+### Option 3: Pull request
 
-### Option 3: Manual Pull Request
-1. Fork the repository and create a branch (`git checkout -b submit/my-model-mario`).
-2. Add your raw game file to `games/<id>.html`.
-3. Take a preview screenshot and save it to `previews/<id>.png` (recommended 960x600).
-4. Add your entry to `data.json` matching the schema above.
-5. Run the validator:
-   ```bash
-   python3 scripts/validate.py
-   ```
-6. Commit, push, and open a Pull Request! All PRs are automatically tested via GitHub Actions CI (`.github/workflows/validate-submission.yml`).
+1. Fork the repo and create a branch.
+2. Add the artifact at `games/<id>.html` and an optional preview at `previews/<id>.png`.
+3. Add the corresponding metadata object to `data.json`.
+4. Run `python3 scripts/validate.py` locally.
+5. Open a pull request; GitHub Actions runs the validator.
 
+Thanks for adding another cabinet to the arcade. 🎮

@@ -1,4 +1,4 @@
-name: Validate PlumberBench Submissions
+name: Validate CRTBench Submissions
 
 on:
   pull_request:
@@ -6,6 +6,10 @@ on:
       - 'games/**'
       - 'data.json'
       - 'previews/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'index.html'
+      - '.github/workflows/validate.yml'
   push:
     branches:
       - main
@@ -26,6 +30,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Run tooling tests
+        run: python3 -m unittest discover -s tests -v
 
       - name: Validate dataset & code
         run: |

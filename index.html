@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' file:; base-uri 'self' file:; form-action 'self' file:; object-src 'none'; script-src 'self' 'unsafe-inline' file:; style-src 'self' 'unsafe-inline' file: https://fonts.googleapis.com; img-src 'self' file: data: blob:; media-src 'self' file: data: blob:; font-src 'self' file: data: https://fonts.gstatic.com; connect-src 'self' file: https://fonts.googleapis.com https://fonts.gstatic.com; frame-src 'self' file: about:">
   <title>CRTBench — The Zero-Shot Retro Arcade & 3D Synthesis Arena</title>
   <meta name="description" content="CRTBench is an open-source benchmark evaluating LLM cognitive reasoning, physical momentum, and 3D spatial trigonometry through one-shot retro arcade and raycaster game synthesis.">
   <meta property="og:title" content="📺 CRTBench — The Zero-Shot Retro Arcade & 3D Synthesis Arena">
-  <meta property="og:description" content="Evaluating AI models on 2D Platformers, 2.5D Raycasters, Arcade Mazes, and Falling Blocks via blind head-to-head duels and community ELO.">
+  <meta property="og:description" content="Evaluating AI models on retro arcade games with local blind duels and personal Elo ratings stored in your browser.">
   <meta property="og:image" content="previews/gemini38_pro_wolf_raycaster.png">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -68,9 +69,26 @@
       justify-content: space-between;
       align-items: center;
       letter-spacing: 1px;
-      overflow-x: auto;
+      overflow: hidden;
       white-space: nowrap;
       gap: 16px;
+      min-width: 0;
+      flex-wrap: wrap;
+    }
+    .marquee-brand {
+      min-width: 0;
+      flex: 1 1 320px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .marquee-controls {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex: 0 1 auto;
+      gap: 8px;
+      flex-wrap: wrap;
     }
     .marquee-tag {
       color: #fff;
@@ -190,6 +208,43 @@
       color: #fff;
       border-color: var(--gold);
       box-shadow: 0 0 10px rgba(248, 195, 0, 0.2);
+    }
+    .filter-btn:focus-visible,
+    .view-nav-btn:focus-visible,
+    .sort-select:focus-visible,
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    [data-action="play"]:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+    }
+    .roster-summary {
+      color: var(--text-muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+    .data-load-error {
+      margin: 20px 0;
+      padding: 12px 14px;
+      border: 1px solid #d29922;
+      border-radius: 8px;
+      background: rgba(210, 153, 34, 0.12);
+      color: #e3b341;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .excluded-notice {
+      padding: 8px 10px;
+      margin: 0 0 10px;
+      border: 1px solid rgba(210, 153, 34, 0.4);
+      border-radius: 6px;
+      background: rgba(210, 153, 34, 0.08);
+      color: #e3b341;
+      font-size: 11px;
+      line-height: 1.4;
     }
     .sort-select {
       background: var(--card-bg);
@@ -844,8 +899,9 @@
       flex-direction: column;
       overflow-y: auto;
       padding: 24px;
+      visibility: hidden;
     }
-    .drawer.active { transform: translateX(0); }
+    .drawer.active { transform: translateX(0); visibility: visible; }
     .drawer-banner {
       width: 100%;
       height: 180px;
@@ -1139,19 +1195,29 @@
       color: var(--gold);
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .global-crt-overlay { transition: none; }
+    }
+
   </style>
 </head>
 <body>
-<div class="global-crt-overlay" id="globalCrtOverlay"></div>
+<div class="global-crt-overlay" id="globalCrtOverlay" aria-hidden="true"></div>
 
 <!-- Top Marquee -->
 <div class="marquee-bar">
-  <div>✦ CRTBENCH 2026 ✦ THE ZERO-SHOT RETRO ARCADE & 3D SYNTHESIS ARENA</div>
-  <div style="display:flex; align-items:center; gap:8px;">
+  <div class="marquee-brand">✦ CRTBENCH 2026 ✦ THE ZERO-SHOT RETRO ARCADE & 3D SYNTHESIS ARENA</div>
+  <div class="marquee-controls">
     <span class="marquee-tag">STRICT ONE-SHOT</span> 
     <span class="marquee-tag" style="background:#f8c300; color:#000;">BLIND VIBE ARENA</span>
     <span class="marquee-tag" style="background:#238636;">4 DISCIPLINES</span>
-    <span class="marquee-tag" style="background:#8250df;">DUAL ELO</span>
+    <span class="marquee-tag" style="background:#8250df;">DUEL Elo</span>
     <button id="toggleScanlinesBtn" style="background:#161d27; border:1px solid #30363d; color:#58a6ff; font-family:'Press Start 2P', monospace; font-size:8px; padding:3px 8px; border-radius:3px; cursor:pointer;">📺 CRT: ON</button>
   </div>
 </div>
@@ -1160,24 +1226,25 @@
 <header class="hero">
   <h1 class="hero-title">CRT<span>BENCH</span></h1>
   <div class="hero-manifesto">
-    CRITERIA: <span>ONE-SHOT PROMPT</span> &nbsp;&bull;&nbsp; SCORING: <span>PURE VIBES & DUAL ELO</span>
+    CRITERIA: <span>ONE-SHOT PROMPT</span> &nbsp;&bull;&nbsp; SCORING: <span>PURE VIBES & Duel Elo</span>
   </div>
   <p class="hero-subtitle">
     <strong style="color:#fff; letter-spacing:0.4px;">One prompt. Zero libraries. Pure assembly of will.</strong><br>
-    Benchmarking whether frontier & local LLMs can synthesize authentic retro classics and 3D engines from memory — ranked through blind in-genre duels and community ELO.
+    Benchmarking whether frontier & local LLMs can synthesize authentic retro classics and 3D engines from memory. Your blind duels, Elo, votes, and notes stay in this browser.
   </p>
 
   <!-- View Switcher -->
   <div class="view-nav">
-    <button class="view-nav-btn active" data-view="wall">🕹️ The Arcade Wall (<span id="countWallHeader">14</span>)</button>
+      <button class="view-nav-btn active" data-view="wall">🕹️ The Arcade Wall (<span id="countWallHeader">0</span>)</button>
     <button class="view-nav-btn" data-view="arena">⚔️ Blind Vibe Arena</button>
-    <button class="view-nav-btn" data-view="table">📊 Dual Elo Leaderboard</button>
-    <button class="view-nav-btn" id="openSubmitModalBtn" style="border-color:#238636; color:#7ee787; margin-left:auto;">➕ Submit Run</button>
+      <button class="view-nav-btn" data-view="table">📊 Duel Elo Leaderboard · Local</button>
+      <button class="view-nav-btn" id="openSubmitModalBtn" aria-haspopup="dialog" aria-controls="submitModal" style="border-color:#238636; color:#7ee787; margin-left:auto;">➕ Submit Run</button>
   </div>
 </header>
 
 <!-- Main Views -->
 <main class="view-section">
+  <div class="data-load-error" id="dataLoadError" role="alert" style="display:none;"></div>
   <!-- 1. The Arcade Wall View -->
   <div id="wallView">
     <!-- Controls Bar for The Arcade Wall -->
@@ -1185,24 +1252,25 @@
       <div style="display:flex; flex-direction:column; gap:10px; flex:1;">
         <!-- Genre / Game Track Filter -->
         <div class="filter-group" id="genreFilterGroup">
-          <button class="filter-btn active" data-genre="all">🎮 All Games (<span id="countGenreAll">14</span>)</button>
-          <button class="filter-btn" data-genre="platformer">🍄 Italian Plumber (<span id="countGenrePlatformer">8</span>)</button>
-          <button class="filter-btn" data-genre="raycaster">🔫 Doom / 3D Raycaster (<span id="countGenreRaycaster">2</span>)</button>
-          <button class="filter-btn" data-genre="maze">👻 Ghost Maze / Dot Chomper (<span id="countGenreMaze">2</span>)</button>
-          <button class="filter-btn" data-genre="puzzle">🧱 Falling Bricks (<span id="countGenrePuzzle">2</span>)</button>
+          <button class="filter-btn active" data-genre="all">🎮 All Games (<span id="countGenreAll">0</span>)</button>
+          <button class="filter-btn" data-genre="platformer">🍄 Italian Plumber (<span id="countGenrePlatformer">0</span>)</button>
+          <button class="filter-btn" data-genre="raycaster">🔫 Doom / 3D Raycaster (<span id="countGenreRaycaster">0</span>)</button>
+          <button class="filter-btn" data-genre="maze">👻 Ghost Maze / Dot Chomper (<span id="countGenreMaze">0</span>)</button>
+          <button class="filter-btn" data-genre="puzzle">🧱 Falling Bricks (<span id="countGenrePuzzle">0</span>)</button>
         </div>
-        <!-- Model License Filter (Open Source vs Proprietary) -->
+        <!-- Model License Filter (Open weights vs proprietary) -->
         <div class="filter-group" id="licenseFilterGroup">
-          <button class="filter-btn active" data-license="all">🌐 All Models (<span id="countLicenseAll">14</span>)</button>
-          <button class="filter-btn" data-license="open">🔓 Open Source / Weights (<span id="countLicenseOpen">10</span>)</button>
-          <button class="filter-btn" data-license="proprietary">🔒 Proprietary / Cloud (<span id="countLicenseProp">4</span>)</button>
+          <button class="filter-btn active" data-license="all">🌐 All Models (<span id="countLicenseAll">0</span>)</button>
+          <button class="filter-btn" data-license="open">🔓 Open Weights (<span id="countLicenseOpen">0</span>)</button>
+          <button class="filter-btn" data-license="proprietary">🔒 Proprietary / Cloud (<span id="countLicenseProp">0</span>)</button>
         </div>
       </div>
-      <div style="align-self:flex-start;">
+      <div style="align-self:flex-start; display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+        <div class="roster-summary" id="wallRosterSummary" aria-live="polite"><span id="countRankedHeader">0</span> entries ranked locally</div>
         <select id="sortSelect" class="sort-select">
-          <option value="elo">Sort by: ELO Rating (Highest)</option>
-          <option value="vibe">Sort by: Vibe Score</option>
-          <option value="votes">Sort by: Community Upvotes</option>
+          <option value="elo">Sort by: Elo Rating (Highest)</option>
+            <option value="vibe" title="Curated editorial score, separate from local votes">Sort by: Editorial Vibe</option>
+          <option value="votes">Sort by: Local Upvotes</option>
           <option value="size">Sort by: Code Volume</option>
         </select>
       </div>
@@ -1218,7 +1286,7 @@
     <div class="arena-container">
       <div class="arena-header">
         <div class="arena-title">⚔️ BLIND VIBE ARENA</div>
-        <div class="arena-sub">Test both implementations blind with zero bias. ELO ratings and model identities are hidden until your vote is cast.</div>
+        <div class="arena-sub">Test both implementations blind with zero bias. Elo and model identities stay hidden until you vote; your results are stored locally in this browser.</div>
         <div style="display:flex; justify-content:center; gap:8px; margin-top:14px; flex-wrap:wrap;" id="arenaGenreButtons">
           <span style="font-size:11px; color:var(--text-muted); align-self:center; text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">Duel Track:</span>
           <button class="filter-btn active" data-arena-genre="all">🎲 Any Fair Matchup</button>
@@ -1240,7 +1308,7 @@
         <div class="arena-cab" id="cabA">
           <div class="arena-cab-header">
             <div class="arena-cab-name" id="cabAName">CHALLENGER ALPHA</div>
-            <div class="elo-pill" id="cabAElo" style="display:none;">⚡ 1200 ELO</div>
+            <div class="elo-pill" id="cabAElo" style="display:none;">⚡ 1200 Elo</div>
           </div>
           <div class="arena-screen" id="cabAScreen">
             <img id="cabAImg" src="" alt="Challenger A">
@@ -1264,7 +1332,7 @@
         <div class="arena-cab" id="cabB">
           <div class="arena-cab-header">
             <div class="arena-cab-name" id="cabBName">CHALLENGER BETA</div>
-            <div class="elo-pill" id="cabBElo" style="display:none;">⚡ 1200 ELO</div>
+            <div class="elo-pill" id="cabBElo" style="display:none;">⚡ 1200 Elo</div>
           </div>
           <div class="arena-screen" id="cabBScreen">
             <img id="cabBImg" src="" alt="Challenger B">
@@ -1285,7 +1353,7 @@
         <button class="btn-arena-tie" id="voteTieBtn">🤝 Both Equal / Tie</button>
         <button class="btn-arena-vote" id="voteBBtn">👉 Challenger B Better</button>
         <button class="btn-arena-skip" id="nextMatchBtn">🎲 Next Blind Matchup</button>
-        <button class="btn-arena-skip" id="resetEloBtn" style="color:#ff7b72;">↺ Reset All ELO Deltas</button>
+        <button class="btn-arena-skip" id="resetEloBtn" style="color:#ff7b72;">↺ Reset Local Elo</button>
       </div>
     </div>
   </div>
@@ -1297,24 +1365,24 @@
       <div style="display:flex; flex-direction:column; gap:10px; flex:1;">
         <!-- Genre / Game Track Filter -->
         <div class="filter-group" id="tableGenreFilterGroup">
-          <button class="filter-btn active" data-table-genre="all">🎮 All Games (<span id="countTableGenreAll">14</span>)</button>
-          <button class="filter-btn" data-table-genre="platformer">🍄 Italian Plumber (<span id="countTableGenrePlatformer">8</span>)</button>
-          <button class="filter-btn" data-table-genre="raycaster">🔫 Doom / 3D Raycaster (<span id="countTableGenreRaycaster">2</span>)</button>
-          <button class="filter-btn" data-table-genre="maze">👻 Ghost Maze (<span id="countTableGenreMaze">2</span>)</button>
-          <button class="filter-btn" data-table-genre="puzzle">🧱 Falling Bricks (<span id="countTableGenrePuzzle">2</span>)</button>
+          <button class="filter-btn active" data-table-genre="all">🎮 Ranked Games (<span id="countTableGenreAll">0</span>)</button>
+          <button class="filter-btn" data-table-genre="platformer">🍄 Italian Plumber (<span id="countTableGenrePlatformer">0</span>)</button>
+          <button class="filter-btn" data-table-genre="raycaster">🔫 Doom / 3D Raycaster (<span id="countTableGenreRaycaster">0</span>)</button>
+          <button class="filter-btn" data-table-genre="maze">👻 Ghost Maze (<span id="countTableGenreMaze">0</span>)</button>
+          <button class="filter-btn" data-table-genre="puzzle">🧱 Falling Bricks (<span id="countTableGenrePuzzle">0</span>)</button>
         </div>
-        <!-- Model License Filter (Open Source vs Proprietary) -->
+        <!-- Model License Filter (Open weights vs proprietary) -->
         <div class="filter-group" id="tableLicenseFilterGroup">
-          <button class="filter-btn active" data-table-license="all">🌐 All Models (<span id="countTableLicenseAll">14</span>)</button>
-          <button class="filter-btn" data-table-license="open">🔓 Open Source / Weights (<span id="countTableLicenseOpen">10</span>)</button>
-          <button class="filter-btn" data-table-license="proprietary">🔒 Proprietary / Cloud (<span id="countTableLicenseProp">4</span>)</button>
+          <button class="filter-btn active" data-table-license="all">🌐 All Models (<span id="countTableLicenseAll">0</span>)</button>
+          <button class="filter-btn" data-table-license="open">🔓 Open Weights (<span id="countTableLicenseOpen">0</span>)</button>
+          <button class="filter-btn" data-table-license="proprietary">🔒 Proprietary / Cloud (<span id="countTableLicenseProp">0</span>)</button>
         </div>
       </div>
       <div style="align-self:flex-start;">
         <select id="tableSortSelect" class="sort-select">
-          <option value="elo">Sort by: In-Genre ELO (Highest)</option>
-          <option value="vibe">Sort by: Vibe Score</option>
-          <option value="votes">Sort by: Community Upvotes</option>
+          <option value="elo">Sort by: In-Genre Elo (Highest)</option>
+          <option value="vibe" title="Curated editorial score, separate from local votes">Sort by: Editorial Vibe</option>
+          <option value="votes">Sort by: Local Upvotes</option>
           <option value="size">Sort by: Code Volume</option>
         </select>
       </div>
@@ -1332,7 +1400,7 @@
             <th>Model & License</th>
             <th>Harness & Hardware</th>
             <th>Thinking Effort</th>
-            <th>In-Genre ELO</th>
+            <th>In-Genre Elo</th>
             <th>Tier</th>
             <th>Matches</th>
             <th>Code Size</th>
@@ -1353,10 +1421,10 @@
   <div class="footer-inner">
     <div class="footer-heading">CRTBENCH RESEARCH INITIATIVE</div>
     <div>
-      CRTBench is an independent, non-commercial open-source benchmark evaluating autonomous procedural code generation and real-time physical reasoning in large language models. All trademarks, service marks, and brand names are the property of their respective owners and are referenced solely for nominative identification in benchmark evaluation.
+      CRTBench is an independent, non-commercial open-source benchmark evaluating autonomous procedural code generation and real-time physical reasoning in large language models. All trademarks, service marks, and brand names are the property of their respective owners and are referenced solely for nominative identification in benchmark evaluation. Your votes, Duel Elo, and notes are stored locally in this browser.
     </div>
     <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; border-top:1px solid #21262d; padding-top:12px; font-size:11px;">
-      <div>Open Source under MIT License &bull; Zero external runtime dependencies</div>
+      <div>MIT-licensed CRTBench source &bull; No external game engines or assets &bull; Web fonts allowed</div>
       <div>
         <a href="https://github.com/carteakey/crtbench" target="_blank" rel="noopener noreferrer" style="color:var(--accent); text-decoration:none;">GitHub Repository ↗</a> &bull; 
         <a href="SUBMISSIONS.md" style="color:var(--accent); text-decoration:none;">Submission Guidelines ↗</a>
@@ -1366,7 +1434,7 @@
 </footer>
 
 <!-- Arcade Cabinet Modal Player -->
-<div class="modal-overlay" id="arcadeModal">
+<div class="modal-overlay" id="arcadeModal" role="dialog" aria-modal="true" aria-labelledby="modalGameTitle" aria-hidden="true" tabindex="-1">
   <div class="arcade-cabinet">
     <div class="cabinet-header">
       <div class="cabinet-title" id="modalGameTitle">CRTBENCH ARCADE</div>
@@ -1377,14 +1445,14 @@
       </div>
     </div>
     <div class="iframe-wrap">
-      <iframe id="arcadeFrame" src="about:blank"></iframe>
+      <iframe id="arcadeFrame" src="about:blank" title="Playable game" sandbox="allow-scripts allow-pointer-lock" allow="fullscreen" referrerpolicy="no-referrer"></iframe>
     </div>
   </div>
 </div>
 
 <!-- Prompt & Comments Drawer -->
-<div class="drawer-overlay" id="drawerOverlay"></div>
-<div class="drawer" id="sideDrawer">
+<div class="drawer-overlay" id="drawerOverlay" aria-hidden="true"></div>
+<div class="drawer" id="sideDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true" tabindex="-1" inert>
   <div class="drawer-banner">
     <img id="drawerImg" src="" alt="Game Preview">
     <div class="crt-scanlines"></div>
@@ -1403,24 +1471,24 @@
   <div class="prompt-box" id="drawerPromptText">Loading prompt...</div>
   <button class="copy-btn" id="drawerCopyBtn">📋 Copy Prompt to Clipboard</button>
 
-  <h3 style="font-size:14px; margin-bottom:8px; color:#fff;">Vibe Review & Mechanics</h3>
+  <h3 style="font-size:14px; margin-bottom:8px; color:#fff;">Editorial Vibe Review & Mechanics</h3>
   <div style="font-size:13px; color:#c9d1d9; line-height:1.6; margin-bottom:20px;" id="drawerVibeReview"></div>
 
-  <h3 style="font-size:14px; margin-bottom:8px; color:#fff;">Community Feedback (<span id="drawerCommentCount">0</span>)</h3>
+  <h3 style="font-size:14px; margin-bottom:8px; color:#fff;">Your Local Notes (<span id="drawerCommentCount">0</span>)</h3>
   <div class="comment-list" id="drawerCommentList"></div>
 
   <div class="comment-input-wrap">
-    <textarea class="comment-textarea" id="newCommentText" placeholder="Leave a review or feedback on this implementation's vibes..."></textarea>
-    <button class="submit-comment-btn" id="submitCommentBtn">Post Comment</button>
+    <textarea class="comment-textarea" id="newCommentText" placeholder="Save a private note about this implementation..."></textarea>
+    <button class="submit-comment-btn" id="submitCommentBtn">Save Local Note</button>
   </div>
 </div>
 
 
 <!-- Submission Studio Modal -->
-<div class="modal-overlay" id="submitModal">
+<div class="modal-overlay" id="submitModal" role="dialog" aria-modal="true" aria-labelledby="submitModalTitle" aria-hidden="true" tabindex="-1">
   <div class="submit-modal">
     <div class="submit-modal-header">
-      <div class="submit-modal-title">➕ SUBMISSION STUDIO</div>
+      <div class="submit-modal-title" id="submitModalTitle">➕ SUBMISSION STUDIO</div>
       <div class="cabinet-controls">
         <button class="cab-btn close" id="closeSubmitModalBtn">✕ Close</button>
       </div>
@@ -1488,7 +1556,7 @@
         <div class="field-group">
           <label class="field-label" for="subLicense">Model License *</label>
           <select class="field-select" id="subLicense">
-            <option value="open">🔓 Open Source / Weights (Local RTX / Mac / Self-hosted)</option>
+            <option value="open">🔓 Open Weights (Local RTX / Mac / Self-hosted)</option>
             <option value="proprietary">🔒 Proprietary / Cloud (OpenAI / Anthropic / Google API)</option>
           </select>
         </div>
@@ -1544,7 +1612,7 @@
   </div>
 </div>
 
-<div id="toast">Prompt copied to clipboard!</div>
+<div id="toast" role="status" aria-live="polite">Prompt copied to clipboard!</div>
 
 <script>
 (() => {
@@ -1558,6 +1626,38 @@
       case 'arcade': return '🚀 Space Arcade';
       default: return '🍄 Italian Plumber';
     }
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, character => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[character]);
+  }
+
+  function safeHttpUrl(value) {
+    try {
+      const url = new URL(String(value || ''), window.location.href);
+      return ['http:', 'https:'].includes(url.protocol) ? url.href : null;
+    } catch (e) { return null; }
+  }
+
+  function safeAssetPath(value, folder, fallback = '') {
+    const path = String(value || '');
+    if (!path.startsWith(`${folder}/`) || path.includes('\\') || path.split('/').some(part => part === '..')) return fallback;
+    return new RegExp(`^${folder}/[A-Za-z0-9._/-]+$`).test(path) ? path : fallback;
+  }
+
+  function appendExternalLink(container, label, value, color) {
+    const href = safeHttpUrl(value);
+    if (!href) return;
+    const link = document.createElement('a');
+    link.className = 'source-btn-link';
+    link.href = href;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = label;
+    if (color) link.style.color = color;
+    container.appendChild(link);
   }
 
   function updateFilterCounts() {
@@ -1576,6 +1676,7 @@
 
     if (document.getElementById('countGenreAll')) document.getElementById('countGenreAll').textContent = genreCounts.all;
     if (document.getElementById('countWallHeader')) document.getElementById('countWallHeader').textContent = genreCounts.all;
+    if (document.getElementById('countRankedHeader')) document.getElementById('countRankedHeader').textContent = genreCounts.all;
     if (document.getElementById('countGenrePlatformer')) document.getElementById('countGenrePlatformer').textContent = genreCounts.platformer;
     if (document.getElementById('countGenreRaycaster')) document.getElementById('countGenreRaycaster').textContent = genreCounts.raycaster;
     if (document.getElementById('countGenreMaze')) document.getElementById('countGenreMaze').textContent = genreCounts.maze;
@@ -1597,589 +1698,7 @@
     if (document.getElementById('countTableLicenseProp')) document.getElementById('countTableLicenseProp').textContent = licenseCounts.proprietary;
   }
 
-  // Fallback offline dataset (7 active, 2 hidden)
-  const EMBEDDED_GAMES_DATA = [
-  {
-    "id": "gpt6_astra_high",
-    "title": "Three Worlds Odyssey",
-    "author": "GPT-6 Astra (Frontier High)",
-    "category": "Modern Indie",
-    "badge": "Frontier High",
-    "file": "games/gpt6_astra_high.html",
-    "baseVotes": 0,
-    "vibeScore": 9.4,
-    "size": "37.5 KB",
-    "lines": 204,
-    "hardware": "API",
-    "model": "GPT-6 Astra",
-    "mode": "High Reasoning Mode",
-    "promptStyle": "Minimal Zero-Shot",
-    "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-    "sourceName": "MarioBench Run",
-    "sourceUrl": "https://github.com/carteakey/crtbench/blob/main/games/gpt6_astra_high.html",
-    "vibeReview": "Spectacular scope across 3 unique worlds (Mushroom Meadow, Sunset Steppes, Starlight Summit). Features harmonic moving platforms that Mario physically rides, kickable turtle shells with ricochet physics, and ceiling clearance detection on mushroom growth. Plays slightly more like a modern indie platformer than an authentic crunchy 1985 NES cartridge, but technically flawless.",
-    "ratings": {
-      "nesCrunch": 7.5,
-      "physicsFeel": 9.5,
-      "ambition": 9.8
-    },
-    "elo": 1200,
-    "matches": 0,
-    "preview": "previews/gpt6_astra_high.png",
-    "wins": 0,
-    "hidden": false,
-    "harness": "API",
-    "thinkingEffort": "High",
-    "genre": "platformer",
-    "isOpenSource": false,
-    "license": "proprietary",
-    "quant": "N/A"
-  },
-  {
-    "id": "gemini38_flash_full",
-    "title": "The 2.6k Deluxe Platformer",
-    "author": "Gemini 3.8 Flash",
-    "category": "NES Purist",
-    "badge": "Full CoT Deluxe",
-    "file": "games/gemini38_flash_full.html",
-    "baseVotes": 0,
-    "vibeScore": 9.1,
-    "size": "74.8 KB",
-    "lines": 2628,
-    "hardware": "API",
-    "model": "Gemini 3.8 Flash",
-    "mode": "Full CoT Deliberation",
-    "promptStyle": "Minimal Zero-Shot",
-    "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-    "sourceName": "MarioBench Run",
-    "sourceUrl": "https://github.com/carteakey/crtbench/blob/main/games/gemini38_flash_full.html",
-    "vibeReview": "Unmatched audio crunch and physical momentum. Implements a Web Audio synthesizer using an 800 Hz bandpass white-noise filter for authentic NES snare drums, directional skidding with procedural dust puffs, 14-frame variable jump height, and kickable Koopa shells that wipe out enemy chains. Mario's face sprite is somewhat derpy, but the gameplay feel is pure arcade gold.",
-    "ratings": {
-      "nesCrunch": 9.5,
-      "physicsFeel": 9.6,
-      "ambition": 9.2
-    },
-    "elo": 1200,
-    "matches": 0,
-    "preview": "previews/gemini38_flash_full.png",
-    "wins": 0,
-    "hidden": false,
-    "harness": "Antigravity",
-    "thinkingEffort": "Ultra",
-    "genre": "platformer",
-    "isOpenSource": false,
-    "license": "proprietary",
-    "quant": "N/A"
-  },
-  {
-    "id": "qwen38_flash_3070_potato",
-    "title": "Super Pixel Bros (Course 1-1)",
-    "author": "cc8.pl (r/LocalLLaMA)",
-    "category": "NES Purist",
-    "badge": "8GB 3070 Potato Run",
-    "file": "games/qwen38_flash_3070_potato.html",
-    "baseVotes": 0,
-    "vibeScore": 8.9,
-    "size": "67.5 KB",
-    "lines": 1277,
-    "hardware": "RTX 3070 8GB",
-    "model": "Qwen3.8-Flash-Next",
-    "mode": "xhigh (10k CoT budget, 40k ctx)",
-    "promptStyle": "Single One-Shot System Prompt",
-    "prompt": "Make a side-scrolling platformer game like Super Mario Bros. using HTML/CSS/JS in a single HTML file.Plan the implementation briefly within the reasoning budget. Then output only the complete HTML file. Do not use tools or provide explanations.",
-    "sourceName": "r/LocalLLaMA & cc8.pl",
-    "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
-    "vibeReview": "Built on an 8GB RTX 3070 (a potato in modern local LLM terms) using UD-Q3_K_XL quant with 40k context and a 10k reasoning limit at ~11-12 t/s. Delivers a retro wrapper with live HUD stats, bandpass noise-filtered NES percussion, jump sweeps, custom pixel sprites, Goombas, and responsive physics.",
-    "ratings": {
-      "nesCrunch": 9.2,
-      "physicsFeel": 8.9,
-      "ambition": 8.8
-    },
-    "elo": 1200,
-    "matches": 0,
-    "preview": "previews/qwen38_flash_3070_potato.png",
-    "wins": 0,
-    "hidden": false,
-    "demoUrl": "https://www.cc8.pl/mario-q38-flash.html",
-    "harness": "llama.cpp",
-    "thinkingEffort": "Medium",
-    "genre": "platformer",
-    "isOpenSource": true,
-    "license": "open",
-    "quant": "UD-Q3_K_XL"
-  },
-  {
-    "id": "qwen38_gold_60k",
-    "title": "The 60,000-Token Monolith",
-    "author": "Qwen3.8-Flash-Next (Gold)",
-    "category": "NES Purist",
-    "badge": "Local Homelab King",
-    "file": "games/qwen38_gold_60k.html",
-    "baseVotes": 0,
-    "vibeScore": 8.5,
-    "size": "70.8 KB",
-    "lines": 1248,
-    "hardware": "RTX 4070 12GB",
-    "model": "Qwen3.8-Flash-Next",
-    "mode": "xhigh (59m CoT Deliberation)",
-    "promptStyle": "Minimal Zero-Shot",
-    "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-    "sourceName": "L3MS Local Homelab (RTX 4070)",
-    "sourceUrl": "https://github.com/carteakey/crtbench/blob/main/games/qwen38_gold_60k.html",
-    "vibeReview": "Generated entirely on a local RTX 4070 in a single contiguous 60,221 token inference stream after 29,455 thinking tokens. Captures authentic retro atmosphere with a custom CRT scanline shader pass, arcade marquee bulbs, World 1-1 and World 1-2 Underground pipe warps, bouncing fireballs, Koopas, and Piranha plants.",
-    "ratings": {
-      "nesCrunch": 9.2,
-      "physicsFeel": 8.0,
-      "ambition": 9.4
-    },
-    "elo": 1200,
-    "matches": 0,
-    "preview": "previews/qwen38_gold_60k.png",
-    "wins": 0,
-    "hidden": false,
-    "harness": "llama.cpp",
-    "thinkingEffort": "Ultra",
-    "genre": "platformer",
-    "isOpenSource": true,
-    "license": "open",
-    "quant": "AD-4.27bpw"
-  },
-  {
-    "id": "qwen38_27b_chopsticks",
-    "title": "Qwen 27B Tiiny NES Replica",
-    "author": "u/ChopSticksPlease",
-    "category": "NES Purist",
-    "badge": "r/LocalLLaMA Viral",
-    "file": "games/qwen38_27b_chopsticks.html",
-    "baseVotes": 0,
-    "vibeScore": 8.7,
-    "size": "30.8 KB",
-    "lines": 1008,
-    "hardware": "RTX 3090 24GB",
-    "model": "Qwen3.8-27B",
-    "mode": "Medium Reasoning Effort",
-    "promptStyle": "Strict NES Specification",
-    "prompt": "Write a fully functional, complete clone of Super Mario Bros game (the famous NES game)\n- Clone must work in a web browser, index.html, no server\n- Decent replica of the graphics assets.\n- Colorful and playable.\n- Controls with keyboard up, down, left, right, spacebar to jump, shift to speed up",
-    "sourceName": "r/LocalLLaMA (u/ChopSticksPlease)",
-    "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
-    "vibeReview": "One-shotted by a 17GB local quant running on an RTX 3090 with MTP draft decoding. Built a crisp 256x240 integer-scaled NES clone with multi-channel audio synthesis, Goombas, breakable bricks, question blocks, and authentic momentum.",
-    "ratings": {
-      "nesCrunch": 9.0,
-      "physicsFeel": 8.6,
-      "ambition": 8.5
-    },
-    "elo": 1200,
-    "matches": 0,
-    "preview": "previews/qwen38_27b_chopsticks.png",
-    "wins": 0,
-    "hidden": false,
-    "demoUrl": "https://indigo-carmencita-27.tiiny.site/",
-    "harness": "llama.cpp",
-    "thinkingEffort": "None",
-    "genre": "platformer",
-    "isOpenSource": true,
-    "license": "open",
-    "quant": "Q4_K_M"
-  },
-  {
-    "id": "gpt6_astra_light",
-    "title": "Super Meadow: A Little Adventure",
-    "author": "GPT-6 Astra (Light)",
-    "category": "Modern Indie",
-    "badge": "Light CoT Indie",
-    "file": "games/gpt6_astra_light.html",
-    "baseVotes": 0,
-    "vibeScore": 8.6,
-    "size": "21.7 KB",
-    "lines": 102,
-    "hardware": "API",
-    "model": "GPT-6 Astra",
-    "mode": "Light Reasoning Mode",
-    "promptStyle": "Minimal Zero-Shot",
-    "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-    "sourceName": "MarioBench Run",
-    "sourceUrl": "https://github.com/carteakey/crtbench/blob/main/games/gpt6_astra_light.html",
-    "vibeReview": "A charming artistic departure. Rather than an 8-bit clone, Astra Light autonomously created a 16:9 modern indie platformer with a sunset gradient sky, bezier curve hills, 120 Hz accumulator physics, screen shake, and a cozy hillside cottage finish.",
-    "ratings": {
-      "nesCrunch": 6.0,
-      "physicsFeel": 9.2,
-      "ambition": 8.8
-    },
-    "elo": 1200,
-    "matches": 0,
-    "preview": "previews/gpt6_astra_light.png",
-    "wins": 0,
-    "hidden": false,
-    "harness": "API",
-    "thinkingEffort": "Light",
-    "genre": "platformer",
-    "isOpenSource": false,
-    "license": "proprietary",
-    "quant": "N/A"
-  },
-  {
-    "id": "qwen38_27b_circus_mikenonect",
-    "title": "Circus Jumper",
-    "author": "u/MikeNonect",
-    "category": "Circus Reskin",
-    "badge": "629 Reddit Upvotes",
-    "file": "games/qwen38_27b_circus_mikenonect.html",
-    "baseVotes": 0,
-    "vibeScore": 8.4,
-    "size": "52.4 KB",
-    "lines": 1637,
-    "hardware": "Framework Desktop",
-    "model": "Qwen3.8-27B",
-    "mode": "Overnight Batch",
-    "promptStyle": "Aesthetic Engaging Prompt",
-    "prompt": "Create a Super Mario clone in JavaScript as a single HTML page. Make the game engaging and the graphics as beautiful as possible. (Later adapted to circus-theme to avoid DMCA).",
-    "sourceName": "r/LocalLLaMA (u/MikeNonect)",
-    "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1vp438p/if_you_would_have_told_me_half_a_year_ago_that_a/",
-    "vibeReview": "The most discussed Mario run on r/LocalLLaMA with 629 upvotes. Transformed Mario into a circus-themed acrobat with colorful tents, trapeze platforms, juggling balls, and rich background art.",
-    "ratings": {
-      "nesCrunch": 5.5,
-      "physicsFeel": 8.8,
-      "ambition": 9.0
-    },
-    "elo": 1200,
-    "matches": 0,
-    "preview": "previews/qwen38_27b_circus_mikenonect.png",
-    "wins": 0,
-    "hidden": false,
-    "demoUrl": "https://mikeveerman.github.io/qwen38-27b-mario",
-    "harness": "llama.cpp",
-    "thinkingEffort": "None",
-    "genre": "platformer",
-    "isOpenSource": true,
-    "license": "open",
-    "quant": "Q8_0"
-  },
-  {
-    "id": "gemini38_flash_baseline",
-    "title": "Paul Allen's Card (Base)",
-    "author": "Gemini 3.8 Flash",
-    "category": "NES Purist",
-    "badge": "Zero-Bug Sprint",
-    "file": "games/gemini38_flash_baseline.html",
-    "baseVotes": 0,
-    "vibeScore": 7.8,
-    "size": "27.6 KB",
-    "lines": 992,
-    "hardware": "API",
-    "model": "Gemini 3.8 Flash",
-    "mode": "Conversational Fast Mode",
-    "promptStyle": "Minimal Zero-Shot",
-    "prompt": "Write a complete, playable Super Mario clone in a single file. Include running, jumping physics, platforms, blocks, and enemies.",
-    "sourceName": "Antigravity Baseline",
-    "sourceUrl": "https://github.com/carteakey/crtbench/blob/main/games/gemini38_flash_baseline.html",
-    "vibeReview": "The original interactive benchmark reference. Built in seconds with zero bugs, silky 60 FPS sub-pixel physics, 6-frame coyote jump buffering, clean square wave audio sweeps, and a 120-column overworld slice.",
-    "ratings": {
-      "nesCrunch": 8.4,
-      "physicsFeel": 8.9,
-      "ambition": 7.0
-    },
-    "elo": 1200,
-    "matches": 0,
-    "preview": "previews/gemini38_flash_baseline.png",
-    "wins": 0,
-    "hidden": true,
-    "harness": "Antigravity",
-    "thinkingEffort": "None",
-    "genre": "platformer",
-    "isOpenSource": false,
-    "license": "proprietary",
-    "quant": "N/A"
-  },
-  {
-    "id": "gemini25_pro_pygame",
-    "title": "Gemini 2.5 Pro PyGame Edition",
-    "author": "u/Healthy-Nebula-3603",
-    "category": "Python / PyGame",
-    "badge": "312 Reddit Upvotes",
-    "file": "games/gemini25_pro_pygame_healthynebula.py",
-    "baseVotes": 0,
-    "vibeScore": 8.1,
-    "size": "25.3 KB",
-    "lines": 537,
-    "hardware": "API",
-    "model": "Gemini 2.5 Pro",
-    "mode": "Standard Prompt",
-    "promptStyle": "Max Quality Python Prompt",
-    "prompt": "Build absolutely the best implementation of the super Mario game in python without any external assets.",
-    "sourceName": "r/LocalLLaMA (Pastebin)",
-    "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1jjsiiw/mario_game_made_by_new_a_gemini_pro_25_in_couple/",
-    "vibeReview": "One-shot Python / PyGame implementation from Gemini 2.5 Pro that blew up with 312 upvotes on r/LocalLLaMA. Clean momentum curves, title screen, procedurally drawn bushes, clouds, and Goombas.",
-    "ratings": {
-      "nesCrunch": 8.0,
-      "physicsFeel": 8.5,
-      "ambition": 7.8
-    },
-    "elo": 1200,
-    "matches": 0,
-    "preview": "previews/gemini25_pro_pygame.png",
-    "wins": 0,
-    "hidden": true,
-    "harness": "API",
-    "thinkingEffort": "None",
-    "genre": "platformer",
-    "isOpenSource": false,
-    "license": "proprietary",
-    "quant": "N/A"
-  },
-  {
-    "id": "ornith35b_matrix_bros",
-    "title": "The Matrix Bros (Cyber Edition)",
-    "author": "u/TimelordQ (r/LocalLLaMA)",
-    "category": "Matrix Reskin",
-    "badge": "Cyber Matrix Run",
-    "file": "games/ornith35b_matrix_bros.html",
-    "baseVotes": 0,
-    "vibeScore": 8.8,
-    "size": "29.7 KB",
-    "lines": 737,
-    "hardware": "RTX 3090 24GB",
-    "model": "Ornith-1.5-35B",
-    "mode": "Q4_K_M Quant",
-    "promptStyle": "Strict NES Specification (Themed)",
-    "prompt": "Write a fully functional, complete clone of Super Mario Bros game (the famous NES game)\n- Clone must work in a web browser, index.html, no server\n- Decent replica of the graphics assets.\n- Colorful and playable.\n- Controls with keyboard up, down, left, right, spacebar to jump, shift to speed up\n- Themed as The Matrix with digital rain and cyber aesthetic",
-    "sourceName": "r/LocalLLaMA & GitHub",
-    "sourceUrl": "https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
-    "demoUrl": "https://timelordq.github.io/The-Matrix-Bros/index.html",
-    "vibeReview": "A viral r/LocalLLaMA mashup combining classic NES Super Mario mechanics with The Matrix. Features digital green katakana code rain falling in real time, hooded cyber-program sprites, neon green platforms, and glowing coin data streams. One-shotted on a local 35B parameter quant.",
-    "ratings": {
-      "nesCrunch": 8.8,
-      "physicsFeel": 8.7,
-      "ambition": 9.3
-    },
-    "elo": 1200,
-    "matches": 0,
-    "wins": 0,
-    "preview": "previews/ornith35b_matrix_bros.png",
-    "hidden": false,
-    "harness": "llama.cpp",
-    "thinkingEffort": "None",
-    "genre": "platformer",
-    "isOpenSource": true,
-    "license": "open",
-    "quant": "Q4_K_M"
-  },
-  {
-    "id": "gemini38_pro_wolf_raycaster",
-    "title": "Operation Wolf3D: Raycast 60",
-    "author": "Gemini 3.8 Pro",
-    "genre": "raycaster",
-    "category": "Wolf3D Classic",
-    "badge": "Inaugural 3D Raycaster",
-    "file": "games/gemini38_pro_wolf_raycaster.html",
-    "baseVotes": 0,
-    "vibeScore": 9.2,
-    "size": "25.6 KB",
-    "lines": 763,
-    "hardware": "API",
-    "model": "Gemini 3.8 Pro",
-    "harness": "Antigravity",
-    "thinkingEffort": "High",
-    "mode": "High CoT Deliberation",
-    "promptStyle": "DDA 3D FPS Specification",
-    "prompt": "Write a complete, fully playable 2.5D Raycaster FPS game (inspired by Wolfenstein 3D and Doom) in a single HTML file with embedded CSS and JavaScript. Zero external dependencies or libraries (no Three.js, pure Canvas 2D).\n\nMust include:\n1. A 60 FPS DDA (Digital Differential Analysis) raycaster engine with fish-eye distortion correction (cos angle multiplier).\n2. Procedurally generated wall textures (e.g. brick, stone, and tech panel patterns drawn via procedural canvas math).\n3. Player movement with WASD (forward, backward, strafe left/right) and Arrow keys / Mouse for turning, with wall collision sliding.\n4. Top-down minimap HUD in a corner showing walls and player FOV cone.\n5. First-person weapon view (pistol/shotgun) with recoil bobbing, muzzle flash, and hitscan shooting.\n6. Web Audio API procedural sound effects (gunshot, bullet hit, enemy groans, footsteps) without external audio files.\n7. Enemy sprites rendered with depth-sorted billboarding and simple line-of-sight chase & shoot AI.\n8. Retro HUD for Health, Ammo, Score, and Face / Status indicator.",
-    "sourceName": "CRTBench 3D Track Run",
-    "sourceUrl": "https://github.com/carteakey/crtbench/blob/main/games/gemini38_pro_wolf_raycaster.html",
-    "vibeReview": "Inaugural contender for CRTBench 2.5D Raycaster discipline. Implements a complete DDA raycasting engine on pure 2D Canvas with procedural stone/tech textures, fish-eye distortion correction, depth-sorted billboard enemy sprites, corner minimap, muzzle flash recoil, and Web Audio synthesized gunshots.",
-    "ratings": {
-      "nesCrunch": 9.0,
-      "physicsFeel": 9.3,
-      "ambition": 9.5
-    },
-    "elo": 1200,
-    "matches": 0,
-    "wins": 0,
-    "preview": "previews/gemini38_pro_wolf_raycaster.png",
-    "hidden": false,
-    "isOpenSource": false,
-    "license": "proprietary",
-    "quant": "N/A"
-  },
-  {
-    "id": "qwen38_flash_retro_dungeon",
-    "title": "Dungeon of the Crimson Keep: Raycast 3D",
-    "genre": "raycaster",
-    "author": "Qwen3.8-Flash-Next (llama.cpp)",
-    "category": "3D Raycaster",
-    "badge": "60 FPS DDA Raycaster",
-    "file": "games/qwen38_flash_retro_dungeon.html",
-    "baseVotes": 0,
-    "vibeScore": 9.2,
-    "size": "22.3 KB",
-    "lines": 600,
-    "hardware": "RTX 3070 8GB",
-    "model": "Qwen3.8-Flash-Next",
-    "harness": "llama.cpp",
-    "thinkingEffort": "Medium",
-    "mode": "10k CoT Budget (xhigh)",
-    "promptStyle": "Single-Shot Zero Dependency Prompt",
-    "prompt": "Create a fully playable 2.5D retro dungeon raycaster in a single HTML file with embedded CSS and JavaScript. Include 60 FPS DDA raycasting, procedural stone textures, WASD sliding collision, minimap FOV cone, first-person fire wand with recoil, Web Audio procedural sounds, depth-sorted skeleton enemies with chase AI, and retro health/mana HUD. Zero external dependencies.",
-    "sourceName": "r/LocalLLaMA & llama.cpp",
-    "sourceUrl": "https://reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/",
-    "vibeReview": "Atmospheric 2.5D gothic dungeon crawler with DDA raycasting, procedural textures, skeleton sprites, and pure Web Audio sound.",
-    "ratings": {
-      "nesCrunch": 8.8,
-      "physicsFeel": 9.2,
-      "ambition": 9.5
-    },
-    "elo": 1200,
-    "matches": 0,
-    "wins": 0,
-    "preview": "previews/qwen38_flash_retro_dungeon.png",
-    "hidden": false,
-    "isOpenSource": true,
-    "license": "open",
-    "quant": "AD-4.27bpw"
-  },
-  {
-    "id": "gemma4_31b_neon_pacmaze",
-    "title": "Neon Phantom Maze: Classic Arcade Chase",
-    "genre": "maze",
-    "author": "Gemma 4 31B (r/LocalLLaMA Contest)",
-    "category": "Modern Indie",
-    "badge": "r/LocalLLaMA Contest Winner",
-    "file": "games/gemma4_31b_neon_pacmaze.html",
-    "baseVotes": 0,
-    "vibeScore": 9.3,
-    "size": "9.0 KB",
-    "lines": 217,
-    "hardware": "RTX 4090 24GB",
-    "model": "Gemma 4 31B",
-    "harness": "llama.cpp",
-    "thinkingEffort": "High",
-    "mode": "High CoT Deliberation",
-    "promptStyle": "Single-Shot Zero Dependency Prompt",
-    "prompt": "Write a complete, playable classic arcade maze chase game in a single HTML file with embedded CSS/JS. Must include authentic tilemap maze with blue rounded-corner walls, pellet dots, power pills, fruit bonus, 4 distinct ghost AI states (Chase, Scatter, Frightened), corner-turning buffer, procedural Web Audio chomp/siren sound, HUD, and tunnel wrapping. Zero external dependencies.",
-    "sourceName": "r/LocalLLaMA Contest Post",
-    "sourceUrl": "https://reddit.com/r/LocalLLaMA/",
-    "vibeReview": "Voted cleanest logic in r/LocalLLaMA gamedev contest. Authentic ghost AI personalities, corner buffering, and procedural audio.",
-    "ratings": {
-      "nesCrunch": 9.4,
-      "physicsFeel": 9.3,
-      "ambition": 9.0
-    },
-    "elo": 1200,
-    "matches": 0,
-    "wins": 0,
-    "preview": "previews/gemma4_31b_neon_pacmaze.png",
-    "hidden": false,
-    "isOpenSource": true,
-    "license": "open",
-    "quant": "Q4_K_M"
-  },
-  {
-    "id": "qwen36_27b_cyber_maze",
-    "title": "Cyber Labyrinth: Vector Ghost Run",
-    "genre": "maze",
-    "author": "Qwen 3.6 27B (r/LocalLLaMA)",
-    "category": "Themed Reskin",
-    "badge": "Community Submission",
-    "file": "games/qwen36_27b_cyber_maze.html",
-    "baseVotes": 0,
-    "vibeScore": 8.8,
-    "size": "5.9 KB",
-    "lines": 157,
-    "hardware": "RTX 3090 24GB",
-    "model": "Qwen 3.6 27B",
-    "harness": "vLLM",
-    "thinkingEffort": "None",
-    "mode": "Single Turn One-Shot",
-    "promptStyle": "Single-Shot Zero Dependency Prompt",
-    "prompt": "Build a cyberpunk vector-neon arcade maze game in a single HTML file. Control a cyber-probe gathering energy nodes while evading 4 sentinel drones with active searchlight vision cones. Spacebar triggers an EMP burst when charged. Use procedural Web Audio synths and CRT glow post-processing. Zero external dependencies.",
-    "sourceName": "r/LocalLLaMA Post",
-    "sourceUrl": "https://reddit.com/r/LocalLLaMA/",
-    "vibeReview": "Sleek vector aesthetic with dynamic drone searchlight cones, EMP blast mechanics, and atmospheric synth bleeps.",
-    "ratings": {
-      "nesCrunch": 8.2,
-      "physicsFeel": 8.8,
-      "ambition": 9.1
-    },
-    "elo": 1200,
-    "matches": 0,
-    "wins": 0,
-    "preview": "previews/qwen36_27b_cyber_maze.png",
-    "hidden": false,
-    "isOpenSource": true,
-    "license": "open",
-    "quant": "Q4_K_M"
-  },
-  {
-    "id": "glm47_flash_tetris_matrix",
-    "title": "Blockfall 1989: Falling Polyominoes",
-    "genre": "puzzle",
-    "author": "GLM-4.7 Flash (r/LocalLLaMA)",
-    "category": "NES Purist",
-    "badge": "r/LocalLLaMA Milestone",
-    "file": "games/glm47_flash_tetris_matrix.html",
-    "baseVotes": 0,
-    "vibeScore": 9.4,
-    "size": "16.3 KB",
-    "lines": 574,
-    "hardware": "RTX 4070 Ti 12GB",
-    "model": "GLM-4.7 Flash",
-    "harness": "llama.cpp",
-    "thinkingEffort": "Medium",
-    "mode": "CoT Reasoning Deliberation",
-    "promptStyle": "Single-Shot Zero Dependency Prompt",
-    "prompt": "Create a fully functional, bug-free falling blocks game in a single HTML file with embedded CSS/JS. Must include 10x20 matrix, 7 standard tetromino shapes, SRS wall kicks, ghost piece landing preview, hold piece buffer (C key), line-clearing flash animation, scaling gravity speeds, and procedural Web Audio 8-bit chiptune theme. Zero external dependencies.",
-    "sourceName": "r/LocalLLaMA One-Shot Thread",
-    "sourceUrl": "https://reddit.com/r/LocalLLaMA/",
-    "vibeReview": "Praised on r/LocalLLaMA as one of the first models to one-shot bug-free line clearing with SRS rotation and generative chiptune audio.",
-    "ratings": {
-      "nesCrunch": 9.6,
-      "physicsFeel": 9.4,
-      "ambition": 9.2
-    },
-    "elo": 1200,
-    "matches": 0,
-    "wins": 0,
-    "preview": "previews/glm47_flash_tetris_matrix.png",
-    "hidden": false,
-    "isOpenSource": true,
-    "license": "open",
-    "quant": "FP8"
-  },
-  {
-    "id": "qwen36_polyomino_puzzle",
-    "title": "Quantum Cascade: Polyomino Drop",
-    "genre": "puzzle",
-    "author": "Qwen 3.6 27B (r/LocalLLaMA)",
-    "category": "Modern Indie",
-    "badge": "Community Submission",
-    "file": "games/qwen36_polyomino_puzzle.html",
-    "baseVotes": 0,
-    "vibeScore": 9.0,
-    "size": "17.8 KB",
-    "lines": 579,
-    "hardware": "RTX 3090 24GB",
-    "model": "Qwen 3.6 27B",
-    "harness": "vLLM",
-    "thinkingEffort": "None",
-    "mode": "Single Turn One-Shot",
-    "promptStyle": "Single-Shot Zero Dependency Prompt",
-    "prompt": "Write a modern glassmorphism falling block puzzle game in a single HTML file. Include particle explosion effects on row clears, ghost piece landing indicator, lock delay, combo counter, and procedural ambient synth audio using Web Audio API. Zero external dependencies.",
-    "sourceName": "r/LocalLLaMA Post",
-    "sourceUrl": "https://reddit.com/r/LocalLLaMA/",
-    "vibeReview": "Modern glassmorphism look with particle explosions on line clears, combo multipliers, and generative ambient synth audio.",
-    "ratings": {
-      "nesCrunch": 8.6,
-      "physicsFeel": 9.1,
-      "ambition": 9.3
-    },
-    "elo": 1200,
-    "matches": 0,
-    "wins": 0,
-    "preview": "previews/qwen36_polyomino_puzzle.png",
-    "hidden": false,
-    "isOpenSource": true,
-    "license": "open",
-    "quant": "Q4_K_M"
-  }
-];
+  // Single source of truth: data.json. There is no stale embedded roster.
 
   let gamesData = [];
   let wallGenre = 'all';
@@ -2197,71 +1716,109 @@
   let arenaVoted = false;
   let arenaGenreFilter = 'all';
 
-  // Local Storage Keys
-  const VOTE_STORAGE_KEY = 'pb_user_votes';
-  const VOTE_COUNTS_KEY = 'pb_vibe_counts_v1';
-  const ELO_DELTAS_KEY = 'pb_elo_deltas_v2';
-  const ELO_MATCHES_KEY = 'pb_elo_matches_v2';
-  const COMMENTS_STORAGE_KEY = 'pb_comments_v2';
+  // Local, browser-only state keys. Previous pb_* values migrate once on read.
+  const VOTE_STORAGE_KEY = 'crtbench_local_votes_v1';
+  const VOTE_COUNTS_KEY = 'crtbench_local_vote_deltas_v1';
+  const ELO_DELTAS_KEY = 'crtbench_local_elo_deltas_v1';
+  const ELO_MATCHES_KEY = 'crtbench_local_elo_matches_v1';
+  const COMMENTS_STORAGE_KEY = 'crtbench_local_notes_v1';
+  const CRT_STORAGE_KEY = 'crtbench_crt_enabled_v1';
+  const LEGACY_STORAGE_KEYS = {
+    [VOTE_STORAGE_KEY]: ['pb_user_votes'],
+    [VOTE_COUNTS_KEY]: ['pb_vibe_counts_v1'],
+    [ELO_DELTAS_KEY]: ['pb_elo_deltas_v2'],
+    [ELO_MATCHES_KEY]: ['pb_elo_matches_v2'],
+    [COMMENTS_STORAGE_KEY]: ['pb_comments_v2'],
+    [CRT_STORAGE_KEY]: ['pb_crt_enabled']
+  };
 
-  function getUserVotes() {
-    try { return JSON.parse(localStorage.getItem(VOTE_STORAGE_KEY)) || {}; }
-    catch(e) { return {}; }
+  function getStoredValue(key) {
+    try {
+      const value = window.localStorage.getItem(key);
+      if (value !== null) return value;
+      for (const legacyKey of LEGACY_STORAGE_KEYS[key] || []) {
+        const legacyValue = window.localStorage.getItem(legacyKey);
+        if (legacyValue !== null) {
+          window.localStorage.setItem(key, legacyValue);
+          return legacyValue;
+        }
+      }
+    } catch (e) {
+      // Storage can be unavailable in private browsing or local-file contexts.
+    }
+    return null;
   }
+
+  function setStoredValue(key, value) {
+    try { window.localStorage.setItem(key, value); }
+    catch (e) { /* Keep the arcade usable if storage is unavailable. */ }
+  }
+
+  function removeStoredValue(key) {
+    try {
+      window.localStorage.removeItem(key);
+      for (const legacyKey of LEGACY_STORAGE_KEYS[key] || []) window.localStorage.removeItem(legacyKey);
+    } catch (e) { /* Nothing else to clear when storage is unavailable. */ }
+  }
+
+  function getStoredObject(key) {
+    try {
+      const value = getStoredValue(key);
+      const parsed = value ? JSON.parse(value) : {};
+      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+    } catch (e) { return {}; }
+  }
+
+  function setStoredObject(key, value) {
+    setStoredValue(key, JSON.stringify(value));
+  }
+
+  function getUserVotes() { return getStoredObject(VOTE_STORAGE_KEY); }
 
   function setUserVotes(votes) {
-    localStorage.setItem(VOTE_STORAGE_KEY, JSON.stringify(votes));
+    setStoredObject(VOTE_STORAGE_KEY, votes);
   }
 
-  function getVoteDeltas() {
-    try { return JSON.parse(localStorage.getItem(VOTE_COUNTS_KEY)) || {}; }
-    catch(e) { return {}; }
-  }
+  function getVoteDeltas() { return getStoredObject(VOTE_COUNTS_KEY); }
 
   function setVoteDelta(id, delta) {
     const deltas = getVoteDeltas();
-    deltas[id] = (deltas[id] || 0) + delta;
-    localStorage.setItem(VOTE_COUNTS_KEY, JSON.stringify(deltas));
+    deltas[id] = (Number(deltas[id]) || 0) + delta;
+    setStoredObject(VOTE_COUNTS_KEY, deltas);
   }
 
-  function getEloDeltas() {
-    try { return JSON.parse(localStorage.getItem(ELO_DELTAS_KEY)) || {}; }
-    catch(e) { return {}; }
-  }
+  function getEloDeltas() { return getStoredObject(ELO_DELTAS_KEY); }
 
   function setEloDelta(id, delta) {
     const deltas = getEloDeltas();
-    deltas[id] = (deltas[id] || 0) + delta;
-    localStorage.setItem(ELO_DELTAS_KEY, JSON.stringify(deltas));
+    deltas[id] = (Number(deltas[id]) || 0) + delta;
+    setStoredObject(ELO_DELTAS_KEY, deltas);
   }
 
-  function getEloMatches() {
-    try { return JSON.parse(localStorage.getItem(ELO_MATCHES_KEY)) || {}; }
-    catch(e) { return {}; }
-  }
+  function getEloMatches() { return getStoredObject(ELO_MATCHES_KEY); }
 
   function recordMatch(id, isWin) {
     const stats = getEloMatches();
-    if (!stats[id]) stats[id] = { matches: 0, wins: 0 };
-    stats[id].matches += 1;
-    if (isWin) stats[id].wins += 1;
-    localStorage.setItem(ELO_MATCHES_KEY, JSON.stringify(stats));
+    if (!stats[id] || typeof stats[id] !== 'object') stats[id] = { matches: 0, wins: 0 };
+    stats[id].matches = (Number(stats[id].matches) || 0) + 1;
+    if (isWin) stats[id].wins = (Number(stats[id].wins) || 0) + 1;
+    setStoredObject(ELO_MATCHES_KEY, stats);
   }
 
   function getEffectiveElo(game) {
     const deltas = getEloDeltas();
-    return Math.round(game.elo + (deltas[game.id] || 0));
+    return Math.round((Number(game.elo) || 1200) + (Number(deltas[game.id]) || 0));
   }
 
   function getEffectiveMatches(game) {
     const stats = getEloMatches()[game.id];
-    return stats ? stats.matches : 0;
+    return stats ? (Number(stats.matches) || 0) : 0;
   }
 
   function getEffectiveWinRate(game) {
     const stats = getEloMatches()[game.id];
-    if (!stats || stats.matches === 0) return '—';
-    return Math.round((stats.wins / stats.matches) * 100) + '%';
+    if (!stats || !Number(stats.matches)) return '—';
+    return Math.round(((Number(stats.wins) || 0) / Number(stats.matches)) * 100) + '%';
   }
 
   function getEloTier(elo, matches) {
@@ -2274,23 +1831,20 @@
 
   function getEffectiveVotes(game) {
     const deltas = getVoteDeltas();
-    return game.baseVotes + (deltas[game.id] || 0);
+    return (Number(game.baseVotes) || 0) + (Number(deltas[game.id]) || 0);
   }
 
-  function getStoredComments() {
-    try { return JSON.parse(localStorage.getItem(COMMENTS_STORAGE_KEY)) || {}; }
-    catch(e) { return {}; }
-  }
+  function getStoredComments() { return getStoredObject(COMMENTS_STORAGE_KEY); }
 
   function saveComment(gameId, text) {
     const comments = getStoredComments();
     if (!comments[gameId]) comments[gameId] = [];
     comments[gameId].unshift({
-      author: 'Community Reviewer',
+      author: 'You (local)',
       time: 'Just now',
       text: text
     });
-    localStorage.setItem(COMMENTS_STORAGE_KEY, JSON.stringify(comments));
+    setStoredObject(COMMENTS_STORAGE_KEY, comments);
   }
 
   function showToast(msg) {
@@ -2300,15 +1854,85 @@
     setTimeout(() => toast.classList.remove('show'), 2600);
   }
 
+  let activeAccessibleDialog = null;
+  let returnFocusTarget = null;
+  const dialogFocusableSelector = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"])';
+
+  function openAccessibleDialog(dialog, initialFocusSelector) {
+    if (!activeAccessibleDialog && !returnFocusTarget && document.activeElement !== document.body) {
+      returnFocusTarget = document.activeElement;
+    }
+    if (activeAccessibleDialog && activeAccessibleDialog !== dialog) {
+      activeAccessibleDialog.classList.remove('active');
+      activeAccessibleDialog.setAttribute('aria-hidden', 'true');
+      activeAccessibleDialog.inert = true;
+    }
+    activeAccessibleDialog = dialog;
+    dialog.inert = false;
+    dialog.classList.add('active');
+    dialog.setAttribute('aria-hidden', 'false');
+    const target = dialog.querySelector(initialFocusSelector) || dialog.querySelector(dialogFocusableSelector) || dialog;
+    requestAnimationFrame(() => target.focus({ preventScroll: true }));
+  }
+
+  function closeAccessibleDialog(dialog, restoreFocus = true) {
+    if (!dialog) return;
+    dialog.classList.remove('active');
+    dialog.setAttribute('aria-hidden', 'true');
+    dialog.inert = true;
+    if (activeAccessibleDialog === dialog) activeAccessibleDialog = null;
+
+    if (restoreFocus && !activeAccessibleDialog) {
+      if (returnFocusTarget && returnFocusTarget.isConnected && !returnFocusTarget.closest('[aria-hidden="true"]')) {
+        returnFocusTarget.focus({ preventScroll: true });
+      }
+      returnFocusTarget = null;
+    }
+  }
+
+  function handleDialogKeyboard(e) {
+    const dialog = activeAccessibleDialog;
+    if (!dialog) return;
+    if (e.key === 'Escape') {
+      if (dialog.id === 'arcadeModal') closeArcadeModal();
+      else if (dialog.id === 'sideDrawer') closeDrawer();
+      else if (dialog.id === 'submitModal') closeSubmitModal();
+      return;
+    }
+    if (e.key !== 'Tab') return;
+
+    const focusable = [...dialog.querySelectorAll(dialogFocusableSelector)]
+      .filter(element => !element.disabled && element.getClientRects().length > 0);
+    if (!focusable.length) {
+      e.preventDefault();
+      dialog.focus();
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && (document.activeElement === first || document.activeElement === dialog)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
   // Load and Render Games
   async function init() {
     try {
       const res = await fetch('data.json');
       if (!res.ok) throw new Error('HTTP ' + res.status);
-      gamesData = await res.json();
+      const loadedGames = await res.json();
+      if (!Array.isArray(loadedGames)) throw new Error('data.json must contain a JSON array');
+      gamesData = loadedGames.filter(game => game && typeof game === 'object' && !Array.isArray(game) && typeof game.id === 'string');
     } catch (e) {
-      console.warn('Using embedded dataset fallback:', e);
-      gamesData = EMBEDDED_GAMES_DATA;
+      console.warn('Unable to load data.json:', e);
+      gamesData = [];
+      const errorNotice = document.getElementById('dataLoadError');
+      errorNotice.textContent = 'CRTBench could not load data.json. If you opened index.html directly (file://), run “python3 -m http.server 8000” in this folder and visit http://localhost:8000/. Votes and ratings remain local to your browser.';
+      errorNotice.style.display = 'block';
     }
     updateFilterCounts();
     renderGrid();
@@ -2348,7 +1972,7 @@
       // 1. Discipline / Game Track filter
       if (genre !== 'all' && (g.genre || 'platformer') !== genre) return false;
 
-      // 2. Model License filter (Open Source / Weights vs Proprietary / Cloud)
+      // 2. Model license filter (open weights vs proprietary / cloud)
       if (license !== 'all') {
         const isOpen = g.isOpenSource === true || g.license === 'open';
         if (license === 'open' && !isOpen) return false;
@@ -2359,7 +1983,8 @@
 
     filtered.sort((a, b) => {
       if (sort === 'elo') return getEffectiveElo(b) - getEffectiveElo(a);
-      if (sort === 'vibe') return b.vibeScore - a.vibeScore;
+      // vibeScore is editorial metadata and is intentionally separate from local votes.
+      if (sort === 'vibe') return (Number(b.vibeScore) || 0) - (Number(a.vibeScore) || 0);
       if (sort === 'votes') return getEffectiveVotes(b) - getEffectiveVotes(a);
       if (sort === 'size') return parseInt(b.lines) - parseInt(a.lines);
       return 0;
@@ -2391,12 +2016,22 @@
       else if (game.category === 'NES Purist') badgeClass += ' badge-purist';
 
       const isOpen = game.isOpenSource === true || game.license === 'open';
+      const gameId = escapeHtml(game.id);
+      const gameTitle = escapeHtml(game.title);
+      const gameModel = escapeHtml(game.model);
+      const harness = String(game.harness || 'Unknown');
+      const safeHarness = escapeHtml(harness);
+      const previewUrl = escapeHtml(safeAssetPath(game.preview, 'previews'));
+      const sourceUrl = safeHttpUrl(game.sourceUrl);
+      const sourceAction = sourceUrl
+        ? `<a class="btn-action" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">🔗 Source</a>`
+        : '<span class="btn-action" aria-label="Source link unavailable">🔗 Source N/A</span>';
       const licenseBadge = isOpen
-        ? `<span class="card-badge" style="background:#238636; font-size:8px; border:1px solid #2ea043;" title="Open Weights / Local Inference">🔓 Open</span>`
+        ? `<span class="card-badge" style="background:#238636; font-size:8px; border:1px solid #2ea043;" title="Open Weights / Local Inference">🔓 Open Weights</span>`
         : `<span class="card-badge" style="background:#1f6feb; font-size:8px; border:1px solid #388bfd;" title="Proprietary / API">🔒 API</span>`;
 
       const quantBadge = (isOpen && game.quant && game.quant !== 'N/A')
-        ? `<span class="card-badge" style="background:#161b22; border:1px solid #30363d; font-size:8px; color:#58a6ff;" title="Quantization">${game.quant}</span>`
+        ? `<span class="card-badge" style="background:#161b22; border:1px solid #30363d; font-size:8px; color:#58a6ff;" title="Quantization">${escapeHtml(game.quant)}</span>`
         : '';
 
       card.innerHTML = `
@@ -2407,39 +2042,39 @@
               <span class="card-badge" style="background:#8250df; font-size:8px;">${getGenreLabel(game.genre || 'platformer')}</span>
               ${licenseBadge}
               ${quantBadge}
-              <span class="elo-pill ${tier.cls}">⚡ ${effectiveElo} ELO</span>
+              <span class="elo-pill ${tier.cls}">⚡ ${effectiveElo} Elo</span>
             </div>
-            <div class="card-title">${game.title}</div>
-            <div class="card-model"><strong>${game.model}</strong> &bull; <span style="color:var(--accent);">${game.harness}</span></div>
-            <div style="font-size:11px; color:#8b949e; margin-top:2px;">🧠 ${game.thinkingEffort} &bull; 💻 ${game.hardware}</div>
+            <div class="card-title">${gameTitle}</div>
+            <div class="card-model"><strong>${gameModel}</strong> &bull; <span style="color:var(--accent);">${safeHarness}</span></div>
+            <div style="font-size:11px; color:#8b949e; margin-top:2px;">🧠 ${escapeHtml(game.thinkingEffort)} &bull; 💻 ${escapeHtml(game.hardware)}</div>
           </div>
-          <button class="upvote-btn ${isVoted ? 'voted' : ''}" data-id="${game.id}">
+          <button class="upvote-btn ${isVoted ? 'voted' : ''}" data-id="${gameId}" aria-label="Toggle local upvote for ${gameTitle}" title="Saved only in this browser">
             <span class="upvote-arrow">▲</span>
             <span class="upvote-count">${votes}</span>
           </button>
         </div>
 
-        <div class="card-screen-wrap" data-action="play" data-id="${game.id}">
-          <img class="card-screen-img" src="${game.preview}" alt="${game.title}" loading="lazy">
+        <div class="card-screen-wrap" data-action="play" data-id="${gameId}" role="button" tabindex="0" aria-label="Play ${gameTitle}">
+          <img class="card-screen-img" src="${previewUrl}" alt="${gameTitle}" loading="lazy">
           <div class="crt-scanlines"></div>
           <div class="card-screen-overlay">
             <span class="screen-play-icon">▶</span>
             <span class="screen-play-text">PLAY ARCADE</span>
           </div>
-          <div class="screen-stat-tag">${game.harness.split(' ')[0]} &bull; ${game.lines} lines</div>
+          <div class="screen-stat-tag">${escapeHtml(harness.split(' ')[0])} &bull; ${escapeHtml(game.lines)} lines</div>
         </div>
 
         <div class="card-body">
           <div class="meta-tags">
-            <span class="meta-tag">⚡ <strong>${effectiveElo}</strong> ELO</span>
+            <span class="meta-tag">⚡ <strong>${effectiveElo}</strong> Elo</span>
             <span class="meta-tag">🥊 <strong>${matches}</strong> duels</span>
-            <span class="meta-tag">💾 <strong>${game.size}</strong></span>
+            <span class="meta-tag">💾 <strong>${escapeHtml(game.size)}</strong></span>
           </div>
 
           <div class="card-footer" style="margin-top:10px;">
-            <button class="btn-play" data-action="play" data-id="${game.id}">▶ PLAY</button>
-            <button class="btn-action" data-action="inspect" data-id="${game.id}">📋 Details</button>
-            <a class="btn-action" href="${game.sourceUrl}" target="_blank" rel="noopener noreferrer">🔗 Source</a>
+            <button class="btn-play" data-action="play" data-id="${gameId}">▶ PLAY</button>
+            <button class="btn-action" data-action="inspect" data-id="${gameId}">📋 Details</button>
+            ${sourceAction}
           </div>
         </div>
       `;
@@ -2459,11 +2094,17 @@
       const matches = getEffectiveMatches(game);
       const tier = getEloTier(effectiveElo, matches);
       const isOpen = game.isOpenSource === true || game.license === 'open';
+      const gameId = escapeHtml(game.id);
+      const gameTitle = escapeHtml(game.title);
+      const safeSourceUrl = safeHttpUrl(game.sourceUrl);
+      const sourceCell = safeSourceUrl
+        ? `<a class="source-btn-link" href="${escapeHtml(safeSourceUrl)}" target="_blank" rel="noopener noreferrer">Link ↗</a>`
+        : '<span class="source-btn-link">N/A</span>';
       const licensePill = isOpen
-        ? '<span class="card-badge" style="background:#238636; font-size:8px; padding:2px 5px; border:1px solid #2ea043;" title="Open Weights / Local">🔓 Open</span>'
+        ? '<span class="card-badge" style="background:#238636; font-size:8px; padding:2px 5px; border:1px solid #2ea043;" title="Open Weights / Local">🔓 Open Weights</span>'
         : '<span class="card-badge" style="background:#1f6feb; font-size:8px; padding:2px 5px; border:1px solid #388bfd;" title="Proprietary / API">🔒 API</span>';
       const quantPill = (isOpen && game.quant && game.quant !== 'N/A')
-        ? `<span class="card-badge" style="background:#161b22; border:1px solid #30363d; font-size:8px; padding:2px 5px; color:#58a6ff;" title="Quantization">${game.quant}</span>`
+        ? `<span class="card-badge" style="background:#161b22; border:1px solid #30363d; font-size:8px; padding:2px 5px; color:#58a6ff;" title="Quantization">${escapeHtml(game.quant)}</span>`
         : '';
       const row = document.createElement('tr');
       const rankEmoji = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
@@ -2471,28 +2112,28 @@
       row.innerHTML = `
         <td style="font-weight:700; font-size:14px;">${rankEmoji}</td>
         <td>
-          <img class="table-thumb" src="${game.preview}" alt="${game.title}" data-action="play" data-id="${game.id}">
+          <img class="table-thumb" src="${escapeHtml(safeAssetPath(game.preview, 'previews'))}" alt="${gameTitle}" data-action="play" data-id="${gameId}">
         </td>
         <td>
-          <div style="font-weight:700; color:#fff;">${game.title}</div>
-          <div style="font-size:11px; color:var(--text-muted);">${game.category} &bull; ${game.author}</div>
+          <div style="font-weight:700; color:#fff;">${gameTitle}</div>
+          <div style="font-size:11px; color:var(--text-muted);">${escapeHtml(game.category)} &bull; ${escapeHtml(game.author)}</div>
         </td>
         <td>
           <span class="card-badge" style="background:#21262d; border:1px solid var(--card-border); color:#e6edf3; font-size:9px;">${getGenreLabel(game.genre || 'platformer')}</span>
         </td>
         <td>
           <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-            <span style="color:var(--accent); font-family:monospace; font-size:12px; font-weight:600;">${game.model}</span>
+            <span style="color:var(--accent); font-family:monospace; font-size:12px; font-weight:600;">${escapeHtml(game.model)}</span>
             ${licensePill}
             ${quantPill}
           </div>
         </td>
         <td>
-          <div style="font-size:11px; color:#c9d1d9;">⚙️ ${game.harness}</div>
-          <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">💻 ${game.hardware}</div>
+          <div style="font-size:11px; color:#c9d1d9;">⚙️ ${escapeHtml(game.harness)}</div>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">💻 ${escapeHtml(game.hardware)}</div>
         </td>
         <td>
-          <div style="font-size:11px; color:var(--gold); font-weight:600;">🧠 ${game.thinkingEffort}</div>
+          <div style="font-size:11px; color:var(--gold); font-weight:600;">🧠 ${escapeHtml(game.thinkingEffort)}</div>
         </td>
         <td style="font-family:'Press Start 2P', monospace; font-size:11px; color:var(--gold);">
           ⚡ ${effectiveElo}
@@ -2501,14 +2142,14 @@
           <span class="elo-pill ${tier.cls}">${tier.name}</span>
         </td>
         <td style="font-family:monospace;">${matches}</td>
-        <td style="font-size:11px; color:var(--text-muted);">${game.size}</td>
+        <td style="font-size:11px; color:var(--text-muted);">${escapeHtml(game.size)}</td>
         <td>
-          <a class="source-btn-link" href="${game.sourceUrl}" target="_blank" rel="noopener noreferrer">Link ↗</a>
+          ${sourceCell}
         </td>
         <td>
           <div style="display:flex; gap:6px;">
-            <button class="btn-play" style="padding:4px 8px; font-size:11px;" data-action="play" data-id="${game.id}">▶ Play</button>
-            <button class="btn-action" style="padding:4px 8px; font-size:11px;" data-action="inspect" data-id="${game.id}">📋</button>
+            <button class="btn-play" style="padding:4px 8px; font-size:11px;" data-action="play" data-id="${gameId}">▶ Play</button>
+            <button class="btn-action" style="padding:4px 8px; font-size:11px;" data-action="inspect" data-id="${gameId}">📋</button>
           </div>
         </td>
       `;
@@ -2557,10 +2198,10 @@
 
     const genreLabel = getGenreLabel(arenaGameA.genre || 'platformer');
 
-    // BLIND SETUP: Do NOT show ELO or model identities!
+    // BLIND SETUP: Do NOT show Elo or model identities!
     document.getElementById('cabAName').textContent = `CHALLENGER ALPHA`;
     document.getElementById('cabAElo').style.display = 'none';
-    document.getElementById('cabAImg').src = arenaGameA.preview;
+    document.getElementById('cabAImg').src = safeAssetPath(arenaGameA.preview, 'previews');
     document.getElementById('cabADetails').innerHTML = `
       <div style="display:inline-block; margin-bottom:6px;"><span class="card-badge" style="background:#8250df; font-size:10px;">${genreLabel}</span></div>
       <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity hidden for blind testing. Play to evaluate gameplay feel, collision response, and procedural audio.</div>
@@ -2568,7 +2209,7 @@
 
     document.getElementById('cabBName').textContent = `CHALLENGER BETA`;
     document.getElementById('cabBElo').style.display = 'none';
-    document.getElementById('cabBImg').src = arenaGameB.preview;
+    document.getElementById('cabBImg').src = safeAssetPath(arenaGameB.preview, 'previews');
     document.getElementById('cabBDetails').innerHTML = `
       <div style="display:inline-block; margin-bottom:6px;"><span class="card-badge" style="background:#8250df; font-size:10px;">${genreLabel}</span></div>
       <div style="color:var(--text-muted); font-size:13px; font-style:italic;">Model identity hidden for blind testing. Play to evaluate gameplay feel, collision response, and procedural audio.</div>
@@ -2617,24 +2258,24 @@
     // REVEAL IDENTITIES POST-VOTE
     document.getElementById('cabAName').textContent = arenaGameA.title;
     document.getElementById('cabAElo').style.display = 'inline-flex';
-    document.getElementById('cabAElo').innerHTML = `⚡ ${newEloA} ELO (${signA})`;
+    document.getElementById('cabAElo').textContent = `⚡ ${newEloA} Elo (${signA})`;
     document.getElementById('cabADetails').innerHTML = `
       <div style="display:inline-block; margin-bottom:6px;"><span class="card-badge" style="background:#8250df; font-size:10px;">${genreLabel}</span></div>
-      <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:2px;">${arenaGameA.model}</div>
-      <div style="color:var(--gold); font-size:12px; margin-bottom:2px;">🧠 ${arenaGameA.thinkingEffort} &bull; ⚙️ ${arenaGameA.harness}</div>
-      <div style="color:var(--text-muted); font-size:11px; margin-bottom:6px;">💻 ${arenaGameA.hardware} &bull; ${arenaGameA.size}</div>
-      <a class="source-btn-link" href="${arenaGameA.sourceUrl}" target="_blank" rel="noopener noreferrer">🔗 Source Post / Code ↗</a>
+      <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:2px;">${escapeHtml(arenaGameA.model)}</div>
+      <div style="color:var(--gold); font-size:12px; margin-bottom:2px;">🧠 ${escapeHtml(arenaGameA.thinkingEffort)} &bull; ⚙️ ${escapeHtml(arenaGameA.harness)}</div>
+      <div style="color:var(--text-muted); font-size:11px; margin-bottom:6px;">💻 ${escapeHtml(arenaGameA.hardware)} &bull; ${escapeHtml(arenaGameA.size)}</div>
+      ${safeHttpUrl(arenaGameA.sourceUrl) ? `<a class="source-btn-link" href="${escapeHtml(safeHttpUrl(arenaGameA.sourceUrl))}" target="_blank" rel="noopener noreferrer">🔗 Source Post / Code ↗</a>` : ''}
     `;
 
     document.getElementById('cabBName').textContent = arenaGameB.title;
     document.getElementById('cabBElo').style.display = 'inline-flex';
-    document.getElementById('cabBElo').innerHTML = `⚡ ${newEloB} ELO (${signB})`;
+    document.getElementById('cabBElo').textContent = `⚡ ${newEloB} Elo (${signB})`;
     document.getElementById('cabBDetails').innerHTML = `
       <div style="display:inline-block; margin-bottom:6px;"><span class="card-badge" style="background:#8250df; font-size:10px;">${genreLabel}</span></div>
-      <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:2px;">${arenaGameB.model}</div>
-      <div style="color:var(--gold); font-size:12px; margin-bottom:2px;">🧠 ${arenaGameB.thinkingEffort} &bull; ⚙️ ${arenaGameB.harness}</div>
-      <div style="color:var(--text-muted); font-size:11px; margin-bottom:6px;">💻 ${arenaGameB.hardware} &bull; ${arenaGameB.size}</div>
-      <a class="source-btn-link" href="${arenaGameB.sourceUrl}" target="_blank" rel="noopener noreferrer">🔗 Source Post / Code ↗</a>
+      <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:2px;">${escapeHtml(arenaGameB.model)}</div>
+      <div style="color:var(--gold); font-size:12px; margin-bottom:2px;">🧠 ${escapeHtml(arenaGameB.thinkingEffort)} &bull; ⚙️ ${escapeHtml(arenaGameB.harness)}</div>
+      <div style="color:var(--text-muted); font-size:11px; margin-bottom:6px;">💻 ${escapeHtml(arenaGameB.hardware)} &bull; ${escapeHtml(arenaGameB.size)}</div>
+      ${safeHttpUrl(arenaGameB.sourceUrl) ? `<a class="source-btn-link" href="${escapeHtml(safeHttpUrl(arenaGameB.sourceUrl))}" target="_blank" rel="noopener noreferrer">🔗 Source Post / Code ↗</a>` : ''}
     `;
 
     // Reveal result card
@@ -2643,8 +2284,8 @@
     revealBox.innerHTML = `
       <div style="font-family:'Press Start 2P', monospace; font-size:11px; color:var(--gold); margin-bottom:6px;">🎉 DUEL REVEALED [${genreLabel}]!</div>
       <div style="font-size:13px; line-height:1.6;">
-        <strong>Challenger A:</strong> ${arenaGameA.title} (${arenaGameA.model}) &rarr; <strong>${newEloA} ELO (${signA})</strong> &nbsp;&bull;&nbsp; <a href="${arenaGameA.sourceUrl}" target="_blank" style="color:var(--accent);">Source ↗</a><br>
-        <strong>Challenger B:</strong> ${arenaGameB.title} (${arenaGameB.model}) &rarr; <strong>${newEloB} ELO (${signB})</strong> &nbsp;&bull;&nbsp; <a href="${arenaGameB.sourceUrl}" target="_blank" style="color:var(--accent);">Source ↗</a>
+        <strong>Challenger A:</strong> ${escapeHtml(arenaGameA.title)} (${escapeHtml(arenaGameA.model)}) &rarr; <strong>${newEloA} Elo (${signA})</strong> &nbsp;&bull;&nbsp; ${safeHttpUrl(arenaGameA.sourceUrl) ? `<a href="${escapeHtml(safeHttpUrl(arenaGameA.sourceUrl))}" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">Source ↗</a>` : 'Source unavailable'}<br>
+        <strong>Challenger B:</strong> ${escapeHtml(arenaGameB.title)} (${escapeHtml(arenaGameB.model)}) &rarr; <strong>${newEloB} Elo (${signB})</strong> &nbsp;&bull;&nbsp; ${safeHttpUrl(arenaGameB.sourceUrl) ? `<a href="${escapeHtml(safeHttpUrl(arenaGameB.sourceUrl))}" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">Source ↗</a>` : 'Source unavailable'}
       </div>
     `;
 
@@ -2656,7 +2297,7 @@
     document.getElementById('voteTieBtn').style.opacity = '0.5';
     document.getElementById('voteBBtn').style.opacity = '0.5';
 
-    showToast(`⚡ Match logged! ${arenaGameA.title}: ${signA} | ${arenaGameB.title}: ${signB}`);
+    showToast(`⚡ Local match logged! ${arenaGameA.title}: ${signA} | ${arenaGameB.title}: ${signB}`);
 
     updateFilterCounts();
     renderGrid();
@@ -2668,6 +2309,7 @@
     document.querySelectorAll('.view-nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const view = btn.dataset.view;
+        if (!view) return;
         window.location.hash = view;
         switchView(view);
       });
@@ -2676,7 +2318,7 @@
     // CRT Atmosphere Toggle
     const toggleScanlinesBtn = document.getElementById('toggleScanlinesBtn');
     if (toggleScanlinesBtn) {
-      const crtPref = localStorage.getItem('pb_crt_enabled');
+      const crtPref = getStoredValue(CRT_STORAGE_KEY);
       if (crtPref === 'false') {
         document.body.classList.add('no-crt');
         toggleScanlinesBtn.textContent = '📺 CRT: OFF';
@@ -2685,7 +2327,7 @@
       }
       toggleScanlinesBtn.addEventListener('click', () => {
         const isOff = document.body.classList.toggle('no-crt');
-        localStorage.setItem('pb_crt_enabled', !isOff);
+        setStoredValue(CRT_STORAGE_KEY, String(!isOff));
         toggleScanlinesBtn.textContent = isOff ? '📺 CRT: OFF' : '📺 CRT: ON';
         toggleScanlinesBtn.style.color = isOff ? '#8b949e' : '#58a6ff';
         toggleScanlinesBtn.style.borderColor = isOff ? '#30363d' : '#58a6ff';
@@ -2765,7 +2407,7 @@
     if (drawerPlayBtn) {
       drawerPlayBtn.addEventListener('click', () => {
         if (activeGameId) {
-          closeDrawer();
+          closeDrawer(false);
           openArcadeModal(activeGameId);
         }
       });
@@ -2792,15 +2434,23 @@
       }
     });
 
+    document.body.addEventListener('keydown', (e) => {
+      const playTrigger = e.target.closest('.card-screen-wrap[role="button"]');
+      if (playTrigger && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        openArcadeModal(playTrigger.dataset.id);
+      }
+    });
+
     // Arena Controls
     document.getElementById('voteABtn').addEventListener('click', () => handleArenaVote('A'));
     document.getElementById('voteTieBtn').addEventListener('click', () => handleArenaVote('TIE'));
     document.getElementById('voteBBtn').addEventListener('click', () => handleArenaVote('B'));
     document.getElementById('nextMatchBtn').addEventListener('click', setupArenaMatchup);
     document.getElementById('resetEloBtn').addEventListener('click', () => {
-      localStorage.removeItem(ELO_DELTAS_KEY);
-      localStorage.removeItem(ELO_MATCHES_KEY);
-      showToast('↺ All ELO ratings reset to baseline 1200');
+      removeStoredValue(ELO_DELTAS_KEY);
+      removeStoredValue(ELO_MATCHES_KEY);
+      showToast('↺ Your local Elo returned to baseline 1200');
       renderGrid();
       renderTable();
       setupArenaMatchup();
@@ -2817,8 +2467,11 @@
     const openSubmitBtn = document.getElementById('openSubmitModalBtn');
     const closeSubmitBtn = document.getElementById('closeSubmitModalBtn');
     const submitModal = document.getElementById('submitModal');
-    if (openSubmitBtn) openSubmitBtn.addEventListener('click', () => submitModal.classList.add('active'));
-    if (closeSubmitBtn) closeSubmitBtn.addEventListener('click', () => submitModal.classList.remove('active'));
+    if (openSubmitBtn) openSubmitBtn.addEventListener('click', () => openAccessibleDialog(submitModal, '#closeSubmitModalBtn'));
+    if (closeSubmitBtn) closeSubmitBtn.addEventListener('click', closeSubmitModal);
+    if (submitModal) submitModal.addEventListener('click', e => {
+      if (e.target === submitModal) closeSubmitModal();
+    });
 
     // Preflight Validator
     let generatedEntryJson = null;
@@ -2845,7 +2498,7 @@
         let rawQuant = (document.getElementById('subQuant') ? document.getElementById('subQuant').value.trim() : '');
         let quant = isOpenSource ? (rawQuant || 'Q4_K_M') : 'N/A';
 
-        const category = isOpenSource ? 'Open Source / Weights' : 'Proprietary Cloud';
+        const category = isOpenSource ? 'Open Weights' : 'Proprietary Cloud';
         const badge = document.getElementById('subBadge').value.trim() || 'Community Submission';
         const source = document.getElementById('subSource').value.trim();
         const demo = document.getElementById('subDemo').value.trim();
@@ -2944,7 +2597,8 @@
     document.getElementById('modalPopout').addEventListener('click', () => {
       if (activeGameId) {
         const game = gamesData.find(g => g.id === activeGameId);
-        if (game) window.open(game.file, '_blank');
+        const gamePath = game && safeAssetPath(game.file, 'games');
+        if (gamePath) window.open(gamePath, '_blank', 'noopener,noreferrer');
       }
     });
 
@@ -2964,18 +2618,12 @@
       if (!text || !activeGameId) return;
       saveComment(activeGameId, text);
       input.value = '';
-      showToast('Comment submitted!');
+      showToast('Local note saved on this browser.');
       loadDrawerComments(activeGameId);
     });
 
     // Keyboard shortcuts
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeArcadeModal();
-        closeDrawer();
-        document.getElementById('submitModal').classList.remove('active');
-      }
-    });
+    window.addEventListener('keydown', handleDialogKeyboard);
   }
 
   // Anti-Cheat Upvoting
@@ -2986,11 +2634,11 @@
     if (isVoted) {
       delete userVotes[gameId];
       setVoteDelta(gameId, -1);
-      showToast('Vote removed');
+      showToast('Local upvote removed');
     } else {
       userVotes[gameId] = true;
       setVoteDelta(gameId, 1);
-      showToast('▲ Upvoted! Vibe logged.');
+      showToast('▲ Local upvote saved on this browser.');
     }
 
     setUserVotes(userVotes);
@@ -3005,10 +2653,10 @@
     if (!game) return;
 
     activeGameId = gameId;
-    document.getElementById('modalGameTitle').textContent = `${game.title} — ${game.author}`;
+    document.getElementById('modalGameTitle').textContent = `${String(game.title || 'CRTBench game')} — ${String(game.author || 'Unknown author')}`;
     const frame = document.getElementById('arcadeFrame');
-    frame.src = game.file;
-    document.getElementById('arcadeModal').classList.add('active');
+    frame.src = safeAssetPath(game.file, 'games', 'about:blank');
+    openAccessibleDialog(document.getElementById('arcadeModal'), '#modalClose');
 
     setTimeout(() => {
       try { frame.contentWindow.focus(); } catch(e){}
@@ -3016,9 +2664,13 @@
   }
 
   function closeArcadeModal() {
-    document.getElementById('arcadeModal').classList.remove('active');
+    closeAccessibleDialog(document.getElementById('arcadeModal'));
     document.getElementById('arcadeFrame').src = 'about:blank';
     activeGameId = null;
+  }
+
+  function closeSubmitModal() {
+    closeAccessibleDialog(document.getElementById('submitModal'));
   }
 
   // Prompt & Feedback Drawer
@@ -3027,61 +2679,79 @@
     if (!game) return;
 
     activeGameId = gameId;
-    document.getElementById('drawerImg').src = game.preview;
-    document.getElementById('drawerTitle').textContent = game.title;
-    const quantInfo = (game.quant && game.quant !== 'N/A') ? ` &bull; 🏷️ <strong>${game.quant}</strong>` : '';
-    document.getElementById('drawerSub').innerHTML = `
-      <strong>⚡ ${getEffectiveElo(game)} ELO</strong> &bull; 
-      <strong>${game.model}</strong>${quantInfo} &bull; ⚙️ ${game.harness} &bull; 🧠 ${game.thinkingEffort} &bull; 💻 ${game.hardware}
-    `;
+    document.getElementById('drawerImg').src = safeAssetPath(game.preview, 'previews');
+    document.getElementById('drawerTitle').textContent = String(game.title || 'Contender specs');
+    const drawerSub = document.getElementById('drawerSub');
+    drawerSub.replaceChildren();
+    const details = [
+      `⚡ ${getEffectiveElo(game)} Elo`,
+      game.model,
+      game.quant && game.quant !== 'N/A' ? `🏷️ ${game.quant}` : null,
+      `⚙️ ${game.harness}`,
+      `🧠 ${game.thinkingEffort}`,
+      `💻 ${game.hardware}`
+    ].filter(Boolean);
+    details.forEach((detail, index) => {
+      if (index) drawerSub.appendChild(document.createTextNode(' • '));
+      const strong = document.createElement('strong');
+      strong.textContent = String(detail ?? '');
+      drawerSub.appendChild(strong);
+    });
 
     // Render Source Links
     const linksDiv = document.getElementById('drawerSourceLinks');
-    linksDiv.innerHTML = `
-      <a class="source-btn-link" href="${game.sourceUrl}" target="_blank" rel="noopener noreferrer">🔗 Source Post / Repository ↗</a>
-      ${game.demoUrl ? `<a class="source-btn-link" href="${game.demoUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);">🌐 Author's Live Web Demo ↗</a>` : ''}
-    `;
+    linksDiv.replaceChildren();
+    appendExternalLink(linksDiv, '🔗 Source Post / Repository ↗', game.sourceUrl);
+    if (game.demoUrl) appendExternalLink(linksDiv, '🌐 Author’s Live Web Demo ↗', game.demoUrl, 'var(--gold)');
 
-    document.getElementById('drawerPromptText').textContent = game.prompt;
-    document.getElementById('drawerVibeReview').textContent = game.vibeReview;
+    document.getElementById('drawerPromptText').textContent = String(game.prompt || '');
+    document.getElementById('drawerVibeReview').textContent = String(game.vibeReview || '');
 
     loadDrawerComments(gameId);
 
     document.getElementById('drawerOverlay').classList.add('active');
-    document.getElementById('sideDrawer').classList.add('active');
+    document.getElementById('drawerOverlay').setAttribute('aria-hidden', 'false');
+    openAccessibleDialog(document.getElementById('sideDrawer'), '#drawerPlayBtn');
   }
 
-  function closeDrawer() {
+  function closeDrawer(restoreFocus = true) {
     document.getElementById('drawerOverlay').classList.remove('active');
-    document.getElementById('sideDrawer').classList.remove('active');
+    document.getElementById('drawerOverlay').setAttribute('aria-hidden', 'true');
+    closeAccessibleDialog(document.getElementById('sideDrawer'), restoreFocus);
   }
 
   function loadDrawerComments(gameId) {
     const list = document.getElementById('drawerCommentList');
-    list.innerHTML = '';
+    list.replaceChildren();
 
-    const stored = getStoredComments()[gameId] || [];
+    const allComments = getStoredComments();
+    const stored = Array.isArray(allComments[gameId]) ? allComments[gameId] : [];
     document.getElementById('drawerCommentCount').textContent = stored.length;
 
     if (stored.length === 0) {
-      list.innerHTML = `
-        <div style="color:var(--text-muted); font-size:13px; font-style:italic; padding:10px 0;">
-          No reviews yet for this implementation. Play the game and submit the first review below!
-        </div>
-      `;
+      const emptyState = document.createElement('div');
+      emptyState.style.cssText = 'color:var(--text-muted); font-size:13px; font-style:italic; padding:10px 0;';
+      emptyState.textContent = 'No local notes yet for this implementation. Play the game and save the first note below!';
+      list.appendChild(emptyState);
       return;
     }
 
     stored.forEach(c => {
+      if (!c || typeof c !== 'object') return;
       const item = document.createElement('div');
       item.className = 'comment-item';
-      item.innerHTML = `
-        <div class="comment-author">
-          <span>${c.author}</span>
-          <span class="comment-time">${c.time}</span>
-        </div>
-        <div style="color:#c9d1d9; line-height:1.4;">${c.text}</div>
-      `;
+      const author = document.createElement('div');
+      author.className = 'comment-author';
+      const authorName = document.createElement('span');
+      authorName.textContent = 'You (local)';
+      const time = document.createElement('span');
+      time.className = 'comment-time';
+      time.textContent = String(c.time || '');
+      author.append(authorName, time);
+      const text = document.createElement('div');
+      text.style.cssText = 'color:#c9d1d9; line-height:1.4;';
+      text.textContent = String(c.text || '');
+      item.append(author, text);
       list.appendChild(item);
     });
   }

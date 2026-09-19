@@ -1,127 +1,95 @@
 # 📺 CRTBench
 
-> **The One-Shot Retro Arcade & 3D Synthesis Benchmark for Large Language Models**  
-> *"Criteria: Strict One-Shot. Scoring: Pure Vibes & Blind Dual ELO Duels."*
+> **A one-shot retro arcade & 3D game-generation bench for large language models**<br>
+> *Bring a prompt. Make a game. Play it and pick your vibe.*
 
-[![Leaderboard](https://img.shields.io/badge/CRTBench-In_Genre_ELO_Leaderboard-e52521?style=for-the-badge&logo=retroarch)](https://github.com/carteakey/crtbench)
-[![One Shot](https://img.shields.io/badge/Format-Strict_One--Shot-f8c300?style=for-the-badge)](SUBMISSIONS.md)
-[![Blind Arena](https://img.shields.io/badge/Vibe_Arena-Blind_Duel_ELO-58a6ff?style=for-the-badge)](index.html)
-[![Active Roster](https://img.shields.io/badge/Active_Entries-14_Contenders-2ea043?style=for-the-badge)](games/)
-[![Disciplines](https://img.shields.io/badge/Disciplines-Platformer_%7C_Raycaster_%7C_Maze_%7C_Blocks-8250df?style=for-the-badge)](index.html)
-
----
-
-## 🎯 The CRTBench Manifesto
-
-Standard LLM benchmarks (HumanEval, SWE-bench, GSM8K) measure narrow syntax verification or unit test satisfaction. None of them measure **experiential coherence**: can a model produce something that actually *feels good to play*?
-
-CRTBench evaluates models across multiple fundamental game architecture disciplines:
-1. **🏃 2D Platformer Track (Continuous Newtonian Physics):** Bounding-box penetration resolution, jump velocity accumulators, coyote buffer frames, variable jump heights, tilemap collision, and Web Audio chiptune synthesis.
-2. **🔫 2.5D Raycaster Track (3D Spatial Geometry & Trigonometry):** DDA (Digital Differential Analysis) grid traversal, ray angle stepping, fish-eye distortion correction ($\text{dist} \times \cos(\theta)$), vertical scanline slicing, and billboard sprite depth-buffering.
-3. **👻 Arcade Maze Track (Discrete Graph Traversal & Finite State Machines):** Grid-locked tile traversal, corner-turning buffering, and authentic ghost AI personalities (Chase, Scatter, and Frightened modes).
-4. **🧱 Falling Blocks Track (Matrix Transformations & SRS Kicks):** 10x20 matrix state, 7 polyominoes, Super Rotation System (SRS) kick tables, ghost piece landing projections, and line clearing loops.
+[![Leaderboard](https://img.shields.io/badge/CRTBench-In--Genre_Leaderboard-e52521?style=for-the-badge&logo=retroarch)](https://github.com/carteakey/crtbench)
+[![Submissions](https://img.shields.io/badge/Format-Community_Runs-f8c300?style=for-the-badge)](SUBMISSIONS.md)
+[![Blind Arena](https://img.shields.io/badge/Vibe_Arena-Local_Duel_Elo-58a6ff?style=for-the-badge)](index.html)
+[![Active Roster](https://img.shields.io/badge/Active_Entries-14-2ea043?style=for-the-badge)](games/)
+[![Disciplines](https://img.shields.io/badge/Tracks-Platformer_%7C_Raycaster_%7C_Maze_%7C_Blocks-8250df?style=for-the-badge)](index.html)
 
 ---
 
-## ⚡ The In-Genre ELO & Blind Duel Architecture
+## 🎯 What is CRTBench?
 
-CRTBench evaluates games through fair, empirical community duels rather than speculative LLM self-rubrics:
-1. **In-Genre Matchmaking:** Contenders face off strictly within their own discipline in the **Blind Vibe Arena** (Platformer vs Platformer, Raycaster vs Raycaster, Maze vs Maze, Falling Blocks vs Falling Blocks). This guarantees direct, apples-to-apples evaluation without cross-domain skew.
-2. **Double-Blind Playtesting:** Contender names, weights licenses, quants, and baseline ratings are completely obscured until votes are cast.
-3. **Standard Competitive ELO:** Updates follow the standard chess Elo formula ($K = 32$):
-   $$\Delta R_A = 32 \times \left(S_A - \frac{1}{1 + 10^{(R_B - R_A)/400}}\right)$$
-   Every community duel dynamically adjusts local leaderboard standings in real time.
+Most coding benchmarks ask whether code passes a test. CRTBench asks a sillier, more human question: **does the thing feel good to play?** It collects small games made with language models and lets you try them for yourself.
 
----
+The four cabinets cover different kinds of game-making:
 
-## ⚡ Active Web Leaderboard (14 Contenders Across 4 Disciplines)
+1. **🏃 Platformer:** movement, jumping, collisions, scrolling, and that elusive good-feeling landing.
+2. **🔫 Raycaster:** grid traversal, perspective, wall slices, sprites, and first-person controls.
+3. **👻 Arcade Maze:** grid movement, corner turns, pathfinding, and chasers with attitude.
+4. **🧱 Falling Blocks:** piece rotation, wall kicks, landing previews, and line clears.
 
-All active contenders are strict **single-prompt, single-file HTML/JS/CSS games** with zero dependencies. ELO ratings initialize at baseline **1200** and evolve dynamically through fair **In-Genre Blind Duels**.
+There is no canonical prompt. Community runs arrive with different prompts, models, harnesses, hardware, and levels of detail; the submitted prompt is kept with each entry when available. Treat the roster as a playable showcase and a source of vibes, not a controlled head-to-head experiment.
 
-| Rank | Contender | Discipline | Model & Quant | Harness & Hardware | Reasoning Tier | Base ELO | Vibe | Official Source Links |
-| :---: | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :--- |
-| 🥇 | [Three Worlds Odyssey](games/gpt6_astra_high.html) | 🏃 Platformer | **GPT-6 Astra** | `API`<br>`API` | **High** | **1200** | 9.4 | [Run Artifact](games/gpt6_astra_high.html) |
-| 🥈 | [Blockfall 1989](games/glm47_flash_tetris_matrix.html) | 🧱 Blocks | **GLM-4.7 Flash**<br>`FP8` | `llama.cpp`<br>`RTX 4070 Ti 12GB` | **Medium** | **1200** | 9.4 | [r/LocalLLaMA Milestone](https://reddit.com/r/LocalLLaMA/) |
-| 🥉 | [Neon Phantom Maze](games/gemma4_31b_neon_pacmaze.html) | 👻 Maze | **Gemma 4 31B**<br>`Q4_K_M` | `llama.cpp`<br>`RTX 4090 24GB` | **High** | **1200** | 9.3 | [r/LocalLLaMA Contest](https://reddit.com/r/LocalLLaMA/) |
-| 4 | [Operation Wolf3D](games/gemini38_pro_wolf_raycaster.html) | 🔫 Raycaster | **Gemini 3.8 Pro** | `Antigravity`<br>`API` | **High** | **1200** | 9.2 | [Run Artifact](games/gemini38_pro_wolf_raycaster.html) |
-| 5 | [Crimson Keep Dungeon](games/qwen38_flash_retro_dungeon.html) | 🔫 Raycaster | **Qwen3.8-Flash-Next**<br>`AD-4.27bpw` | `llama.cpp`<br>`RTX 3070 8GB` | **Medium** | **1200** | 9.2 | [llama.cpp Run](games/qwen38_flash_retro_dungeon.html) |
-| 6 | [The 2.6k Deluxe Platformer](games/gemini38_flash_full.html) | 🏃 Platformer | **Gemini 3.8 Flash** | `Antigravity`<br>`API` | **Ultra** | **1200** | 9.1 | [Run Artifact](games/gemini38_flash_full.html) |
-| 7 | [Quantum Cascade](games/qwen36_polyomino_puzzle.html) | 🧱 Blocks | **Qwen 3.6 27B**<br>`Q4_K_M` | `vLLM`<br>`RTX 3090 24GB` | **None** | **1200** | 9.0 | [r/LocalLLaMA Submission](https://reddit.com/r/LocalLLaMA/) |
-| 8 | [Super Pixel Bros (1-1)](games/qwen38_flash_3070_potato.html) | 🏃 Platformer | **Qwen3.8-Flash-Next**<br>`UD-Q3_K_XL` | `llama.cpp`<br>`RTX 3070 8GB` | **Medium** | **1200** | 8.9 | [Reddit Thread](https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/) &bull; [Author's Live Demo](https://www.cc8.pl/mario-q38-flash.html) |
-| 9 | [Cyber Labyrinth](games/qwen36_27b_cyber_maze.html) | 👻 Maze | **Qwen 3.6 27B**<br>`Q4_K_M` | `vLLM`<br>`RTX 3090 24GB` | **None** | **1200** | 8.8 | [r/LocalLLaMA Submission](https://reddit.com/r/LocalLLaMA/) |
-| 10 | [The Matrix Bros](games/ornith35b_matrix_bros.html) | 🏃 Platformer | **Ornith-1.5-35B**<br>`Q4_K_M` | `llama.cpp`<br>`RTX 3090 24GB` | **None** | **1200** | 8.8 | [Reddit Thread](https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/) &bull; [GitHub Demo](https://timelordq.github.io/The-Matrix-Bros/index.html) |
-| 11 | [Qwen 27B NES Replica](games/qwen38_27b_chopsticks.html) | 🏃 Platformer | **Qwen3.8-27B**<br>`Q4_K_M` | `llama.cpp`<br>`RTX 3090 24GB` | **None** | **1200** | 8.7 | [Reddit Thread](https://www.reddit.com/r/LocalLLaMA/comments/1wbchyj/qwen38_27b_made_mario_with_a_single_prompt_o/) &bull; [Tiiny Demo](https://indigo-carmencita-27.tiiny.site/) |
-| 12 | [The 60,000-Token Monolith](games/qwen38_gold_60k.html) | 🏃 Platformer | **Qwen3.8-Flash-Next**<br>`AD-4.27bpw` | `llama.cpp`<br>`RTX 4070 12GB` | **Ultra** | **1200** | 8.5 | [L3MS Run](games/qwen38_gold_60k.html) |
-| 13 | [Super Meadow](games/gpt6_astra_light.html) | 🏃 Platformer | **GPT-6 Astra** | `API`<br>`API` | **Light** | **1200** | 8.6 | [Run Artifact](games/gpt6_astra_light.html) |
-| 14 | [Circus Jumper](games/qwen38_27b_circus_mikenonect.html) | 🏃 Platformer | **Qwen3.8-27B**<br>`Q8_0` | `llama.cpp`<br>`Framework Desktop` | **None** | **1200** | 8.4 | [Reddit Thread (629 upvotes)](https://www.reddit.com/r/LocalLLaMA/comments/1vp438p/if_you_would_have_told_me_half_a_year_ago_that_a/) |
+## ⚔️ The local Duel Elo
 
----
+The Vibe Arena pairs games from the same track and offers a blind-ish A/B vote. It hides model labels before voting, though game art, source links, or other clues may still give a run away.
 
-## 🖼️ Multi-Discipline Gallery Previews
+Each browser keeps its own votes and Duel Elo in local storage. There is no shared service or cross-user community total. New eligible entries start at **1200 Elo** and appear in the rankings immediately; a fresh browser therefore shows the seed order until that browser has played some duels. These early ranks are provisional fun, not a claim that a game has proved itself.
 
-| [2D Platformer: Three Worlds Odyssey](games/gpt6_astra_high.html) | [2.5D Raycaster: Operation Wolf3D](games/gemini38_pro_wolf_raycaster.html) | [Arcade Maze: Neon Phantom Maze](games/gemma4_31b_neon_pacmaze.html) |
+The page also shows an **editorial vibe score**: a curator's subjective first-pass score recorded with the entry. It is separate from your local Duel Elo and is not a community rating or vote average.
+
+## 🕹️ Active eligible roster
+
+All 14 browser games are active. Google Fonts are allowed; external game assets, scripts, and runtime libraries are not. The table is a catalog, not a performance ranking. Vibe scores are editorial; each fresh browser starts Duel Elo at 1200.
+
+| Game | Track | Model & quant | Harness & hardware | Reasoning | Seed Duel Elo | Editorial vibe |
+| :--- | :---: | :--- | :--- | :---: | :---: | :---: |
+| [Three Worlds Odyssey](games/gpt6_astra_high.html) | 🏃 Platformer | GPT-6 Astra | API | High | 1200 | 9.4 |
+| [The 2.6k Deluxe Platformer](games/gemini38_flash_full.html) | 🏃 Platformer | Gemini 3.8 Flash | Antigravity · API | Ultra | 1200 | 9.1 |
+| [Qwen 27B Tiiny NES Replica](games/qwen38_27b_chopsticks.html) | 🏃 Platformer | Qwen3.8-27B · Q4_K_M | llama.cpp · RTX 3090 24GB | None | 1200 | 8.7 |
+| [Super Meadow: A Little Adventure](games/gpt6_astra_light.html) | 🏃 Platformer | GPT-6 Astra | API | Light | 1200 | 8.6 |
+| [Circus Jumper](games/qwen38_27b_circus_mikenonect.html) | 🏃 Platformer | Qwen3.8-27B · Q8_0 | llama.cpp · Framework Desktop | None | 1200 | 8.4 |
+| [The Matrix Bros (Cyber Edition)](games/ornith35b_matrix_bros.html) | 🏃 Platformer | Ornith-1.5-35B · Q4_K_M | llama.cpp · RTX 3090 24GB | None | 1200 | 8.8 |
+| [Super Pixel Bros (Course 1-1)](games/qwen38_flash_3070_potato.html) | 🏃 Platformer | Qwen3.8-Flash-Next · UD-Q3_K_XL | llama.cpp · RTX 3070 8GB | Medium | 1200 | 8.9 |
+| [The 60,000-Token Monolith](games/qwen38_gold_60k.html) | 🏃 Platformer | Qwen3.8-Flash-Next · AD-4.27bpw | llama.cpp · RTX 4070 12GB | Ultra | 1200 | 8.5 |
+| [Operation Wolf3D: Raycast 60](games/gemini38_pro_wolf_raycaster.html) | 🔫 Raycaster | Gemini 3.8 Pro | Antigravity · API | High | 1200 | 9.2 |
+| [Dungeon of the Crimson Keep: Raycast 3D](games/qwen38_flash_retro_dungeon.html) | 🔫 Raycaster | Qwen3.8-Flash-Next · AD-4.27bpw | llama.cpp · RTX 3070 8GB | Medium | 1200 | 9.2 |
+| [Neon Phantom Maze: Classic Arcade Chase](games/gemma4_31b_neon_pacmaze.html) | 👻 Maze | Gemma 4 31B · Q4_K_M | llama.cpp · RTX 4090 24GB | High | 1200 | 9.3 |
+| [Cyber Labyrinth: Vector Ghost Run](games/qwen36_27b_cyber_maze.html) | 👻 Maze | Qwen 3.6 27B · Q4_K_M | vLLM · RTX 3090 24GB | None | 1200 | 8.8 |
+| [Blockfall 1989: Falling Polyominoes](games/glm47_flash_tetris_matrix.html) | 🧱 Falling Blocks | GLM-4.7 Flash · FP8 | llama.cpp · RTX 4070 Ti 12GB | Medium | 1200 | 9.4 |
+| [Quantum Cascade: Polyomino Drop](games/qwen36_polyomino_puzzle.html) | 🧱 Falling Blocks | Qwen 3.6 27B · Q4_K_M | vLLM · RTX 3090 24GB | None | 1200 | 9.0 |
+
+## 🗃️ Archived runs
+
+These files stay in the repo so their original generated bytes are preserved, but are outside the active browser roster.
+
+| Entry | Why it is archived |
+| :--- | :--- |
+| [Gemini 2.5 Pro PyGame Edition](games/gemini25_pro_pygame_healthynebula.py) | Python/Pygame artifact rather than a browser game. |
+| [Paul Allen's Card (Base)](games/gemini38_flash_baseline.html) | Archived baseline, superseded by a later run. |
+
+## 🖼️ A peek inside the cabinets
+
+| [Three Worlds Odyssey](games/gpt6_astra_high.html) | [Operation Wolf3D](games/gemini38_pro_wolf_raycaster.html) | [Neon Phantom Maze](games/gemma4_31b_neon_pacmaze.html) |
 | :---: | :---: | :---: |
 | ![Three Worlds Odyssey](previews/gpt6_astra_high.png) | ![Operation Wolf3D](previews/gemini38_pro_wolf_raycaster.png) | ![Neon Phantom Maze](previews/gemma4_31b_neon_pacmaze.png) |
-| **GPT-6 Astra &bull; Platformer** | **Gemini 3.8 Pro &bull; 3D Raycaster** | **Gemma 4 31B &bull; Arcade Maze** |
 
-| [Falling Blocks: Blockfall 1989](games/glm47_flash_tetris_matrix.html) | [2.5D Raycaster: Crimson Keep Dungeon](games/qwen38_flash_retro_dungeon.html) | [Falling Blocks: Quantum Cascade](games/qwen36_polyomino_puzzle.html) |
+| [Crimson Keep Dungeon](games/qwen38_flash_retro_dungeon.html) | [Qwen 27B NES Replica](games/qwen38_27b_chopsticks.html) | [The Matrix Bros](games/ornith35b_matrix_bros.html) |
 | :---: | :---: | :---: |
-| ![Blockfall 1989](previews/glm47_flash_tetris_matrix.png) | ![Crimson Keep Dungeon](previews/qwen38_flash_retro_dungeon.png) | ![Quantum Cascade](previews/qwen36_polyomino_puzzle.png) |
-| **GLM-4.7 Flash &bull; SRS Blocks** | **Qwen3.8-Flash &bull; Gothic DDA** | **Qwen 3.6 27B &bull; Particle Cascade** |
+| ![Crimson Keep Dungeon](previews/qwen38_flash_retro_dungeon.png) | ![Qwen 27B NES Replica](previews/qwen38_27b_chopsticks.png) | ![The Matrix Bros](previews/ornith35b_matrix_bros.png) |
 
----
+## 🚀 Run it locally
 
-## ⚔️ The Blind Vibe Arena
-
-To guarantee objective evaluations without brand or parameter bias, the **`⚔️ Blind Vibe Arena`** hides all model identities and ELO ratings prior to voting:
-1. **Blind Cabinets**: Challenger A and Challenger B are presented with zero metadata.
-2. **Side-by-Side Play**: Play or inspect both platformers in sandboxed cabinets.
-3. **Voting**: Vote `👈 Challenger A`, `🤝 Tie`, or `👉 Challenger B`.
-4. **Post-Vote Reveal**: The true model identities, hardware specifications, updated ELO deltas, and verified source links are revealed!
-5. **Dynamic ELO Updates**:
-   $$\Delta R_A = 32 \times \left(S_A - \frac{1}{1 + 10^{(R_B - R_A)/400}}\right)$$
-   Your votes dynamically reshape the local leaderboard standings in real time.
-
----
-
-## 🗄️ Experimental / Archived Entries
-
-The following implementations are preserved in the repository for historical and cross-ecosystem reference, but are hidden from the active browser leaderboard:
-
-1. **[Gemini 2.5 Pro PyGame Edition](games/gemini25_pro_pygame_healthynebula.py)**:
-   - **Origin:** Submitted by `u/Healthy-Nebula-3603` on [r/LocalLLaMA (312 upvotes)](https://www.reddit.com/r/LocalLLaMA/comments/1jjsiiw/mario_game_made_by_new_a_gemini_pro_25_in_couple/).
-   - **Reason for Archive:** Written in Python/Pygame rather than single-file browser HTML. Can be executed locally via `pip install pygame && python3 games/gemini25_pro_pygame_healthynebula.py`.
-2. **[Paul Allen's Card (Gemini 3.8 Flash Baseline)](games/gemini38_flash_baseline.html)**:
-   - **Origin:** Zero-bug conversational sprint baseline.
-   - **Reason for Archive:** Superseded by the Deluxe 2.6k Full CoT deliberation implementation.
-
----
-
-## 🚀 Running CRTBench
- 
 ```bash
-# Clone the repository
 git clone https://github.com/carteakey/crtbench.git
 cd crtbench
-
-# Launch local server
 python3 -m http.server 8000
 ```
-Open **`http://localhost:8000`** in your browser.  
-*(You can also double click [`index.html`](index.html) to open directly via `file:///` — offline data fallbacks are pre-baked).*
 
----
+Open **http://localhost:8000** in a browser. The web app expects to be served locally or from GitHub Pages.
 
-## 🤝 Submissions & Workflow
-We provide three streamlined ways to submit new runs:
-1. **In-Browser Submission Studio**: Click `➕ Submit Run` in the top header of [`index.html`](index.html) to run preflight validation, verify zero dependencies, compute metrics, and export schema entries.
-2. **Automated CLI Submission**: Run `python3 scripts/submit.py --file path/to/mario.html ...` to auto-capture preview screenshots and append entries in one command.
-3. **Automated CI Validation**: Every Pull Request is verified automatically via GitHub Actions CI (`scripts/validate.py`).
+## 🤝 Submit a run
 
-See **[`SUBMISSIONS.md`](SUBMISSIONS.md)** for full prompt standards, hardware disclosure guidelines, and schema specifications.
+Use **➕ Submit Run** in the web app, the helper CLI, or a pull request. The browser studio and CLI can check file shape, report size and line counts, and prepare a metadata entry. Pull requests run the repository validator through GitHub Actions. Google Fonts may be loaded externally; game assets, scripts, and runtime libraries must be bundled or generated by the artifact.
 
----
+See [`SUBMISSIONS.md`](SUBMISSIONS.md) for the submission guide and metadata notes. Prompts are community-supplied rather than standardized, and links are recorded as submitted: a link may point to a post, a demo, the committed artifact, or only a general community page. A listed link is not independent verification of the run.
 
-## 📜 License & Notice
+## 📜 License & notice
 
-MIT License. All trademarks, service marks, and brand names are the property of their respective owners and are referenced solely for nominative identification and comparative benchmark evaluation.
+The CRTBench project is licensed under the MIT License; see [`LICENSE`](LICENSE). That project license does not identify a model's weights license or establish the license of every generated game artifact. Those are separate metadata fields and remain unrecorded where a contributor has not supplied them.
+
+All trademarks, service marks, and brand names are the property of their respective owners and appear for identification and comparison. CRTBench is an independent project.
