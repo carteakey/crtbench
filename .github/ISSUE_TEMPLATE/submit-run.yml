@@ -1,0 +1,171 @@
+name: Submit a CRTBench run
+description: Share a playable model-generated game and the run details you actually have.
+title: "[Run]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for finding another cabinet for the arcade. Exact prompts and honest unknowns are better than polished guesses. Community prompts do not need to match a canonical prompt.
+
+  - type: dropdown
+    id: artifact_status
+    attributes:
+      label: Playable artifact
+      description: CRTBench needs the generated output, not only a screenshot or social post.
+      options:
+        - Public repository or downloadable archive
+        - I will attach the files in a pull request
+        - Live demo only
+        - Output is not currently available
+    validations:
+      required: true
+
+  - type: input
+    id: title
+    attributes:
+      label: Game title
+      placeholder: Cosmic Slop Patrol
+    validations:
+      required: true
+
+  - type: input
+    id: contributor
+    attributes:
+      label: Creator or submitter
+      placeholder: u/ExampleHandle
+    validations:
+      required: true
+
+  - type: input
+    id: source
+    attributes:
+      label: Original source post
+      placeholder: https://www.reddit.com/r/LocalLLaMA/comments/...
+    validations:
+      required: true
+
+  - type: input
+    id: artifact_url
+    attributes:
+      label: Artifact, repository, or archive URL
+      description: Leave blank only when the files will arrive in the accompanying pull request.
+      placeholder: https://github.com/user/game
+
+  - type: input
+    id: demo_url
+    attributes:
+      label: Live demo URL
+      placeholder: https://user.github.io/game/
+
+  - type: textarea
+    id: prompt
+    attributes:
+      label: Exact prompt
+      description: Preserve spelling, system instructions, and formatting. Do not rewrite it into a cleaner benchmark prompt.
+      render: text
+    validations:
+      required: true
+
+  - type: input
+    id: model
+    attributes:
+      label: Exact model and revision
+      placeholder: Qwen3.8-Flash-Next, model URL or commit if known
+    validations:
+      required: true
+
+  - type: dropdown
+    id: model_access
+    attributes:
+      label: Model access
+      options:
+        - Open weights
+        - Proprietary API
+        - Unknown
+    validations:
+      required: true
+
+  - type: input
+    id: quant
+    attributes:
+      label: Quantization
+      placeholder: Intel AutoRound W4A16, Q4_K_M, FP8, or N/A
+
+  - type: input
+    id: harness
+    attributes:
+      label: Harness and version
+      placeholder: OMP commit/version, Antigravity, llama.cpp commit, direct API
+    validations:
+      required: true
+
+  - type: input
+    id: backend
+    attributes:
+      label: Inference backend and version
+      placeholder: vLLM fork/commit, llama.cpp build, API model version
+
+  - type: input
+    id: hardware
+    attributes:
+      label: Hardware
+      placeholder: 4× AMD Radeon Pro V620, RTX 4090 24GB, or API
+    validations:
+      required: true
+
+  - type: dropdown
+    id: generation_mode
+    attributes:
+      label: How was it generated?
+      description: One human prompt can still launch a long agentic run; choose the description that matches what happened.
+      options:
+        - Single model response, no tools
+        - One human prompt with autonomous tools or browser debugging
+        - Multi-turn human-guided iteration
+        - Unknown
+    validations:
+      required: true
+
+  - type: textarea
+    id: run_details
+    attributes:
+      label: Run details
+      description: Include duration, human follow-up messages, reasoning setting, context length, sampling settings, token counts, browser instances, or tool calls when known.
+      placeholder: About 3 hours; no human follow-ups; two browser instances; 128K context...
+
+  - type: textarea
+    id: performance
+    attributes:
+      label: Reported performance
+      description: Keep measured and estimated values distinct.
+      placeholder: Approximately 1,300 prompt-processing tok/s and 70 generation tok/s.
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: External libraries, network access, and assets
+      description: List CDNs, packages, downloaded images/audio, model-selected web assets, and their source URLs.
+      placeholder: Three.js from CDN; NASA nebula image from ...
+
+  - type: textarea
+    id: licensing
+    attributes:
+      label: Publishing permission and licenses
+      description: State whether CRTBench may redistribute the artifact and identify known code, asset, and model-weight licenses.
+      placeholder: Author permits redistribution under MIT; NASA asset URL and usage terms; model weights license...
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Final checks
+      options:
+        - label: I have shared the generated output or will include it in a pull request.
+          required: true
+        - label: Unknown values are left unknown rather than guessed.
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else worth preserving?
+      placeholder: Run log, screenshots, funny failures, or context that makes this run interesting.

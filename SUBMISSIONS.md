@@ -34,6 +34,14 @@ The compatibility fields `license` (`open` or `proprietary`) and `isOpenSource` 
 
 ## 📦 Submit a run
 
+### The quick author ask
+
+If you found a run on Reddit or elsewhere, start by asking for the output. A screenshot is fun, but CRTBench cannot preserve or validate a game it cannot run.
+
+> Would you be willing to share the generated game files or a repository? If so, could you also share the exact prompt, model/quant, harness and inference backend, hardware, approximate run duration, whether the model used browser/tools or received human follow-ups, and any external libraries/assets? Please also say whether the artifact can be redistributed and include any source or license links you know. Unknown answers are completely fine.
+
+The [GitHub run-submission form](https://github.com/carteakey/crtbench/issues/new?template=submit-run.yml) collects the same information in a structured way. It deliberately accepts community prompts verbatim; no canonical prompt is required.
+
 ### Option 1: Browser submission studio
 
 1. Open the [CRTBench web app](https://carteakey.github.io/crtbench/) or start it locally with `python3 -m http.server 8000`.
