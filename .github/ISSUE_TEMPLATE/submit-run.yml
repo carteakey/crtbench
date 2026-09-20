@@ -51,6 +51,19 @@ body:
       description: Leave blank only when the files will arrive in the accompanying pull request.
       placeholder: https://github.com/user/game
 
+  - type: dropdown
+    id: track
+    attributes:
+      label: Closest CRTBench track
+      options:
+        - Platformer
+        - Raycaster
+        - Arcade Maze
+        - Falling Blocks
+        - Wild Card / Other
+    validations:
+      required: true
+
   - type: input
     id: demo_url
     attributes:

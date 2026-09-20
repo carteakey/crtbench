@@ -1216,7 +1216,7 @@
   <div class="marquee-controls">
     <span class="marquee-tag">STRICT ONE-SHOT</span> 
     <span class="marquee-tag" style="background:#f8c300; color:#000;">BLIND VIBE ARENA</span>
-    <span class="marquee-tag" style="background:#238636;">4 DISCIPLINES</span>
+    <span class="marquee-tag" style="background:#238636;">5 CABINETS</span>
     <span class="marquee-tag" style="background:#8250df;">DUEL Elo</span>
     <button id="toggleScanlinesBtn" style="background:#161d27; border:1px solid #30363d; color:#58a6ff; font-family:'Press Start 2P', monospace; font-size:8px; padding:3px 8px; border-radius:3px; cursor:pointer;">📺 CRT: ON</button>
   </div>
@@ -1257,6 +1257,7 @@
           <button class="filter-btn" data-genre="raycaster">🔫 Doom / 3D Raycaster (<span id="countGenreRaycaster">0</span>)</button>
           <button class="filter-btn" data-genre="maze">👻 Ghost Maze / Dot Chomper (<span id="countGenreMaze">0</span>)</button>
           <button class="filter-btn" data-genre="puzzle">🧱 Falling Bricks (<span id="countGenrePuzzle">0</span>)</button>
+          <button class="filter-btn" data-genre="other">🧪 Wild Card / Other (<span id="countGenreOther">0</span>)</button>
         </div>
         <!-- Model License Filter (Open weights vs proprietary) -->
         <div class="filter-group" id="licenseFilterGroup">
@@ -1294,6 +1295,7 @@
           <button class="filter-btn" data-arena-genre="raycaster">🔫 Doom / Raycaster</button>
           <button class="filter-btn" data-arena-genre="maze">👻 Ghost Maze</button>
           <button class="filter-btn" data-arena-genre="puzzle">🧱 Falling Bricks</button>
+          <button class="filter-btn" data-arena-genre="other">🧪 Wild Card / Other</button>
         </div>
       </div>
 
@@ -1370,6 +1372,7 @@
           <button class="filter-btn" data-table-genre="raycaster">🔫 Doom / 3D Raycaster (<span id="countTableGenreRaycaster">0</span>)</button>
           <button class="filter-btn" data-table-genre="maze">👻 Ghost Maze (<span id="countTableGenreMaze">0</span>)</button>
           <button class="filter-btn" data-table-genre="puzzle">🧱 Falling Bricks (<span id="countTableGenrePuzzle">0</span>)</button>
+          <button class="filter-btn" data-table-genre="other">🧪 Wild Card / Other (<span id="countTableGenreOther">0</span>)</button>
         </div>
         <!-- Model License Filter (Open weights vs proprietary) -->
         <div class="filter-group" id="tableLicenseFilterGroup">
@@ -1551,6 +1554,7 @@
             <option value="raycaster">🔫 Doom / 3D Raycaster (3D DDA & Projection)</option>
             <option value="maze">👻 Ghost Maze / Dot Chomper (Graph Traversal & AI)</option>
             <option value="puzzle">🧱 Falling Bricks (Matrix & SRS Logic)</option>
+            <option value="other">🧪 Wild Card / Other (Everything Else)</option>
           </select>
         </div>
         <div class="field-group">
@@ -1624,6 +1628,7 @@
       case 'maze': return '👻 Ghost Maze / Dot Chomper';
       case 'puzzle': return '🧱 Falling Bricks';
       case 'arcade': return '🚀 Space Arcade';
+      case 'other': return '🧪 Wild Card / Other';
       default: return '🍄 Italian Plumber';
     }
   }
@@ -1662,7 +1667,7 @@
 
   function updateFilterCounts() {
     const active = getActiveGames();
-    const genreCounts = { all: active.length, platformer: 0, raycaster: 0, maze: 0, puzzle: 0 };
+    const genreCounts = { all: active.length, platformer: 0, raycaster: 0, maze: 0, puzzle: 0, other: 0 };
     const licenseCounts = { all: active.length, open: 0, proprietary: 0 };
 
     active.forEach(g => {
@@ -1681,6 +1686,7 @@
     if (document.getElementById('countGenreRaycaster')) document.getElementById('countGenreRaycaster').textContent = genreCounts.raycaster;
     if (document.getElementById('countGenreMaze')) document.getElementById('countGenreMaze').textContent = genreCounts.maze;
     if (document.getElementById('countGenrePuzzle')) document.getElementById('countGenrePuzzle').textContent = genreCounts.puzzle;
+    if (document.getElementById('countGenreOther')) document.getElementById('countGenreOther').textContent = genreCounts.other;
 
     if (document.getElementById('countLicenseAll')) document.getElementById('countLicenseAll').textContent = licenseCounts.all;
     if (document.getElementById('countLicenseOpen')) document.getElementById('countLicenseOpen').textContent = licenseCounts.open;
@@ -1692,6 +1698,7 @@
     if (document.getElementById('countTableGenreRaycaster')) document.getElementById('countTableGenreRaycaster').textContent = genreCounts.raycaster;
     if (document.getElementById('countTableGenreMaze')) document.getElementById('countTableGenreMaze').textContent = genreCounts.maze;
     if (document.getElementById('countTableGenrePuzzle')) document.getElementById('countTableGenrePuzzle').textContent = genreCounts.puzzle;
+    if (document.getElementById('countTableGenreOther')) document.getElementById('countTableGenreOther').textContent = genreCounts.other;
 
     if (document.getElementById('countTableLicenseAll')) document.getElementById('countTableLicenseAll').textContent = licenseCounts.all;
     if (document.getElementById('countTableLicenseOpen')) document.getElementById('countTableLicenseOpen').textContent = licenseCounts.open;

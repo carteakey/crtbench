@@ -38,7 +38,7 @@ STRING_FIELDS = {
 }
 CANONICAL_HARNESSES = {"Antigravity", "llama.cpp", "vLLM", "Ollama", "API"}
 CANONICAL_REASONING_TIERS = {"None", "Light", "Medium", "High", "Ultra"}
-CANONICAL_GENRES = {"platformer", "raycaster", "maze", "puzzle"}
+CANONICAL_GENRES = {"platformer", "raycaster", "maze", "puzzle", "other"}
 CANONICAL_LICENSES = {"open", "proprietary"}
 MODEL_ACCESS_TYPES = {"open_weights", "proprietary"}
 VIBE_SCORE_TYPES = {"editorial", "community"}

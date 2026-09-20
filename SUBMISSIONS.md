@@ -15,7 +15,7 @@ Keep the committed game artifact exactly as submitted when you are claiming an u
 Add one object to `data.json` and a file under `games/`. Keep field names and categories consistent so the cabinet stays searchable.
 
 - **Title and author:** Give the game a memorable name and credit the author or submitter as they want to appear.
-- **Track (`genre`):** Use `platformer`, `raycaster`, `maze`, or `puzzle` for the current cabinets.
+- **Track (`genre`):** Use `platformer`, `raycaster`, `maze`, `puzzle`, or `other`. The `other` cabinet is the Wild Card for space shooters, simulations, genre mashups, and experiments that do not fit the first four tracks.
 - **Prompt:** Store the prompt actually used, not a standardized rewrite. Different prompts are expected.
 - **Model and access (`model`, `modelAccess`):** Record the model name and use `open_weights` or `proprietary`. “Open weights” describes model access; it does not establish an open-source license.
 - **Weights license (`weightsLicense`):** Give the exact license only when the model/version is known. Use `null` when it is unknown or not applicable; do not infer it from “open weights.”

@@ -102,6 +102,12 @@ class ValidatorTests(unittest.TestCase):
         self.assertEqual(result["errors"], 0)
         self.assertEqual(validate.png_dimensions((self.root / self.entry["preview"]).read_bytes()), (960, 600))
 
+    def test_other_is_a_valid_wild_card_genre(self):
+        wild_card = copy.deepcopy(self.entry)
+        wild_card["genre"] = "other"
+        result, _ = self.validate([wild_card])
+        self.assertEqual(result["errors"], 0)
+
     def test_rejects_duplicate_ids_invalid_enums_and_metadata(self):
         invalid = copy.deepcopy(self.entry)
         invalid["genre"] = "doom"

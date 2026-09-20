@@ -7,7 +7,7 @@
 [![Submissions](https://img.shields.io/badge/Format-Community_Runs-f8c300?style=for-the-badge)](SUBMISSIONS.md)
 [![Blind Arena](https://img.shields.io/badge/Vibe_Arena-Local_Duel_Elo-58a6ff?style=for-the-badge)](index.html)
 [![Active Roster](https://img.shields.io/badge/Active_Entries-14-2ea043?style=for-the-badge)](games/)
-[![Disciplines](https://img.shields.io/badge/Tracks-Platformer_%7C_Raycaster_%7C_Maze_%7C_Blocks-8250df?style=for-the-badge)](index.html)
+[![Disciplines](https://img.shields.io/badge/Tracks-Platformer_%7C_Raycaster_%7C_Maze_%7C_Blocks_%7C_Other-8250df?style=for-the-badge)](index.html)
 
 ---
 
@@ -15,12 +15,13 @@
 
 Most coding benchmarks ask whether code passes a test. CRTBench asks a sillier, more human question: **does the thing feel good to play?** It collects small games made with language models and lets you try them for yourself.
 
-The four cabinets cover different kinds of game-making:
+The five cabinets cover different kinds of game-making:
 
 1. **🏃 Platformer:** movement, jumping, collisions, scrolling, and that elusive good-feeling landing.
 2. **🔫 Raycaster:** grid traversal, perspective, wall slices, sprites, and first-person controls.
 3. **👻 Arcade Maze:** grid movement, corner turns, pathfinding, and chasers with attitude.
 4. **🧱 Falling Blocks:** piece rotation, wall kicks, landing previews, and line clears.
+5. **🧪 Wild Card / Other:** space shooters, simulations, strange experiments, and anything that refuses to fit neatly into the first four cabinets.
 
 There is no canonical prompt. Community runs arrive with different prompts, models, harnesses, hardware, and levels of detail; the submitted prompt is kept with each entry when available. Treat the roster as a playable showcase and a source of vibes, not a controlled head-to-head experiment.
 
