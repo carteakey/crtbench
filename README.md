@@ -6,7 +6,7 @@
 [![Leaderboard](https://img.shields.io/badge/CRTBench-In--Genre_Leaderboard-e52521?style=for-the-badge&logo=retroarch)](https://github.com/carteakey/crtbench)
 [![Submissions](https://img.shields.io/badge/Format-Community_Runs-f8c300?style=for-the-badge)](SUBMISSIONS.md)
 [![Blind Arena](https://img.shields.io/badge/Vibe_Arena-Local_Duel_Elo-58a6ff?style=for-the-badge)](index.html)
-[![Active Roster](https://img.shields.io/badge/Active_Entries-14-2ea043?style=for-the-badge)](games/)
+[![Active Roster](https://img.shields.io/badge/Active_Entries-15-2ea043?style=for-the-badge)](games/)
 [![Disciplines](https://img.shields.io/badge/Tracks-Platformer_%7C_Raycaster_%7C_Maze_%7C_Blocks_%7C_Other-8250df?style=for-the-badge)](index.html)
 
 ---
@@ -35,7 +35,7 @@ The page also shows an **editorial vibe score**: a curator's subjective first-pa
 
 ## 🕹️ Active eligible roster
 
-All 14 browser games are active. Google Fonts are allowed; external game assets, scripts, and runtime libraries are not. The table is a catalog, not a performance ranking. Vibe scores are editorial; each fresh browser starts Duel Elo at 1200.
+All 15 browser games are active. Google Fonts are allowed; external game assets, scripts, and runtime libraries are not. The table is a catalog, not a performance ranking. Vibe scores are editorial; each fresh browser starts Duel Elo at 1200.
 
 | Game | Track | Model & quant | Harness & hardware | Reasoning | Seed Duel Elo | Editorial vibe |
 | :--- | :---: | :--- | :--- | :---: | :---: | :---: |
@@ -47,6 +47,7 @@ All 14 browser games are active. Google Fonts are allowed; external game assets,
 | [The Matrix Bros (Cyber Edition)](games/ornith35b_matrix_bros.html) | 🏃 Platformer | Ornith-1.5-35B · Q4_K_M | llama.cpp · RTX 3090 24GB | None | 1200 | 8.8 |
 | [Super Pixel Bros (Course 1-1)](games/qwen38_flash_3070_potato.html) | 🏃 Platformer | Qwen3.8-Flash-Next · UD-Q3_K_XL | llama.cpp · RTX 3070 8GB | Medium | 1200 | 8.9 |
 | [The 60,000-Token Monolith](games/qwen38_gold_60k.html) | 🏃 Platformer | Qwen3.8-Flash-Next · AD-4.27bpw | llama.cpp · RTX 4070 12GB | Ultra | 1200 | 8.5 |
+| [Super Plumber Bros](games/claude_sonnet5_super_plumber.html) | 🏃 Platformer | Claude Sonnet 5 | API | Medium | 1200 | 8.0 |
 | [Operation Wolf3D: Raycast 60](games/gemini38_pro_wolf_raycaster.html) | 🔫 Raycaster | Gemini 3.8 Pro | Antigravity · API | High | 1200 | 9.2 |
 | [Dungeon of the Crimson Keep: Raycast 3D](games/qwen38_flash_retro_dungeon.html) | 🔫 Raycaster | Qwen3.8-Flash-Next · AD-4.27bpw | llama.cpp · RTX 3070 8GB | Medium | 1200 | 9.2 |
 | [Neon Phantom Maze: Classic Arcade Chase](games/gemma4_31b_neon_pacmaze.html) | 👻 Maze | Gemma 4 31B · Q4_K_M | llama.cpp · RTX 4090 24GB | High | 1200 | 9.3 |
